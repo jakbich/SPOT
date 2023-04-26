@@ -8,10 +8,12 @@ You need to have [CHAMP](https://github.com/chvmp/champ) installed in your machi
 
 cd into your workspace src directory then:
 
+```bash
   git clone https://github.com/Thomahawkuru/champ_spot.git
   cd champ_spot
   git submodule init
   git submodule update
+```
 
 ### Quick Start Guide
 
