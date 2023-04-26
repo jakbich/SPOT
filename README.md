@@ -15,6 +15,8 @@ cd into your workspace src directory then:
   git submodule update
 ```
 
+spot_ros submodule: https://github.com/Thomahawkuru/spot_ros
+
 ### Quick Start Guide
 
 You can find the pre-configured robots in [configs](https://github.com/chvmp/robots/tree/master/configs) folder. There's an auto-generated README in every configuration package that contains instructions on how to run the demos.
