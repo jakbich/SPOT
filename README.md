@@ -20,18 +20,7 @@ You can find the pre-configured robots in [configs](https://github.com/chvmp/rob
 
 Please take note that although the README may contain instructions how to run in Gazebo, only the following pre-configured robots work in Gazebo:
 
-- Anybotics' ANYmal B
-- Anybotics' ANYmal C
 - Boston Dynamic's Spot
-- Unitree Robotics' Aliengo
-- Unitree Robotics' Go1
-- Unitree Robotics' A1
-- MIT Mini Cheetah
-- OpenDog V2
-- Open Quadruped
-- Stochlite
-- MangDang's Mini Pupper
-- Stanford Pupper
 
 ## Credits
 
