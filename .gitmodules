@@ -1,0 +1,4 @@
+[submodule "spot_ros"]
+	path = spot_ros
+	url = https://github.com/Thomahawkuru/spot_ros.git
+	branch = gazebo
