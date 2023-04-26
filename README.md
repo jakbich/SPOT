@@ -6,13 +6,12 @@ This repository contains configuration packages of various quadrupedal robots ge
 
 You need to have [CHAMP](https://github.com/chvmp/champ) installed in your machine to make these robots walk.
 
-### URDF
+cd into your workspace src directory then:
 
-There's a list of resources where you can download the URDF file of the robot you need in _[install_descriptions](https://github.com/chvmp/robots/blob/master/install_descriptions)_ file. Alternatively, you can run:
-
-    ./install_descriptions
-
-to download all the URDFs at once.
+git clone https://github.com/Thomahawkuru/champ_spot.git
+cd champ_spot
+git submodule init
+git submodule update
 
 ### Quick Start Guide
 
