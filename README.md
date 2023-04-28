@@ -17,6 +17,15 @@ cd into your workspace src directory then:
 
 spot_ros submodule: https://github.com/Thomahawkuru/spot_ros
 
+### Gazebo Worlds
+to use custom worlds:
+
+```bash
+  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to this repo>/models
+  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to this repo>/worlds
+```
+Examples: https://github.com/leonhartyao/gazebo_models_worlds_collection
+
 ### Quick Start Guide
 
 You can find the pre-configured robots in [configs](https://github.com/chvmp/robots/tree/master/configs) folder. There's an auto-generated README in every configuration package that contains instructions on how to run the demos.
