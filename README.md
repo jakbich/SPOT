@@ -18,7 +18,7 @@ cd into your workspace src directory then:
 spot_ros submodule: https://github.com/Thomahawkuru/spot_ros
 
 ### Gazebo Worlds
-to use custom worlds:
+to use custom worlds, add following to ~/.bashrc
 
 ```bash
   export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to this repo>/models
