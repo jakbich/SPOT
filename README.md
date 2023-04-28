@@ -21,8 +21,8 @@ spot_ros submodule: https://github.com/Thomahawkuru/spot_ros
 to use custom worlds, add following to ~/.bashrc
 
 ```bash
-  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to this repo>/models
-  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to this repo>/worlds
+  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to>/models
+  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to>/worlds
 ```
 Examples: https://github.com/leonhartyao/gazebo_models_worlds_collection
 
