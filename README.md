@@ -31,6 +31,7 @@ You need a git SSH key setup. Navigate to `src` directory in your workspace, the
  catkin build
  source <your_ws>/devel/setup.bash
 ```
+* `Resource not found: yocs_velocity_smoother` error might occur; in that case, build your workspace again.
 
 ### Gazebo Worlds
 Add `models` directory to the GAZEBO_MODEL_PATH environment variable. You can add the following line to the end of your ~/.bashrc:
