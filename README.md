@@ -18,7 +18,7 @@ rosdep install --from-paths src --ignore-src -r -y
 
 You need a git SSH key setup. Navigate to `src` directory in your workspace, then:
 ```
- git clone https://github.com/Thomahawkuru/champ_spot.git
+ git clone https://gitlab.tudelft.nl/cor/ro47007/2023/team-0/tno/champ_spot/
  cd champ_spot
  git submodule init
  git submodule update
