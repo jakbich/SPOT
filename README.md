@@ -55,4 +55,4 @@ roslaunch spot_config spawn_robot.launch rviz:=true
 In the simulation, only robot's front cameras are available. Note that the cameras are mounted sideways, so they have a narrower horizontal FoV, but a larger vertical one. The camera data is rotated anticlockwise by 90 degrees.
 
 ## Installing Spot ROS driver
-In order to install the driver, follow the README instructions from [Boston Dynamic's Spot](https://github.com/clearpathrobotics/spot_ros) repository.
+In order to install the driver, follow the README instructions from [Boston Dynamic's Spot](https://github.com/clearpathrobotics/spot_ros) repository. This driver will be used later on with the real robot. It requires a different workspace.
