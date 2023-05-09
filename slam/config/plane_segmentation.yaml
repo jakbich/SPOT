@@ -1,0 +1,7 @@
+update_rate: 4 #Hz
+
+# Define parameters for both cameras
+right_camera: {source_frame: /frontright_depth_optical_frame, target_frame: /base_footprint}
+left_camera: {source_frame: /frontleft_depth_optical_frame, target_frame: /base_footprint}
+
+segmentation_treshold: 0.1 # Segmentation treshold
