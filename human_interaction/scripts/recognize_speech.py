@@ -31,29 +31,23 @@ class Transcriber:
             object
     """
     def __init__(self, stream_params: StreamParams) -> None:
+        
+        rospy.init_node('speech_transcriber')
+        self.pub = rospy.Publisher("/spot/speech/response", String)
+        
+
+
+    
     # Initializes the Transcriber class with the given stream parameters and
     # creates a ROS node to publish the transcribed speech.
         self.stream_params = stream_params
         self._pyaudio = None
         self._stream = None
         self._wav_file = None
+        self.recorder = sr.Recognizer()
 
         
-        rospy.init_node('speech_transcriber')
-        self.pub = rospy.Publisher("/spot/speech/response", String)
-
-
-
-    def record(self, duration: int, save_path: str) -> None:
-        """Record sound from mic for a given amount of seconds.
-        :param duration: Number of seconds we want to record for
-        :param save_path: Where to store recording
-        """
-        print("Start recording...")
-        self._create_recording_resources(save_path)
-        self._write_wav_file_reading_from_stream(duration)
-        self._close_recording_resources()
-        print("Stop recording")
+   
 
     def _create_recording_resources(self, save_path: str) -> None:
         self._pyaudio = pyaudio.PyAudio()
@@ -77,45 +71,140 @@ class Transcriber:
         self._pyaudio.terminate()
 
 
-    def transcribe(self, audio_file: str) -> str:
+    def transcribe(self, save_path:str, duration:int) -> str:
+        print("Start speaking...")
+        self._create_recording_resources(save_path)
+        self._write_wav_file_reading_from_stream(duration)
+        self._close_recording_resources()
+        print("Stop speaking \n\n")
+
         r = sr.Recognizer()
-        with sr.AudioFile(audio_file) as source:
+        with sr.AudioFile(save_path) as source:
             audio = r.record(source)
-        #os.remove("audio.wav") 
-        return r.recognize_google(audio)
+        os.remove("audio.wav") 
+        return r.recognize_google(audio).lower()
+# 
+    # def transcribe(self, duration = None):
+    #     with sr.Microphone() as source:
+    #         if duration is not None:
+    #             print(f"Robot: Please speak for {duration} seconds.")
+    #         else:
+    #             print("Robot: Please speak.")
+    #         audio = self.recorder.listen(source, phrase_time_limit=duration)
+    #     try:
+    #         # Use Google Speech Recognition to transcribe the audio
+    #         text = r.recognize_google(audio)
+    #         return text.lower()
+    #     except sr.UnknownValueError:
+    #         # If the speech cannot be transcribed, return None
+    #         return None
 
     
+    def conversation(self):
+
+    # Conversation to figure out which item to get
+    #  answer = transcriber.transcribe(duration=3, save_path="audio.wav")
+        conv_complete = False
+
+        remap = {
+            "yeah": "yes",
+            "sure": "yes",
+            "of course": "yes",
+            "absolutely": "yes",
+            "definitely": "yes",
+            "yah": "yes",    
+            "yea": "yes", 
+            "yeah": "yes",   
+            "yep": "yes",    
+            "ok": "yes",     
+            "okay": "yes",   
+
+            "nope": "no",    
+            "nay": "no",     
+            "nah": "no",     
+            "negative": "no", 
+            "not": "no"      
+        }
+
+        print("\n\nSPOT: Hello, do you need anything?")
+        answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+
+        while answer is not None:
+        # Use remapping to also include the most common ways of saying yes or no
+            if answer.lower() in remap:
+                answer = remap[answer]
+
+            if "yes" in answer:
+                print(f"SPOT: Which item do you need?")
+                answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+                if answer is not None:
+                    print(f"SPOT: You said you need {answer}, is that correct?")
+                    confirm = transcriber.transcribe(duration=5, save_path="audio.wav")
+
+                    while confirm is not None:
+                    # Use remapping to also include the most common ways of saying yes or no
+                        if confirm.lower() in remap:
+                            confirm = remap[confirm]
+
+                        if "yes" in confirm:
+                            print(f"SPOT: Great, I will start searching {answer} for you.")
+                            conv_complete = True
+                            break
+                        elif "no" in confirm:
+                            print(f"SPOT: I'm sorry, let's try again.")
+                            break
+                        else:
+                            print("SPOT: I didn't understand your response. Please say yes or no.")
+                            confirm = transcriber.transcribe(duration=5, save_path="audio.wav")
+                    if confirm is None:
+                        print(f"SPOT: I'm sorry, I didn't hear your response.")
+                        break
+                else:
+                    print(f"SPOT: I'm sorry, I didn't hear your response.")
+                    break
+            elif "no" in answer:
+                print(f"SPOT: Okay, have a good day!")
+                break
+            else:
+                print("SPOT: I didn't understand your response. Please say yes or no.")
+                answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+            if answer is None:
+                print(f"SPOT: I'm sorry, I didn't hear your response.")
+                break
+            if conv_complete:
+                break
+            
+            
+            
+        transcriber.pub.publish(answer)
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Record audio from microphone")
     parser.add_argument("-d", "--debug", action="store_true", default=False, help="Display debug information")
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
-    if not args.debug:
+    debug = rospy.get_param("/debug")
+
+    if not debug:
         # Disable warnings
         import warnings
         warnings.filterwarnings("ignore")
-
         # Redirect the error output to /dev/null
         os.close(2)
         os.open(os.devnull, os.O_RDWR)
     
+
     try:
         stream_params = StreamParams()
         transcriber  = Transcriber(stream_params)
-        transcriber.record(3, "audio.wav")
-        text = transcriber.transcribe("audio.wav")
-        transcriber.pub.publish(text)
+        transcriber.conversation()
 
-
-        text = text.split()
-        dist, dir, obj = text[0],text[1],text[2]
-        print(f"Spot will now walk {dist} steps in the direction {dir} to get {obj}")
-        
         rospy.spin()
 
     except rospy.ROSInterruptException:
-        rospy.logwarn("The node plane_segmentation could not be launched")
+        rospy.logwarn("The node speech_recognition could not be launched")
         pass
 
 
