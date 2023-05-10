@@ -73,8 +73,9 @@ class PlaneSegmentation:
         points = np.vstack((pc_right, pc_left))
 
         # Filter points that are out of reach
-        distance = np.linalg.norm(points, axis=1)
-        in_reach = np.where(distance <= 4.5)[0]
+        distances = np.linalg.norm(points, axis=1)
+        angles = np.arctan(points[:, 0] / points[:, 1])
+        in_reach = np.where((distances <= 4.5) & (distances >= 0.7) & (abs(angles) > np.pi / 4))[0]
         points = points[in_reach]
 
         # Ground plane segmentation based on Z-coordinate

@@ -13,7 +13,7 @@ from message_filters import TimeSynchronizer, Subscriber
 
 class OccupancyMap:
     def __init__(self, size: np.ndarray, resolution: float, origin: np.ndarray) -> None:
-        self.size = (size / resolution).astype(int)
+        self.size = np.array([size[0] / resolution, size[0] / resolution], dtype=int)
         self.resolution = resolution
         self.grid = np.ones(self.size[0] * self.size[1], dtype=int) * -1
         self.origin = np.array([origin.x, origin.y])
@@ -45,30 +45,34 @@ class OccupancyMap:
 
             # Fill occupancy map with the new point cloud data
             if i == 0: # Ground points
-                self.grid[indices] -= 10
+                self.grid[indices] -= 15
             else:
-                self.grid[indices] += 10
-
+                self.grid[indices] += 15
 
             self.grid[self.grid < -1] = 0
             self.grid[self.grid > 100] = 100
 
         # # Subsample grid
-        # self.grid = self.grid.reshape(self.size)
-        # conv_gird = self.grid[corner1_ji[0]:corner2_ji[0]+1, corner1_ji[1]:corner2_ji[1]+1]
-        # rospy.logwarn("Array shape: (%i, %i)", self.grid.shape[0], self.grid.shape[1])
+        # # rospy.logwarn("Array shape: (%i, %i)", self.grid.shape[0], self.grid.shape[0])
+        # # conv_gird = self.grid[corner1_ji[0]:corner2_ji[0]+1, corner1_ji[1]:corner2_ji[1]+1]
+        # # rospy.logwarn("Array shape: (%i, %i)", self.grid.shape[0], self.grid.shape[1])
         # # Define convolution (https://stackoverflow.com/questions/43086557/convolve2d-just-by-using-numpy)
-        # conv_gird = np.pad(conv_gird, 1, mode='constant')
-        # view_shape = tuple((3, 3, conv_gird.shape[0], conv_gird.shape[1]))
+        # conv_gird = np.pad(self.grid.reshape(self.size), 1, mode='constant')
+        # conv_gird = conv_gird - 50
+        # conv_gird[conv_gird == -51] = 0
+        # # rospy.logwarn("Array shape: (%i, %i)", conv_gird.shape[0], conv_gird.shape[1])
+        # view_shape = tuple((3, 3, self.size[0], self.size[1]))
         # strides = conv_gird.strides + conv_gird.strides
         # sub_matrices = np.lib.stride_tricks.as_strided(conv_gird, view_shape, strides)
         
         # # Apply mean convolution filter
         # conv_filter = np.ones((3, 3)) * (1/9)
         # result = np.einsum('ij,ijkl->kl',conv_filter,sub_matrices)
-        # rospy.logwarn("Array shape: (%i, %i)", result.shape[0], result.shape[1])
-        # self.grid[corner1_ji[0]:corner2_ji[0]+1, corner1_ji[1]:corner2_ji[1]+1] = result
-        # self.grid = self.grid.flatten()  
+        # # rospy.logwarn("Result shape: (%i, %i)", result.shape[0], result.shape[0])
+        # grid = result.astype(int).flatten() + 50
+        # self.grid[indices] = grid[indices]
+        # self.grid[self.grid < -1] = 0
+        # self.grid[self.grid > 100] = 100
 
 
 
