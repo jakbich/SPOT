@@ -35,7 +35,8 @@ class PlaneSegmentation:
         # Set up subscriber and publisher
         sub_right = Subscriber("/spot/depth/frontright/depth_in_visual", PointCloud2, queue_size=2)
         sub_left = Subscriber("/spot/depth/frontleft/depth_in_visual", PointCloud2, queue_size=2)
-        self.pub = rospy.Publisher("/spot/depth/pc_plane_segmentation", PointCloud2)
+        self.pub_non_ground_points = rospy.Publisher("/spot/depth/plane_segmentation/non_ground", PointCloud2)
+        self.pub_ground_points = rospy.Publisher("/spot/depth/plane_segmentation/ground", PointCloud2)
 
         # Synchronize the subscribers based on their timestamps
         ts = TimeSynchronizer([sub_right, sub_left], 5)
@@ -71,17 +72,26 @@ class PlaneSegmentation:
         # Combine both pointclouds into one array
         points = np.vstack((pc_right, pc_left))
 
+        # Filter points that are out of reach
+        distance = np.linalg.norm(points, axis=1)
+        in_reach = np.where(distance <= 4.5)[0]
+        points = points[in_reach]
+
         # Ground plane segmentation based on Z-coordinate
         non_ground_points = points[np.where(points[:, 2] > self.segmentation_treshold)]
+        ground_points = points[np.where(points[:, 2] <= self.segmentation_treshold)]
 
         # Create PointCloud2 message from array
         header = Header()
         header.stamp = time
         header.frame_id = str(self.left_camera_target)[1:]
-        msg = point_cloud2.create_cloud_xyz32(header, non_ground_points)
+
+        msg_non_ground_points = point_cloud2.create_cloud_xyz32(header, non_ground_points)
+        msg_ground_points = point_cloud2.create_cloud_xyz32(header, ground_points)
 
         # Publish the resulting pointcloud
-        self.pub.publish(msg)      
+        self.pub_non_ground_points.publish(msg_non_ground_points)
+        self.pub_ground_points.publish(msg_ground_points)      
 
     def get_transformation(self, source: str, target: str) -> np.ndarray:
         trans_matrix = np.zeros((4, 4))
