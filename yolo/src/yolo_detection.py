@@ -28,7 +28,7 @@ class Yolo:
         home_dir = os.path.expanduser("~")
 
         # Construct the updated file path
-        file_path_cfg = 'mdp_spot/src/champ_spot/yolo/yolo_config/cfg/yolov3.cfg'
+        file_path_cfg = 'mdp_spot/src/champ_spot/yolo/yolo_config/yolov3.cfg'
         file_path_weight = 'mdp_spot/src/champ_spot/yolo/yolo_config/yolov3.weights'
         relative_path_cfg = os.path.join(home_dir, file_path_cfg)
         relative_path_weight = os.path.join(home_dir,file_path_weight)
@@ -76,8 +76,11 @@ class Yolo:
                         confidences.append(float(confidence))
                         class_ids.append(class_id)
 
+            #perform non maxima supression 
             indexes =  cv2.dnn.NMSBoxes(boxes,confidences,0.5,0.4)
-            for i in indexes.flatten():
+            indexes = np.array(indexes).flatten()
+
+            for i in indexes:
                 box = BoundingBox2D()
                 box.header = msg.header
                 box.center = Point()
