@@ -8,8 +8,8 @@ import ros_numpy
 import numpy as np
 import tf
 import math
-from nav_msgs.msg import OccupancyGrid
-from message_filters import TimeSynchronizer, Subscriber
+from nav_msgs.msg import OccupancyGrid, Odometry
+from message_filters import TimeSynchronizer, Subscriber, ApproximateTimeSynchronizer
 
 class OccupancyMap:
     def __init__(self, size: np.ndarray, resolution: float, origin: np.ndarray) -> None:
@@ -52,29 +52,6 @@ class OccupancyMap:
             self.grid[self.grid < -1] = 0
             self.grid[self.grid > 100] = 100
 
-        # # Subsample grid
-        # # rospy.logwarn("Array shape: (%i, %i)", self.grid.shape[0], self.grid.shape[0])
-        # # conv_gird = self.grid[corner1_ji[0]:corner2_ji[0]+1, corner1_ji[1]:corner2_ji[1]+1]
-        # # rospy.logwarn("Array shape: (%i, %i)", self.grid.shape[0], self.grid.shape[1])
-        # # Define convolution (https://stackoverflow.com/questions/43086557/convolve2d-just-by-using-numpy)
-        # conv_gird = np.pad(self.grid.reshape(self.size), 1, mode='constant')
-        # conv_gird = conv_gird - 50
-        # conv_gird[conv_gird == -51] = 0
-        # # rospy.logwarn("Array shape: (%i, %i)", conv_gird.shape[0], conv_gird.shape[1])
-        # view_shape = tuple((3, 3, self.size[0], self.size[1]))
-        # strides = conv_gird.strides + conv_gird.strides
-        # sub_matrices = np.lib.stride_tricks.as_strided(conv_gird, view_shape, strides)
-        
-        # # Apply mean convolution filter
-        # conv_filter = np.ones((3, 3)) * (1/9)
-        # result = np.einsum('ij,ijkl->kl',conv_filter,sub_matrices)
-        # # rospy.logwarn("Result shape: (%i, %i)", result.shape[0], result.shape[0])
-        # grid = result.astype(int).flatten() + 50
-        # self.grid[indices] = grid[indices]
-        # self.grid[self.grid < -1] = 0
-        # self.grid[self.grid > 100] = 100
-
-
 
 class GridMapping:
     def __init__(self) -> None:
@@ -107,34 +84,40 @@ class GridMapping:
         # Set up subscriber and publisher
         sub_non_ground_points = Subscriber("/spot/depth/plane_segmentation/non_ground", PointCloud2, queue_size=5)
         sub_ground_points = Subscriber("/spot/depth/plane_segmentation/ground", PointCloud2, queue_size=5)
-        self.pub = rospy.Publisher("/spot/mapping/occupancy_grid", OccupancyGrid)
+        sub_robot_pos = Subscriber("/odom/ground_truth", Odometry, queue_size=20)
+        self.pub = rospy.Publisher("/spot/mapping/occupancy_grid", OccupancyGrid, queue_size=1)
 
         # Synchronize the subscribers based on their timestamps
-        ts = TimeSynchronizer([sub_non_ground_points, sub_ground_points], 5)
+        # ts = TimeSynchronizer([sub_non_ground_points, sub_ground_points], 5)
+        ts = ApproximateTimeSynchronizer([sub_non_ground_points, sub_ground_points, sub_robot_pos], queue_size=10, slop=0.1) # Slop is time tollerance
         ts.registerCallback(self.update_map)
 
 
-    def update_map(self, msg_non_ground_points, msg_ground_points) -> None:
+    def test(self, msg):
+        print(msg.pose.pose.position.x)
+
+    def update_map(self, msg_non_ground_points, msg_ground_points, msg_robot_pos) -> None:
         time = msg_non_ground_points.header.stamp
+        
+        robot_pose = msg_robot_pos.pose.pose
+        position = np.array([robot_pose.position.x, robot_pose.position.y, robot_pose.position.z])
+        quaternions = np.array([robot_pose.orientation.x, robot_pose.orientation.y, robot_pose.orientation.z, robot_pose.orientation.w])
 
-        # Get position of the robot in map frame (odom)
-        position, quaternions = None, None
-        try:
-            position, quaternions = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, time)
-            position = np.array(position)
-            quaternions = np.array(quaternions)
+        # # Get position of the robot in map frame (odom)
+        # position, quaternions = None, None
+        # try:
+        #     position, quaternions = self.tf_listener.lookupTransform(self.map_frame, self.robot_frame, time)
+        #     position = np.array(position)
+        #     quaternions = np.array(quaternions)
 
-        except tf.Exception as e:
-            rospy.logwarn("Failed to lookup transform: {}".format(e))
+        # except tf.Exception as e:
+        #     rospy.logwarn("Failed to lookup transform: {}".format(e))
 
         if position is not None and quaternions is not None:
             # Get euler angles from quaternions
             euler = tf.transformations.euler_from_quaternion(quaternions, 'sxyz')
             yaw = euler[-1]
 
-            # Check if robot has moved
-            # if np.linalg.norm(position[:2] - self.prev_robot_pos) > 0.1 or abs(yaw - self.prev_robot_yaw) > np.pi / 36:            
-                # Check if map is initialized
             if self.occupancy_map is None:
                 self.occupancy_map = OccupancyMap(self.map_size, self.map_resolution, self.map_msg.info.origin.position)
 
