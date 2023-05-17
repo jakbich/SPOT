@@ -110,8 +110,8 @@ generate_messages(DEPENDENCIES actionlib_msgs)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES human_interaction
-#  CATKIN_DEPENDS rospy std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS rospy std_msgs actionlib
+  #  DEPENDS system_lib
 )
 
 ###########
@@ -167,7 +167,7 @@ include_directories(
 catkin_install_python(PROGRAMS
 
     scripts/recognize_speech.py
-    
+    scripts/recognize_speech_client.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

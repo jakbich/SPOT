@@ -9,7 +9,9 @@ import argparse
 import pyttsx3
 
 import rospy 
+import actionlib
 from std_msgs.msg import String
+from human_interaction.msg import ConversationAction, ConversationFeedback, ConversationResult
 
 @dataclass
 class StreamParams:
@@ -24,7 +26,7 @@ class StreamParams:
         return asdict(self)
 
 
-class Transcriber:
+class ConversationServer:
     """Recorder uses the blocking I/O facility from pyaudio to record sound
     from mic.
     Attributes:
@@ -33,8 +35,14 @@ class Transcriber:
     """
     def __init__(self, stream_params: StreamParams) -> None:
         
-        rospy.init_node('speech_transcriber')
-        self.pub = rospy.Publisher("/spot/speech/response", String)
+        self.server = actionlib.SimpleActionServer('conversation', ConversationAction, self.run_conv, False)
+        self.server.start()
+        rospy.loginfo("Action Server Conversation started...")
+
+        self.result = ConversationResult()
+
+
+        self.pub = rospy.Publisher("/spot/speech/response", String, queue_size=10)
 
 
     
@@ -134,12 +142,15 @@ class Transcriber:
             }
 
         
-   
+        
+
 
     def _create_recording_resources(self, save_path: str) -> None:
         self._pyaudio = pyaudio.PyAudio()
         self._stream = self._pyaudio.open(**self.stream_params.to_dict())
         self._create_wav_file(save_path)
+
+
 
     def _create_wav_file(self, save_path: str):
         self._wav_file = wave.open(save_path, "wb")
@@ -147,15 +158,20 @@ class Transcriber:
         self._wav_file.setsampwidth(self._pyaudio.get_sample_size(self.stream_params.format))
         self._wav_file.setframerate(self.stream_params.rate)
 
+
+
     def _write_wav_file_reading_from_stream(self, duration: int) -> None:
         for _ in range(int(self.stream_params.rate * duration / self.stream_params.frames_per_buffer)):
             audio_data = self._stream.read(self.stream_params.frames_per_buffer)
             self._wav_file.writeframes(audio_data)
 
+
+
     def _close_recording_resources(self) -> None:
         self._wav_file.close()
         self._stream.close()
         self._pyaudio.terminate()
+
 
 
     def transcribe(self, save_path:str, duration:int) -> str:
@@ -174,10 +190,13 @@ class Transcriber:
         os.remove("audio.wav") 
         return r.recognize_google(audio).lower()
     
+    
+
     def print_say(self, text):
         print("SPOT:", text)
         self.engine.say(text)
         self.engine.runAndWait()
+
 
 
     def remap_answer(self,answer):
@@ -185,6 +204,7 @@ class Transcriber:
             return self.remap[answer]
         else:
             return answer
+
 
     
     def conversation_get_mission(self):
@@ -198,19 +218,19 @@ class Transcriber:
         self.print_say("Hello, I am SPOT you assistance dog, do you need anything?")
 
 
-        answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+        answer = self.transcribe(duration=5, save_path="audio.wav")
 
         while answer is not None:
         # Use remapping to also include the most common ways of saying yes or no
             answer = self.remap_answer(answer)
 
             if "yes" in answer:
-                self.print_say( "Which item do you need" )
-                answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+                self.print_say( "Which item do you need?" )
+                answer = self.transcribe(duration=5, save_path="audio.wav")
                
                 if answer is not None:
-                    self.print_say(f"SPOT: You said you need {answer}, is that correct?")
-                    confirm = transcriber.transcribe(duration=5, save_path="audio.wav")
+                    self.print_say(f"You said you need {answer}, is that correct?")
+                    confirm = self.transcribe(duration=5, save_path="audio.wav")
                     
 
                     while confirm is not None:
@@ -218,56 +238,111 @@ class Transcriber:
                         confirm = self.remap_answer(confirm)
 
                         if "yes" in confirm:
-                            self.print_say( f"SPOT: Great, I will start searching {answer} for you.")
+                            self.print_say( f"Great, I will start searching {answer} for you.")
                             conv_complete = True
+                            self.result.answer = answer
+                            self.server.set_succeeded(self.result)
                             break
                         elif "no" in confirm:
-                            self.print_say( f"SPOT: I'm sorry, let's try again.")
+                            self.print_say( f"I'm sorry, let's try again.")
                             
                             break
                         else:
-                            self.print_say( "SPOT: I didn't understand your response.")
-                            confirm = transcriber.transcribe(duration=5, save_path="audio.wav")
+                            self.print_say( "I didn't understand your response.")
+                            confirm = self.transcribe(duration=5, save_path="audio.wav")
                             
                     if confirm is None:
-                        self.print_say( f"SPOT: I'm sorry, I didn't hear your response.")
+                        self.print_say( f"I'm sorry, I didn't hear your response.")
                         break
                 else:
-                    self.print_say(f"SPOT: I'm sorry, I didn't hear your response.")
+                    self.print_say(f"I'm sorry, I didn't hear your response.")
                     break
             elif "no" in answer:
-                self.print_say( f"SPOT: Okay, have a good day!")
+                self.print_say( f"Okay, have a good day!")
                 break
             else:
-                self.print_say( "SPOT: I didn't understand your response.")
-                answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+                self.print_say( "I didn't understand your response.")
+                answer = self.transcribe(duration=5, save_path="audio.wav")
             if answer is None:
-                self.print_say( f"SPOT: I'm sorry, I didn't hear your response.")
+                self.print_say( f"I'm sorry, I didn't hear your response.")
                 break
             if conv_complete:
                 break
-            
-            
-            
-        transcriber.pub.publish(answer)
+        
+        self.pub.publish(answer)
+
+
+
 
     def conversation_finish_mission(self):
-        self.print_say( "SPOT:Is this the item you wanted")
+        item_delivered = False
+
+        self.print_say("Here is the item. Is this the item you wanted?")
+        answer = self.transcribe(duration=5, save_path="audio.wav")
+
+        while answer is not None:
+            # Use remapping to include the most common ways of saying yes or no
+            answer = self.remap_answer(answer)
+
+            if "yes" in answer:
+                self.print_say("There you go!")
+                item_delivered = True
+                break
+            elif "no" in answer:
+                self.print_say("Which item would you have wanted instead?")
+                answer = self.transcribe(duration=5, save_path="audio.wav")
+
+                if answer is not None:
+                    self.print_say(f"You said you wanted {answer}, is that correct?")
+                    confirm = self.transcribe(duration=5, save_path="audio.wav")
+
+                    while confirm is not None:
+                        # Use remapping to include the most common ways of saying yes or no
+                        confirm = self.remap_answer(confirm)
+
+                        if "yes" in confirm:
+                            self.print_say(f"Great, I will get you {answer} instead.")
+                            item_delivered = True
+                            break
+                        elif "no" in confirm:
+                            self.print_say("I'm sorry, let's try again.")
+                            break
+                        else:
+                            self.print_say("I didn't understand your response.")
+                            confirm = self.transcribe(duration=5, save_path="audio.wav")
+
+                    if confirm is None:
+                        self.print_say("I'm sorry, I didn't hear your response.")
+                        break
+                else:
+                    self.print_say("I'm sorry, I didn't hear your response.")
+                    break
+            else:
+                self.print_say("I didn't understand your response.")
+                answer = self.transcribe(duration=5, save_path="audio.wav")
+
+            if answer is None:
+                self.print_say("I'm sorry, I didn't hear your response.")
+                break
+
+        if item_delivered:
+            # Perform actions after successful delivery
+            pass
 
 
 
-
-    def decide_conv(self):
-        print('\n' * 30)
-        self.print_say( "Do you want to give a new mission or finish an old one?")
-        answer = transcriber.transcribe(duration=5, save_path="audio.wav")
-        answer = self.remap_answer(answer)
-
-        if "new"  in answer:
-            return "new"
+    def run_conv(self, goal):
+        if goal.conv_type == "give_mission":
+            self.conversation_get_mission()
         
-        if "old" in answer:
-            return "old"
+        elif goal.conv_type == "finish_mission":
+            self.conversation_finish_mission()
+
+        else:
+            rospy.loginfo("No proper goal was specified for Conversation server")
+
+        
+
 
 
 if __name__ == "__main__":
@@ -277,6 +352,7 @@ if __name__ == "__main__":
     args, unknown = parser.parse_known_args()
 
     debug = rospy.get_param("/debug")
+
 
     if not debug:
         # Disable warnings
@@ -289,15 +365,16 @@ if __name__ == "__main__":
 
     try:
         stream_params = StreamParams()
-        transcriber  = Transcriber(stream_params)
 
-        conversation = transcriber.decide_conv()
+        rospy.init_node('conversation_server')
 
-        if conversation == "new":
-            transcriber.conversation_get_mission()
+        server = ConversationServer(stream_params)
 
-        if conversation == "old":
-            transcriber.conversation_finish_mission()
+       # if conversation == "new":
+         #   transcriber.conversation_get_mission()
+
+        #if conversation == "old":
+        #    transcriber.conversation_finish_mission()
 
         rospy.spin()
 

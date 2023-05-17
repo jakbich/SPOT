@@ -1,0 +1,11 @@
+<launch>
+   
+
+	<node 
+	pkg="human_interaction" 
+	type="recognize_speech_client.py" 
+	name="conversation_client" 
+	output="screen"
+/>
+
+</launch>

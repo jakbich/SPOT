@@ -8,7 +8,7 @@
 	<node 
 	pkg="human_interaction" 
 	type="recognize_speech.py" 
-	name="speech_transcriber" 
+	name="conversation_server" 
 	output="screen"
 />
 
