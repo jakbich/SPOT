@@ -1,4 +1,4 @@
-update_rate: 4 #Hz
+update_rate: 5 #Hz
 
 # Define parameters for both cameras
 right_camera: {source_frame: /frontright_depth_optical_frame, target_frame: /base_footprint}

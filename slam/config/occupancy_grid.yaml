@@ -1,0 +1,5 @@
+# Ocuupancy grid specs
+map_size: {x: 15, y: 15}
+map_resolution: 0.1
+map_frame: "/odom"
+map_reference_frame: "/base_footprint"
