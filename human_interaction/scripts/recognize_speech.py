@@ -6,6 +6,7 @@ import speech_recognition as sr
 import warnings
 import os
 import argparse
+import pyttsx3
 
 import rospy 
 from std_msgs.msg import String
@@ -34,7 +35,6 @@ class Transcriber:
         
         rospy.init_node('speech_transcriber')
         self.pub = rospy.Publisher("/spot/speech/response", String)
-        
 
 
     
@@ -45,6 +45,93 @@ class Transcriber:
         self._stream = None
         self._wav_file = None
         self.recorder = sr.Recognizer()
+
+        self.engine = pyttsx3.init(driverName='espeak')
+
+        
+
+        self.remap = {
+            "yeah": "yes",
+            "sure": "yes",
+            "of course": "yes",
+            "absolutely": "yes",
+            "definitely": "yes",
+            "yah": "yes",
+            "yea": "yes",
+            "yeah": "yes",
+            "yep": "yes",
+            "ok": "yes",
+            "okay": "yes",
+            "certainly": "yes",
+            "indeed": "yes",
+            "affirmative": "yes",
+            "roger": "yes",
+            "aye": "yes",
+            "correct": "yes",
+            "right": "yes",
+            "exactly": "yes",
+            "positive": "yes",
+            "surely": "yes",
+            
+            "nope": "no",
+            "nay": "no",
+            "nah": "no",
+            "negative": "no",
+            "not": "no",
+            "no way": "no",
+            "absolutely not": "no",
+            "definitely not": "no",
+            "certainly not": "no",
+            "nope": "no",
+            "negative": "no",
+            "not at all": "no",
+            "by no means": "no",
+            "never": "no",
+            "hardly": "no",
+            "scarcely": "no",
+            "not really": "no",
+            "not sure": "no",
+            "not necessarily": "no",
+            "unlikely": "no",
+
+            "cold": "old",
+            "hold": "old",
+            "told": "old",
+            "gold": "old",
+            "mold": "old",
+            "bold": "old",
+            "fold": "old",
+            "sold": "old",
+            "rolled": "old",
+            "soul": "old",
+            "pole": "old",
+            "hole": "old",
+            "coal": "old",
+            "goal": "old",
+            "toad": "old",
+            "load": "old",
+
+            "new": "new",
+            "knew": "new",
+            "grew": "new",
+            "drew": "new",
+            "who": "new",
+            "blue": "new",
+            "flue": "new",
+            "shoe": "new",
+            "stew": "new",
+            "crew": "new",
+            "few": "new",
+            "you": "new",
+            "cue": "new",
+            "jew": "new",
+            "view": "new",
+            "pew": "new",
+            "due": "new",
+            "mu": "new",
+            "nu": "new",
+            "loo": "new"
+            }
 
         
    
@@ -76,100 +163,86 @@ class Transcriber:
         self._create_recording_resources(save_path)
         self._write_wav_file_reading_from_stream(duration)
         self._close_recording_resources()
-        print("Stop speaking \n\n")
+        print("Stop speaking")
+        print("\n")
+        print('_' * 50 )
+        print("\n")
 
         r = sr.Recognizer()
         with sr.AudioFile(save_path) as source:
             audio = r.record(source)
         os.remove("audio.wav") 
         return r.recognize_google(audio).lower()
-# 
-    # def transcribe(self, duration = None):
-    #     with sr.Microphone() as source:
-    #         if duration is not None:
-    #             print(f"Robot: Please speak for {duration} seconds.")
-    #         else:
-    #             print("Robot: Please speak.")
-    #         audio = self.recorder.listen(source, phrase_time_limit=duration)
-    #     try:
-    #         # Use Google Speech Recognition to transcribe the audio
-    #         text = r.recognize_google(audio)
-    #         return text.lower()
-    #     except sr.UnknownValueError:
-    #         # If the speech cannot be transcribed, return None
-    #         return None
+    
+    def print_say(self, text):
+        print("SPOT:", text)
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+
+    def remap_answer(self,answer):
+        if answer.lower() in self.remap:
+            return self.remap[answer]
+        else:
+            return answer
 
     
-    def conversation(self):
+    def conversation_get_mission(self):
 
     # Conversation to figure out which item to get
     #  answer = transcriber.transcribe(duration=3, save_path="audio.wav")
         conv_complete = False
 
-        remap = {
-            "yeah": "yes",
-            "sure": "yes",
-            "of course": "yes",
-            "absolutely": "yes",
-            "definitely": "yes",
-            "yah": "yes",    
-            "yea": "yes", 
-            "yeah": "yes",   
-            "yep": "yes",    
-            "ok": "yes",     
-            "okay": "yes",   
 
-            "nope": "no",    
-            "nay": "no",     
-            "nah": "no",     
-            "negative": "no", 
-            "not": "no"      
-        }
+        print('\n' * 30)
+        self.print_say("Hello, I am SPOT you assistance dog, do you need anything?")
 
-        print("\n\nSPOT: Hello, do you need anything?")
+
         answer = transcriber.transcribe(duration=5, save_path="audio.wav")
 
         while answer is not None:
         # Use remapping to also include the most common ways of saying yes or no
-            if answer.lower() in remap:
-                answer = remap[answer]
+            answer = self.remap_answer(answer)
 
             if "yes" in answer:
-                print(f"SPOT: Which item do you need?")
+                self.print_say( "Which item do you need" )
                 answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+               
                 if answer is not None:
-                    print(f"SPOT: You said you need {answer}, is that correct?")
+                    self.print_say(f"SPOT: You said you need {answer}, is that correct?")
                     confirm = transcriber.transcribe(duration=5, save_path="audio.wav")
+                    
 
                     while confirm is not None:
-                    # Use remapping to also include the most common ways of saying yes or no
-                        if confirm.lower() in remap:
-                            confirm = remap[confirm]
+                    # Use self.remapping to also include the most common ways of saying yes or no
+                        confirm = self.remap_answer(confirm)
 
                         if "yes" in confirm:
-                            print(f"SPOT: Great, I will start searching {answer} for you.")
+                            self.print_say( f"SPOT: Great, I will start searching {answer} for you.")
                             conv_complete = True
                             break
                         elif "no" in confirm:
-                            print(f"SPOT: I'm sorry, let's try again.")
+                            self.print_say( f"SPOT: I'm sorry, let's try again.")
+                            
                             break
                         else:
-                            print("SPOT: I didn't understand your response. Please say yes or no.")
+                            self.print_say( "SPOT: I didn't understand your response.")
                             confirm = transcriber.transcribe(duration=5, save_path="audio.wav")
+                            
                     if confirm is None:
-                        print(f"SPOT: I'm sorry, I didn't hear your response.")
+                        self.print_say( f"SPOT: I'm sorry, I didn't hear your response.")
                         break
                 else:
-                    print(f"SPOT: I'm sorry, I didn't hear your response.")
+                    self.print_say(f"SPOT: I'm sorry, I didn't hear your response.")
                     break
             elif "no" in answer:
-                print(f"SPOT: Okay, have a good day!")
+                self.print_say( f"SPOT: Okay, have a good day!")
                 break
             else:
-                print("SPOT: I didn't understand your response. Please say yes or no.")
+                self.print_say( "SPOT: I didn't understand your response.")
                 answer = transcriber.transcribe(duration=5, save_path="audio.wav")
             if answer is None:
-                print(f"SPOT: I'm sorry, I didn't hear your response.")
+                self.print_say( f"SPOT: I'm sorry, I didn't hear your response.")
                 break
             if conv_complete:
                 break
@@ -177,6 +250,24 @@ class Transcriber:
             
             
         transcriber.pub.publish(answer)
+
+    def conversation_finish_mission(self):
+        self.print_say( "SPOT:Is this the item you wanted")
+
+
+
+
+    def decide_conv(self):
+        print('\n' * 30)
+        self.print_say( "Do you want to give a new mission or finish an old one?")
+        answer = transcriber.transcribe(duration=5, save_path="audio.wav")
+        answer = self.remap_answer(answer)
+
+        if "new"  in answer:
+            return "new"
+        
+        if "old" in answer:
+            return "old"
 
 
 if __name__ == "__main__":
@@ -199,7 +290,14 @@ if __name__ == "__main__":
     try:
         stream_params = StreamParams()
         transcriber  = Transcriber(stream_params)
-        transcriber.conversation()
+
+        conversation = transcriber.decide_conv()
+
+        if conversation == "new":
+            transcriber.conversation_get_mission()
+
+        if conversation == "old":
+            transcriber.conversation_finish_mission()
 
         rospy.spin()
 
