@@ -33,14 +33,15 @@ class ConversationServer:
         - stream_params: StreamParams object with values for pyaudio Stream
             object
     """
+
     def __init__(self, stream_params: StreamParams) -> None:
         
         self.server = actionlib.SimpleActionServer('conversation', ConversationAction, self.run_conv, False)
         self.server.start()
         rospy.loginfo("Action Server Conversation started...")
 
-        self.result = ConversationResult()
-
+  
+        self.feedback = ConversationFeedback()
 
         self.pub = rospy.Publisher("/spot/speech/response", String, queue_size=10)
 
@@ -60,6 +61,7 @@ class ConversationServer:
 
         self.remap = {
             "yeah": "yes",
+            "correct": "yes",
             "sure": "yes",
             "of course": "yes",
             "absolutely": "yes",
@@ -219,6 +221,10 @@ class ConversationServer:
 
 
         answer = self.transcribe(duration=5, save_path="audio.wav")
+        self.feedback.current_question = "1/3  done"
+        print(self.feedback)
+        self.server.publish_feedback(self.feedback) 
+
 
         while answer is not None:
         # Use remapping to also include the most common ways of saying yes or no
@@ -227,11 +233,18 @@ class ConversationServer:
             if "yes" in answer:
                 self.print_say( "Which item do you need?" )
                 answer = self.transcribe(duration=5, save_path="audio.wav")
-               
+                self.feedback.current_question = "2/3  done"
+                self.server.publish_feedback(self.feedback) 
+
+
                 if answer is not None:
                     self.print_say(f"You said you need {answer}, is that correct?")
                     confirm = self.transcribe(duration=5, save_path="audio.wav")
-                    
+                    self.feedback.current_question = "3/3  done"
+                    self.server.publish_feedback(self.feedback)
+                    #self._feedback.current_question = "3"
+                    #self.server.publish_feedback(self._feedback)
+
 
                     while confirm is not None:
                     # Use self.remapping to also include the most common ways of saying yes or no
@@ -240,8 +253,11 @@ class ConversationServer:
                         if "yes" in confirm:
                             self.print_say( f"Great, I will start searching {answer} for you.")
                             conv_complete = True
-                            self.result.answer = answer
-                            self.server.set_succeeded(self.result)
+
+                            self.result = ConversationResult()
+                            self.result.answer = str(answer)
+                            self.server.set_succeeded(self.result) 
+                        
                             break
                         elif "no" in confirm:
                             self.print_say( f"I'm sorry, let's try again.")
