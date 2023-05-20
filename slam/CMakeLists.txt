@@ -163,6 +163,9 @@ catkin_install_python(PROGRAMS
    src/plane_segmentation.py
    src/occupancy_map.py
    src/active_slam.py
+   src/explore_frontiers.py
+   src/motion_control.py
+   src/grid_position_transform.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
