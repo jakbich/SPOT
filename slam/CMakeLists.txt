@@ -166,6 +166,7 @@ catkin_install_python(PROGRAMS
    src/explore_frontiers.py
    src/motion_control.py
    src/grid_position_transform.py
+   src/exploring.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

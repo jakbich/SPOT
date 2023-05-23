@@ -33,6 +33,10 @@ class MotionControl:
         self.twist_msg.angular.y = 0
         self.twist_msg.angular.z = 0
 
+        # Create a Bool message template
+        self.done_msg = Bool()
+        self.done_msg.data = False
+
         # Setup subscriber
         self.goal_sub = rospy.Subscriber("/spot/mapping/goal", Float64MultiArray, self.goal_callback)
         self.robot_pos_sub = rospy.Subscriber("/spot/mapping/grid_location", Float64MultiArray, self.robot_pos_callback, queue_size=1)
@@ -52,7 +56,7 @@ class MotionControl:
         #     self.move_to_goal(self.goal_pos, self.goal_yaw)
 
         # self.move_to_goal([95,105])
-        self.move_to_goal([60,85])
+        # self.move_to_goal([60,85])
 
     
     # Callback for goal
@@ -60,6 +64,12 @@ class MotionControl:
         rospy.logwarn("Goal callback")
         self.goal_pos = msg.data[:2]
         self.goal_yaw = msg.data[2]
+
+        self.done_msg.data = False
+
+        if self.robot_pos is not None and self.robot_yaw is not None:
+            if self.goal_pos is not None and self.goal_yaw is not None:
+                self.move_to_goal(self.goal_pos, self.goal_yaw)
 
 
     # Function to move towards goal
@@ -89,22 +99,48 @@ class MotionControl:
             if distance_to_goal > self.pos_tol:
                 rospy.logwarn("Moving")
                 self.twist_msg.linear.x = self.linear_vel
-                rospy.logwarn("Linear velocity: {}".format(self.twist_msg.linear.x))
                 self.cmd_vel_pub.publish(self.twist_msg)
             else:
                 rospy.logwarn("Done moving")
-                self.twist_msg.linear.x = 0
-                self.cmd_vel_pub.publish(self.twist_msg)
-                self.done_pub.publish(True)
+                self.twist_msg.linear.x = 0           
+
+                # Rotate to given yaw
+                rospy.logwarn("Rotating to given yaw")
+                angle_to_yaw = yaw - self.robot_yaw
+                rospy.logwarn("Angle to yaw: {}".format(angle_to_yaw))
+
+                if abs(angle_to_yaw) > self.angle_tol:
+                    rospy.logwarn("Rotating")
+                    self.twist_msg.angular.z = self.angular_vel * np.sign(angle_to_yaw)
+                    self.twist_msg.linear.x = 0
+                    self.cmd_vel_pub.publish(self.twist_msg)
+                else:
+                    # Yaw and goal is reached
+                    rospy.logwarn("Done rotating")
+                    self.twist_msg.angular.z = 0
+                    self.twist_msg.linear.x = 0
+                    self.cmd_vel_pub.publish(self.twist_msg)
+
+                    # Publish done message
+                    self.done_msg.data = True
+                    self.done_pub.publish(self.done_msg)
+                    
+
 
                 # Reset goal
                 self.goal_pos = None
                 self.goal_yaw = None
 
+    # Define function to rotate 360 degrees when started
+    def full_rotation(self):
+        rospy.logwarn("Full rotation")
+        self.twist_msg.angular.z = self.angular_vel
+        self.cmd_vel_pub.publish(self.twist_msg)
+
 
 if __name__ == "__main__":
     try:
-        mc = MotionControl()
+        MotionControl()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
