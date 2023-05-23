@@ -2,7 +2,7 @@
 move_base_msgs/MoveBaseGoal goal
 ---
 # Define result
-uint32 status
+bool reached
 --- 
 # Define feedback
 move_base_msgs/MoveBaseFeedback feedback
