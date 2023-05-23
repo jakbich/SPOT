@@ -157,6 +157,7 @@ class FrontierExploration:
                     self.map_msg.data = self.map_grid.grid
                     self.map_msg.header.stamp = rospy.Time.now()
                     self.grid_publisher.publish(self.map_msg)
+                    # END FOR DEBUGGING
 
                     # Publish to motion controller
                     self.goal_msg.data = [int(pos[0]), int(pos[1]), 0]

@@ -1,0 +1,9 @@
+# Define goal
+move_base_msgs/MoveBaseGoal goal
+---
+# Define result
+uint32 status
+--- 
+# Define feedback
+move_base_msgs/MoveBaseFeedback feedback
+
