@@ -25,14 +25,12 @@ class Yolo:
         self.tf_listener = tf.TransformListener()
         rospy.sleep(rospy.Duration(2)) # Give the tf server some time to start up
 
-        #define target and source frames of the camera
-        right_camera_source = '/frontright_rgb_optical_frame'
-        left_camera_source = '/frontleft_rgb_optical_frame'
-        camera_target = '/front_rail'
+        #define target and source frames of the cameras
+        self.left_camera_source = '/frontleft_rgb_optical_frame' 
+        self.right_camera_source = '/frontright_rgb_optical_frame'
+        self.left_camera_target = '/front_left_hip'
+        self.right_camera_target = '/front_right_hip'
 
-        #Get fixed transformation matrix between cameras and base of robot
-        #self.right_trans = self.get_transformation(right_camera_source,camera_target)
-        #self.left_trans = self.get_transformation(left_camera_source,camera_target)
         
         self.image_pub = rospy.Publisher('/spot/camera/boundingBoxCamera', Image, queue_size=2)
      
@@ -89,15 +87,16 @@ class Yolo:
                 cv_image_left = self.bridge.imgmsg_to_cv2(left_msg,img_encoding)
                 cv_image_right = self.bridge.imgmsg_to_cv2(right_msg,img_encoding)
                
-                #self.test_transform = cv2.warpPerspective(cv_image, self.left_trans[:3,:3], (cv_image.shape[1], cv_image.shape[0]))
                 
-                cv_image_left = cv2.rotate(cv_image_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                cv_image_right = cv2.rotate(cv_image_right, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                self.cv_image = self.transform_image(cv_image_right, self.right_camera_source, self.right_camera_target)
 
-                self.cv_image = np.concatenate((cv_image_right, cv_image_left), axis=1)
+                #cv_image_left = cv2.rotate(cv_image_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                #cv_image_right = cv2.rotate(cv_image_right, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-                outputs = self.detect(self.cv_image)      #apply yolo to image
-                self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
+                #self.cv_image = np.concatenate((cv_image_right, cv_image_left), axis=1)
+
+                #outputs = self.detect(self.cv_image)      #apply yolo to image
+                #self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
 
                 # Convert the image to ROS format and publish it
                 bounding_box_image = self.bridge.cv2_to_imgmsg(self.cv_image , encoding=img_encoding)
@@ -151,8 +150,51 @@ class Yolo:
         layer_names = self.net.getLayerNames()
         ln = [layer_names[i - 1] for i in self.net.getUnconnectedOutLayers()]
         
-        #returns outputs
         return np.vstack(self.net.forward(ln))
+    
+    def transform_image(self,image_A, frame_A, frame_B):
+        try:
+            now = rospy.Time.now()
+            self.tf_listener.waitForTransform(frame_A, frame_B, now, rospy.Duration(2.0))
+            position, quaternions = self.tf_listener.lookupTransform(frame_A, frame_B, now)
+        except (tf.Exception, tf.ConnectivityException, tf.LookupException, tf.ExtrapolationException) as e:
+            rospy.logwarn("Failed to lookup transform: {}".format(e))
+            return None
+
+        if position is not None and quaternions is not None:
+            euler = tf.transformations.euler_from_quaternion(quaternions, axes='sxyz')
+            trans_matrix = tf.transformations.compose_matrix(translate=position, angles=euler)
+
+            height, width = image_A.shape[:2]
+            image_B = np.zeros_like(image_A)
+
+            for y in range(height):
+                for x in range(width):
+                    # Convert pixel coordinates to 3D point in frame A
+                    point_A_homogeneous = np.array([x, y, 1, 1])  # Homogeneous coordinates
+
+                    # Apply transformation matrix to the 3D point
+                    point_B_homogeneous = np.dot(trans_matrix, point_A_homogeneous)
+
+                    # Convert back to 3D point
+                    point_B = point_B_homogeneous[:3] / point_B_homogeneous[3]
+
+                    # Project transformed 3D point onto ground plane
+                    u, v, _ = point_B  # Ignore the z-coordinate
+
+                    # Set pixel value in transformed image
+                    if 0 <= u < width and 0 <= v < height:
+                        image_B[int(v), int(u)] = image_A[y, x]
+
+            return image_B
+
+        else:
+            rospy.logfatal("Failed to obtain transformation")
+            return None
+
+
+
+       
 
 if __name__=='__main__':
     try:
