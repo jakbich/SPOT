@@ -11,6 +11,7 @@ from sensor_msgs.msg import Image
 from message_filters import TimeSynchronizer, Subscriber,ApproximateTimeSynchronizer
 from cv_bridge import CvBridge, CvBridgeError
 import tf
+import rospkg
 
 
 class Yolo:
@@ -29,9 +30,9 @@ class Yolo:
         left_camera_source = '/frontleft_rgb_optical_frame'
         camera_target = '/front_rail'
 
-        # Get fixed transformation matrix between cameras and base of robot
-        self.right_trans = self.get_transformation(right_camera_source,camera_target)
-        self.left_trans = self.get_transformation(left_camera_source,camera_target)
+        #Get fixed transformation matrix between cameras and base of robot
+        #self.right_trans = self.get_transformation(right_camera_source,camera_target)
+        #self.left_trans = self.get_transformation(left_camera_source,camera_target)
         
         self.image_pub = rospy.Publisher('/spot/camera/boundingBoxCamera', Image, queue_size=2)
      
@@ -43,19 +44,20 @@ class Yolo:
         '''YOLO SETUP'''
         self.confidence_threshold = 0.1
 
-        # Get the user's home directory
-        home_dir = os.path.expanduser("~")
+        #get the file path to the yolo package
+        rospack = rospkg.RosPack()
+        path_relative = str(rospack.get_path('yolo'))
 
-        # Construct the updated file path
-        file_path_cfg = 'mdp_spot/src/champ_spot/yolo/yolo_config/yolov3.cfg'
-        file_path_weight = 'mdp_spot/src/champ_spot/yolo/yolo_config/yolov3.weights'
-        file_path_names = 'mdp_spot/src/champ_spot/yolo/yolo_config/coco.names'
-        relative_path_cfg = os.path.join(home_dir, file_path_cfg)
-        relative_path_weight = os.path.join(home_dir, file_path_weight)
-        self.coco_names = os.path.join(home_dir, file_path_names)
-
+        # Construct the updated file path to yolo initialisation files
+        file_path_cfg = 'yolo_config/yolov3.cfg'
+        file_path_weight = 'yolo_config/yolov3.weights'
+        file_path_names = 'yolo_config/coco.names'
+        absolute_path_cfg = os.path.join(path_relative, file_path_cfg)
+        absolute_path_weight = os.path.join(path_relative, file_path_weight)
+        self.coco_names = os.path.join(path_relative, file_path_names)
+        
         # load yolo model
-        self.net = cv2.dnn.readNet(relative_path_weight, relative_path_cfg)
+        self.net = cv2.dnn.readNet(absolute_path_weight, absolute_path_cfg)
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
         '''YOLO SETUP'''
 
@@ -65,13 +67,14 @@ class Yolo:
         ts = ApproximateTimeSynchronizer([sub_right, sub_left],queue_size=2,slop=0.1)
         ts.registerCallback(self.callback)
 
+        rospy.loginfo("YOLO initialised")
+
     
     def shutdown(self):
         # Clean up code here (if any) before the node shuts down
         pass
 
     def run(self) -> None:
-        rospy.loginfo("Timing images")
         while not rospy.is_shutdown():
             self.loop_rate.sleep()
 
@@ -83,21 +86,23 @@ class Yolo:
                 img_encoding = left_msg.encoding
                 
                 #convert msg into cv2 readable image
-                cv_image = self.bridge.imgmsg_to_cv2(left_msg,img_encoding)
+                cv_image_left = self.bridge.imgmsg_to_cv2(left_msg,img_encoding)
+                cv_image_right = self.bridge.imgmsg_to_cv2(right_msg,img_encoding)
                
                 #self.test_transform = cv2.warpPerspective(cv_image, self.left_trans[:3,:3], (cv_image.shape[1], cv_image.shape[0]))
                 
-                self.cv_image = cv2.rotate(cv_image, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                
-                #apply yolo to image
-                outputs = self.detect(self.cv_image)
+                cv_image_left = cv2.rotate(cv_image_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                cv_image_right = cv2.rotate(cv_image_right, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-                #contains multiple post-prosessing steps including non-maximum suppression
-                self.draw_bounding_box(outputs)
-               
+                self.cv_image = np.concatenate((cv_image_right, cv_image_left), axis=1)
+
+                outputs = self.detect(self.cv_image)      #apply yolo to image
+                self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
+
                 # Convert the image to ROS format and publish it
                 bounding_box_image = self.bridge.cv2_to_imgmsg(self.cv_image , encoding=img_encoding)
                 self.image_pub.publish(bounding_box_image)
+
                 rospy.loginfo('Image published')
             else:
                 rospy.logwarn("Image received but yolo not yet initialized")
@@ -105,9 +110,9 @@ class Yolo:
         except CvBridgeError as e:
             rospy.logerr(e)
 
-    def draw_bounding_box(self,outputs):
-        H,W = self.cv_image.shape[:2]
-        
+    def draw_bounding_box(self,outputs,image):
+        H,W = image.shape[:2]
+
         boxes = []
         confidences = []
         classIDs = []
@@ -130,9 +135,9 @@ class Yolo:
                 (x, y) = (boxes[i][0], boxes[i][1])
                 (w, h) = (boxes[i][2], boxes[i][3])
                 color = [int(c) for c in self.colors[classIDs[i]]]
-                cv2.rectangle(self.cv_image, (x, y), (x + w, y + h), color, 2)
+                cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(self.classes[classIDs[i]], confidences[i])
-                cv2.putText(self.cv_image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+                cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
             
     def detect(self,img):
         self.classes = open(self.coco_names).read().strip().split('\n')
@@ -148,31 +153,6 @@ class Yolo:
         
         #returns outputs
         return np.vstack(self.net.forward(ln))
-
-
-    def get_transformation(self, source: str, target: str) -> np.ndarray:
-        trans_matrix = np.zeros((4, 4))
-        position, quaternions = None, None
-
-        try:
-            now = rospy.Time.now()
-            self.tf_listener.waitForTransform(target, source, now, rospy.Duration(2.0))
-            position, quaternions = self.tf_listener.lookupTransform(target, source, rospy.Time.now())
-        except tf.Exception as e:
-            rospy.logwarn("Failed to lookup transform: {}".format(e))
-            
-        if position is not None and quaternions is not None:
-            euler = tf.transformations.euler_from_quaternion(quaternions, 'sxyz')
-            trans_matrix = tf.transformations.euler_matrix(euler[0], euler[1], euler[2], axes='sxyz')
-
-            trans_matrix[:3, 3] = np.array(position).T
-            trans_matrix[3, 3] = 1
-
-            return trans_matrix
-        else:
-            rospy.logfatal("Did not return")
-
-
 
 if __name__=='__main__':
     try:
