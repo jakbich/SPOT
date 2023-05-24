@@ -33,8 +33,6 @@ class FrontierExploration:
         # Define robot variables
         self.robot_pos = None
         self.yaw = None
-        self.linear_vel = 0.5 # m/s
-        self.angular_vel = 0.5 # rad/s
         self.done_flag = False # Flag to indicate whether the robot is done moving
 
         # Define tolerance variables for moving
@@ -108,7 +106,7 @@ class FrontierExploration:
 
 
     # exploration loop function
-    def explore_frontiers(self, argument):\
+    def explore_frontiers(self):
         # FOR DEBUGGING
         if self.map_grid is None:
             self.map_grid = OccupancyMap(self.map_size, self.map_resolution, self.map_msg.info.origin.position)
@@ -157,6 +155,7 @@ class FrontierExploration:
                     self.map_msg.data = self.map_grid.grid
                     self.map_msg.header.stamp = rospy.Time.now()
                     self.grid_publisher.publish(self.map_msg)
+                    # END FOR DEBUGGING
 
                     # Publish to motion controller
                     self.goal_msg.data = [int(pos[0]), int(pos[1]), 0]
