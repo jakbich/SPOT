@@ -9,3 +9,5 @@ Speech engine needed
 ```
 sudo apt-get install espeak
 ```
+
+minor changes to checkout merging
