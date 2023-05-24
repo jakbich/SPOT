@@ -8,9 +8,16 @@ import queue
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Float64MultiArray
 
+import actionlib
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal MoveBaseFeedback, MoveBaseResult
+from slam.msg import MotionAction, MotionGoal, MotionFeedback, MotionResult
+
+
 class MotionControl:
     def __init__(self) -> None:
-        rospy.init_node('motion_control')
+
+        self.server = actionlib.SimpleActionServer('motion_control', MotionAction, self.get_goal, False)
+        self.server.start()
 
         # Robot variables
         self.linear_vel = 0.5 # m/s
@@ -21,7 +28,7 @@ class MotionControl:
         self.goal_yaw = None
 
         # Define tolerance variables for moving
-        self.pos_tol = 10 # grid cells
+        self.pos_tol = 5 # grid cells
         self.angle_tol = 0.1 # rad
 
         # Creae a Twist message template
@@ -32,6 +39,10 @@ class MotionControl:
         self.twist_msg.angular.x = 0
         self.twist_msg.angular.y = 0
         self.twist_msg.angular.z = 0
+
+        # Create a Bool message template
+        self.done_msg = Bool()
+        self.done_msg.data = False
 
         # Setup subscriber
         self.goal_sub = rospy.Subscriber("/spot/mapping/goal", Float64MultiArray, self.goal_callback)
@@ -52,7 +63,11 @@ class MotionControl:
         #     self.move_to_goal(self.goal_pos, self.goal_yaw)
 
         # self.move_to_goal([95,105])
-        self.move_to_goal([60,85])
+        # self.move_to_goal([60,85])
+
+        # if self.robot_pos is not None and self.robot_yaw is not None:
+        #     if self.goal_pos is not None and self.goal_yaw is not None:
+        #         self.move_to_goal(self.goal_pos, self.goal_yaw)
 
     
     # Callback for goal
@@ -61,6 +76,15 @@ class MotionControl:
         self.goal_pos = msg.data[:2]
         self.goal_yaw = msg.data[2]
 
+        self.done_msg.data = False
+
+    def get_goal(self, goal: MoveBaseGoal):
+        rospy.logwarn("Get goal")
+        self.goal_pos = [goal.target_pose.pose.position.x, goal.target_pose.pose.position.y]
+        self.goal_yaw = tf.transformations.euler_from_quaternion([goal.target_pose.pose.orientation.x, goal.target_pose.pose.orientation.y, goal.target_pose.pose.orientation.z, goal.target_pose.pose.orientation.w], 'sxyz')[-1] 
+
+        if self.robot_pos is not None and self.robot_yaw is not None:
+            self.move_to_goal(self.goal_pos, self.goal_yaw)
 
     # Function to move towards goal
     def move_to_goal(self, goal, yaw=0):
@@ -89,22 +113,52 @@ class MotionControl:
             if distance_to_goal > self.pos_tol:
                 rospy.logwarn("Moving")
                 self.twist_msg.linear.x = self.linear_vel
-                rospy.logwarn("Linear velocity: {}".format(self.twist_msg.linear.x))
                 self.cmd_vel_pub.publish(self.twist_msg)
             else:
                 rospy.logwarn("Done moving")
-                self.twist_msg.linear.x = 0
-                self.cmd_vel_pub.publish(self.twist_msg)
-                self.done_pub.publish(True)
+                self.twist_msg.linear.x = 0           
+
+                # Rotate to given yaw
+                rospy.logwarn("Rotating to given yaw")
+                angle_to_yaw = yaw - self.robot_yaw
+                rospy.logwarn("Angle to yaw: {}".format(angle_to_yaw))
+
+                if abs(angle_to_yaw) > self.angle_tol:
+                    rospy.logwarn("Rotating")
+                    self.twist_msg.angular.z = self.angular_vel * np.sign(angle_to_yaw)
+                    self.twist_msg.linear.x = 0
+                    self.cmd_vel_pub.publish(self.twist_msg)
+                else:
+                    # Yaw and goal is reached
+                    rospy.logwarn("Done rotating")
+                    self.twist_msg.angular.z = 0
+                    self.twist_msg.linear.x = 0
+                    self.cmd_vel_pub.publish(self.twist_msg)
+
+                    # Publish done message
+                    self.done_msg.data = True
+                    self.done_pub.publish(self.done_msg)
+
+                    # Defining ROS result
+                    result = MotionResult()
+                    result.status = 1   # 1 = success, 0 = not done, -1 = failed
+
+                    self.server.set_succeeded(result)
+                    
+
 
                 # Reset goal
                 self.goal_pos = None
                 self.goal_yaw = None
 
 
+
 if __name__ == "__main__":
+
     try:
-        mc = MotionControl()
+        rospy.init_node("motion_control")
+        server = MotionControl()
+
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
