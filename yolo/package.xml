@@ -53,6 +53,10 @@
   <build_depend>rospy</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <exec_depend>rospy</exec_depend>
+  
+  <build_depend>rospkg</build_depend>
+  <build_export_depend>rospkg</build_export_depend>
+  <exec_depend>rospkg</exec_depend>
 
   <build_depend>ros_numpy</build_depend>
   <build_export_depend>ros_numpy</build_export_depend>
