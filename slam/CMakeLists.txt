@@ -161,7 +161,8 @@ include_directories(
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
    src/plane_segmentation.py
-  #  src/occupancy_map.py
+   src/occupancy_map.py
+   src/active_slam.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
