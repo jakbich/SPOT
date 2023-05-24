@@ -9,14 +9,15 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Float64MultiArray
 
 import actionlib
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback, MoveBaseResult
-from slam.msg import MotionAction, MotionGoal, MotionFeedback, MotionResult
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal,MoveBaseActionResult, MoveBaseFeedback, MoveBaseResult
+
 
 
 class MotionControl:
     def __init__(self) -> None:
 
-        self.server = actionlib.SimpleActionServer('motion_control', MotionAction, self.get_goal, False)
+        #self.server = actionlib.SimpleActionServer('motion_control', MotionAction, self.get_goal, False)
+        self.server = actionlib.SimpleActionServer('motion_control', MoveBaseAction, self.get_goal, False)
         self.server.start()
 
         # Robot variables
@@ -45,8 +46,8 @@ class MotionControl:
 
     def get_goal(self, goal: MoveBaseGoal):
         rospy.logwarn("Get goal")
-        self.goal_pos = [goal.goal.target_pose.pose.position.x, goal.goal.target_pose.pose.position.y]
-        self.goal_yaw = tf.transformations.euler_from_quaternion([goal.goal.target_pose.pose.orientation.x, goal.goal.target_pose.pose.orientation.y, goal.goal.target_pose.pose.orientation.z, goal.goal.target_pose.pose.orientation.w], 'sxyz')[-1] 
+        self.goal_pos = [goal.target_pose.pose.position.x, goal.target_pose.pose.position.y]
+        self.goal_yaw = tf.transformations.euler_from_quaternion([goal.target_pose.pose.orientation.x, goal.target_pose.pose.orientation.y, goal.target_pose.pose.orientation.z, goal.target_pose.pose.orientation.w], 'sxyz')[-1] 
         self.goal_yaw = math.pi/2
 
         # if self.robot_pos is not None and self.robot_yaw is not None:
@@ -112,12 +113,13 @@ class MotionControl:
             self.twist_msg.angular.z = self.angular_vel * np.sign(angle_to_orientation)
             self.cmd_vel_pub.publish(self.twist_msg)
 
+        # Set result
+        result = MoveBaseActionResult()
+        result.header.stamp = rospy.Time.now()  # Set the timestamp of the result
+        result.status.status = 0  # Set the status code, where 0 represents success
+        result.status.text = "Goal reached"  # Set an optional status text
 
-        # Defining ROS result
-        result = MotionResult()
-        result.reached = True 
-
-        rospy.logwarn("Done moving to goal")
+        rospy.loginfo("Done moving to goal")
         self.server.set_succeeded(result)
 
         self.goal_pos = None
