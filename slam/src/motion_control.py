@@ -28,7 +28,7 @@ class MotionControl:
         self.goal_yaw = None
 
         # Define tolerance variables for moving
-        self.pos_tol = 5 # grid cells
+        self.pos_tol = 3 # grid cells
         self.angle_tol = 0.1 # rad
 
         # Creae a Twist message template
@@ -39,11 +39,6 @@ class MotionControl:
         self.twist_msg.angular.x = 0
         self.twist_msg.angular.y = 0
         self.twist_msg.angular.z = 0
-
-        # Create a Bool message template
-        self.done_msg = Bool()
-        self.done_msg.data = False
-
 
         # Setup publisher
         self.cmd_vel_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
