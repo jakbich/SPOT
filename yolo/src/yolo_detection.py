@@ -4,15 +4,16 @@ import rospy
 import cv2
 import numpy as np
 import os
-import matplotlib.pyplot as plt
-from vision_msgs.msg import BoundingBox2D
-from geometry_msgs.msg import Point
-from sensor_msgs.msg import Image
-from sensor_msgs.msg import CameraInfo
-from message_filters import TimeSynchronizer, Subscriber,ApproximateTimeSynchronizer
-from cv_bridge import CvBridge, CvBridgeError
 import tf
 import rospkg
+import ros_numpy
+from sensor_msgs.msg import PointCloud2
+from geometry_msgs import PointStamped
+from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo
+from message_filters import Subscriber,ApproximateTimeSynchronizer
+from cv_bridge import CvBridge, CvBridgeError
+
 
 
 class Yolo:
@@ -33,8 +34,13 @@ class Yolo:
         self.right_camera_source = '/frontright_rgb_optical_frame'
         self.camera_target = '/base_footprint'
 
-        #for publishing the image with detections
+        # Get transformatin matrix between base footpint (origin of pointcloud) to each camera frame
+        self.right_trans = self.get_transformation(str('/base_footprint'),str('/frontright_rgb_optical_frame'))
+        self.left_trans = self.get_transformation(str('/base_footprint'),str('/frontleft_rgb_optical_frame' ))
+
+        #create publishers
         self.image_pub = rospy.Publisher('/spot/camera/boundingBoxCamera', Image, queue_size=2)
+        self.points_pub = rospy.Publisher('/spot/depth/detection_center',PointStamped,queue_size=10)
     
 
         self.get_camera_info()
@@ -46,9 +52,9 @@ class Yolo:
             rospy.logfatal("Right Camera Calibration Matrix Not Obtained")
 
         else:
-            rospy.loginfo("Camera Information Successufully Obtained")
-            self.intrinsic_calibration_right = np.array(self.intrinsic_calibration_right).reshape(3,3)
-            self.intrinsic_calibration_left = np.array(self.intrinsic_calibration_left).reshape(3,3)
+            rospy.loginfo("Camera Information Successfully Obtained")
+            self.intrinsic_calibration_right_inv = np.linalg.inv(np.array(self.intrinsic_calibration_right).reshape(3,3))
+            self.intrinsic_calibration_left_inv = np.linalg.inv(np.array(self.intrinsic_calibration_left).reshape(3,3))
 
 
         self.initialize_yolo()
@@ -57,8 +63,9 @@ class Yolo:
         # Synchronize the subscribers based on their timestamps
         sub_left = Subscriber('/spot/camera/frontleft/image', Image, queue_size=2)
         sub_right = Subscriber('/spot/camera/frontright/image', Image, queue_size=2)
+        sub_pc = Subscriber('/spot/depth/plane_segmentation/non_ground', PointCloud2, queue_size=2)
 
-        ts = ApproximateTimeSynchronizer([sub_right, sub_left], queue_size=2, slop=0.1)
+        ts = ApproximateTimeSynchronizer([sub_right, sub_left,sub_pc], queue_size=2, slop=0.5)
         ts.registerCallback(self.callback)
 
     def initialize_yolo(self):
@@ -99,37 +106,68 @@ class Yolo:
             self.loop_rate.sleep()
 
 
-    def callback(self,right_msg,left_msg) -> None:
+    def callback(self,right_msg,left_msg,pc_msg) -> None:
         try:
             if self.net is not None:
-                rospy.loginfo('Image\'s received...')
+                rospy.loginfo('Data received...')
                 img_encoding = left_msg.encoding
-                rospy.loginfo(img_encoding)
                 
                 #convert msg into cv2 readable image
                 cv_image_left = self.bridge.imgmsg_to_cv2(left_msg,img_encoding)
                 cv_image_right = self.bridge.imgmsg_to_cv2(right_msg,img_encoding)
 
-                self.cv_image = self.transform_image(cv_image_right,self.intrinsic_calibration_right)
-
-                #cv_image_left = cv2.rotate(cv_image_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                #cv_image_right = cv2.rotate(cv_image_right, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                cv_image_left = cv2.rotate(cv_image_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                cv_image_right = cv2.rotate(cv_image_right, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
                 #self.cv_image = np.concatenate((cv_image_right, cv_image_left), axis=1)
 
-                #outputs = self.detect(self.cv_image)      #apply yolo to image
-                #self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
+                self.cv_image = cv_image_right
+
+                outputs = self.detect(self.cv_image)      #apply yolo to image
+                centers = self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
+
+                # turn pc_msg to numpy array
+                pc_base = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(pc_msg)
+                pc_hom_base = np.hstack((pc_base, np.ones(len(pc_base)).reshape(-1, 1)))
+
+                # Apply transformation and convert back to normal coordinates
+                pc_hom_camR = np.dot(self.right_trans, pc_hom_base.T).T
+                pc_camR = pc_hom_camR[:, :3] / pc_hom_camR[:, -1:]
+
+                #for each detection by yolo find the closest pointcloud point that corresponds to this pixel coordinate
+                center_3d_base = []
+                for center in centers:
+                    pixel_hom = np.array([center[0],center[1],1]).reshape(3,1)
+                    pixels = self.intrinsic_calibration_right_inv.dot(pixel_hom)
+                    x_c, y_c, _ = pixels.flatten()
+
+                    # Find the closest point in the point cloud
+                    distances = np.sqrt(np.sum((pc_camR[:, :2] - np.array([x_c, y_c])) ** 2, axis=1))
+                    closest_index = np.argmin(distances)
+                    closest_point_cam = (pc_camR[closest_index])
+
+                    #transform point back to base frame and append it to the list
+                    closest_point_base_hom = np.dot(np.linalg.inv(self.right_trans),np.append(closest_point_cam,1))
+                    center_3d_base.append(closest_point_base_hom[:3]/closest_point_base_hom[3])
+
+                #contruct center point message
+                point_msg = PointStamped()
+                point_msg.header.stamp = rospy.Time.now()
+                point_msg.header.frame_id = "base_footprint"
+                point_msg.points = center_3d_base
 
                 # Convert the image to ROS format and publish it
-                bounding_box_image = self.bridge.cv2_to_imgmsg(cv_image_right, encoding=img_encoding)
+                bounding_box_image = self.bridge.cv2_to_imgmsg(self.cv_image, encoding=img_encoding)
                 self.image_pub.publish(bounding_box_image)
+                self.points_pub.publish(point_msg)
 
-                rospy.loginfo('Image published')
+                rospy.loginfo('Information published')
             else:
                 rospy.logwarn("Image received but yolo not yet initialized")
 
         except CvBridgeError as e:
             rospy.logerr(e)
+
 
     def draw_bounding_box(self,outputs,image):
         H,W = image.shape[:2]
@@ -151,6 +189,7 @@ class Yolo:
                 classIDs.append(classID)
 
         indices = cv2.dnn.NMSBoxes(boxes, confidences, self.confidence_threshold, self.confidence_threshold-0.1)
+        centers = []
         if len(indices) > 0:
             for i in indices.flatten():
                 (x, y) = (boxes[i][0], boxes[i][1])
@@ -159,6 +198,17 @@ class Yolo:
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(self.classes[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+
+                '''
+                image was rotated 90 degree before detection because otherwise yolo would struggle
+                This means that the found center point need to be rotated back
+                rotated_x = H - y_old -1
+                rotated_y = x_old
+                int(y+h/2) / int(x+w/2) give center point of bounding box
+                '''
+
+                centers.append([H - int(y+h/2)-1,int(x+w/2)])
+        return centers
             
     def detect(self,img):
         self.classes = open(self.coco_names).read().strip().split('\n')
@@ -174,86 +224,28 @@ class Yolo:
         
         return np.vstack(self.net.forward(ln))
 
-    # def transform_image(self, image_A, frame_A, frame_B, K):
-    #     try:
-    #         now = rospy.Time.now()
-    #         self.tf_listener.waitForTransform(frame_A, frame_B, now, rospy.Duration(2.0))
-    #         position, quaternions = self.tf_listener.lookupTransform(frame_A, frame_B, now)
-    #     except (tf.Exception, tf.ConnectivityException, tf.LookupException, tf.ExtrapolationException) as e:
-    #         rospy.logwarn("Failed to lookup transform: {}".format(e))
-    #         return None
+    def get_transformation(self, source: str, target: str) -> np.ndarray:
+        trans_matrix = np.zeros((4, 4))
+        position, quaternions = None, None
 
-    #     if position is not None and quaternions is not None:
-    #         euler = tf.transformations.euler_from_quaternion(quaternions, axes='sxyz')
-    #         trans_matrix = tf.transformations.compose_matrix(translate=position, angles=euler)
+        try:
+            now = rospy.Time.now()
+            self.tf_listener.waitForTransform(target, source, now, rospy.Duration(2.0))
+            position, quaternions = self.tf_listener.lookupTransform(target, source, rospy.Time.now())
+        except tf.Exception as e:
+            rospy.logwarn("Failed to lookup transform: {}".format(e))
             
-    #         height, width = image_A.shape[:2]
-    #         image_B = np.zeros_like(image_A)
+        if position is not None and quaternions is not None:
+            euler = tf.transformations.euler_from_quaternion(quaternions, 'sxyz')
+            trans_matrix = tf.transformations.euler_matrix(euler[0], euler[1], euler[2], axes='sxyz')
 
-    #         K_inv = np.linalg.inv(K)  # Inverse of camera intrinsic calibration matrix
+            trans_matrix[:3, 3] = np.array(position).T
+            trans_matrix[3, 3] = 1
 
-    #         for y in range(height):
-    #             for x in range(width):
-    #                 # Convert pixel coordinates to normalized image coordinates
-    #                 pixel_homogeneous = np.array([x, y, 1])  # Homogeneous coordinates
-    #                 pixel_normalized = np.dot(K_inv, pixel_homogeneous)
-    #                 pixel_normalized /= pixel_normalized[2]  # Divide by last element
+            return trans_matrix
+        else:
+            rospy.logfatal("Did not return")
 
-    #                 # Convert normalized image coordinates to 3D camera coordinates
-    #                 u, v = pixel_normalized[:2]  # Extract x, y coordinates
-
-    #                 # Apply transformation matrix to the 3D point
-    #                 point_A_homogeneous = np.array([u, v, 1, 1])  # Homogeneous coordinates
-    #                 point_B_homogeneous = np.dot(trans_matrix, point_A_homogeneous)
-    #                 point_B = point_B_homogeneous[:3] / point_B_homogeneous[3]
-
-    #                 # Project transformed 3D point onto ground plane
-    #                 u_new, v_new, _ = point_B  # Ignore the z-coordinate
-
-    #                 # Set pixel value in transformed image
-    #                 if 0 <= u_new < width and 0 <= v_new < height:
-    #                     image_B[int(v_new), int(u_new)] = image_A[y, x]
-
-    #         return image_B
-    #     else:
-    #         rospy.logfatal("Failed to obtain transformation")
-    #         return None
-        
-
-
-    def transform_image(self, image_A, K):
-        height, width, channels = image_A.shape[:2]
-        image_B = np.zeros_like(image_A)
-
-        K_inv = np.linalg.inv(K)  # Inverse of camera intrinsic calibration matrix
-
-        for y in range(height):
-            for x in range(width):
-                # Convert pixel coordinates to normalized image coordinates
-                pixel_homogeneous = np.array([x, y, 1])  # Homogeneous coordinates
-                pixel_normalized = np.dot(K_inv, pixel_homogeneous)
-                pixel_normalized /= pixel_normalized[2]  # Divide by last element
-
-                # Apply transformation to the normalized coordinates
-                u, v = pixel_normalized[:2]  # Extract x, y coordinates
-
-                # Set transformed pixel coordinates in new image
-                u_new, v_new = u, v  # No transformation applied for now
-
-                # Set pixel value in transformed image
-                if 0 <= u_new < width and 0 <= v_new < height:
-                    for c in range(channels):
-                        image_B[int(v_new), int(u_new), c] = image_A[y, x, c]
-
-        return image_B
-
-
-
-      
-
-
-
-       
 
 if __name__=='__main__':
     try:
