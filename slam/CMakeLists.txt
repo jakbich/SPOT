@@ -162,6 +162,7 @@ include_directories(
 catkin_install_python(PROGRAMS
    src/plane_segmentation.py
    src/occupancy_map.py
+   src/image2pointcloud.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
