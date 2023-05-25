@@ -135,6 +135,7 @@ class Yolo:
                 pc_camR = pc_hom_camR[:, :3] / pc_hom_camR[:, -1:]
 
                 #for each detection by yolo find the closest pointcloud point that corresponds to this pixel coordinate
+                #TODO: Figure out if the point found is accurate to the detection
                 center_3d_base = []
                 for center in centers:
                     pixel_hom = np.array([center[0],center[1],1]).reshape(3,1)
@@ -149,6 +150,8 @@ class Yolo:
                     #transform point back to base frame and append it to the list
                     closest_point_base_hom = np.dot(np.linalg.inv(self.right_trans),np.append(closest_point_cam,1))
                     center_3d_base.append(closest_point_base_hom[:3]/closest_point_base_hom[3])
+
+                #TODO: write a function that combines the point information with detection information e.g: label point with detection class name (maybe confidence)
 
                 #contruct center point message
                 point_msg = PointStamped()
