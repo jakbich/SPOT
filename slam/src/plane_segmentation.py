@@ -33,13 +33,13 @@ class PlaneSegmentation:
         self.left_trans = self.get_transformation(str(self.left_camera_source),str(self.left_camera_target))
 
         # Set up subscriber and publisher
-        sub_right = Subscriber("/spot/depth/frontright/depth_in_visual", PointCloud2, queue_size=2)
-        sub_left = Subscriber("/spot/depth/frontleft/depth_in_visual", PointCloud2, queue_size=2)
-        self.pub_non_ground_points = rospy.Publisher("/spot/depth/plane_segmentation/non_ground", PointCloud2)
-        self.pub_ground_points = rospy.Publisher("/spot/depth/plane_segmentation/ground", PointCloud2)
+        sub_right = Subscriber("/spot/depth/right/pointcloud", PointCloud2, queue_size=2)
+        sub_left = Subscriber("/spot/depth/left/pointcloud", PointCloud2, queue_size=2)
+        self.pub_non_ground_points = rospy.Publisher("/spot/depth/plane_segmentation/non_ground", PointCloud2, queue_size=2)
+        self.pub_ground_points = rospy.Publisher("/spot/depth/plane_segmentation/ground", PointCloud2, queue_size=2)
 
         # Synchronize the subscribers based on their timestamps
-        ts = TimeSynchronizer([sub_right, sub_left], 5)
+        ts = TimeSynchronizer([sub_right, sub_left], queue_size=2)
         ts.registerCallback(self.callback)
 
     
@@ -51,6 +51,7 @@ class PlaneSegmentation:
 
     # Synchronized callback
     def callback(self, right_msg, left_msg) -> None:
+        rospy.logwarn("Plane segmentation")
         # Read synchronised time
         time = right_msg.header.stamp
 
