@@ -10,6 +10,16 @@ project(rrt_msg)
 find_package(catkin REQUIRED COMPONENTS
   ros_numpy
   rospy
+  std_msgs
+  gazebo_msgs
+  nav_msgs
+  geometry_msgs
+  tf
+  message_generation
+  actionlib_msgs
+  move_base_msgs
+  actionlib
+
 )
 
 ## System dependencies are found with CMake's conventions
@@ -60,17 +70,20 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  DIRECTORY action FILES Motion.action
+)
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+  actionlib_msgs
+  move_base_msgs
+  actionlib
+
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -161,6 +174,8 @@ include_directories(
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
   src/rrt_msg_node.py
+  src/rrt_star_node.py
+  
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
