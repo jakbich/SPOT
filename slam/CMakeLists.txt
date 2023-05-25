@@ -10,6 +10,9 @@ project(slam)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   ros_numpy
+  genmsg actionlib_msgs
+  move_base_msgs
+  actionlib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -59,18 +62,19 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+# Generate actions in the 'action' folder
+add_action_files(
+  DIRECTORY action FILES Motion.action
+)
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+  actionlib_msgs
+  move_base_msgs
+  actionlib
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -162,7 +166,10 @@ include_directories(
 catkin_install_python(PROGRAMS
    src/plane_segmentation.py
    src/occupancy_map.py
-   src/active_slam.py
+   src/explore_frontiers.py
+   src/motion_control.py
+   src/explore.py
+   src/grid_position_transform.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
