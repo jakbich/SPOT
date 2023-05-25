@@ -11,6 +11,8 @@ from geometry_msgs.msg import PoseStamped
 import tf
 import numpy as np
 import matplotlib.pyplot as plt
+from std_msgs.msg import Header  # Import the Header class
+
 
 import actionlib
 
@@ -123,14 +125,15 @@ class RRT_planner:
 
         # start_y = self.robot_positions[0][1]
         # start = (start_x, start_y)
-        print(self.robot_pos)
+        # print(self.robot_pos)
     
         # grid_position = self.robot_pos  # Replace x_grid and y_grid with the desired grid position
         # relative_position = np.array(grid_position) * self.map_resolution
         # start = relative_position + np.array([self.origin_x, self.origin_y])
+        print(self.start_models.append('/'))
+
         print(self.goal_models.append('cup_green'))
 
-        print(self.goal_positions)
         start = (self.start_positions[0][0], self.start_positions[0][1])
         goal = (self.goal_positions[0][0], self.goal_positions[0][1])
 
@@ -190,7 +193,7 @@ class RRT_planner:
             try:
                 goal_index = msg.name.index(goal_model)
                 goal_position_real = msg.pose[goal_index].position
-                print(goal_position_real)
+                # print(goal_position_real)
                 # relative_position = np.array([goal_position_real.x,goal_position_real.y]) - np.array([self.origin_x, self.origin_y])
                 # goal_position = [int(relative_position[0]/self.map_resolution), int(relative_position[1]/self.map_resolution)]
                 # self.goal_positions.append((goal_position[0], goal_position[1]))
@@ -209,8 +212,8 @@ class RRT_planner:
         for i, metric_point in enumerate(path):
             relative_position = np.array(metric_point[:2]) - np.array([self.origin_x, self.origin_y])
             grid_point = [int(relative_position[0] / self.map_resolution), int(relative_position[1] / self.map_resolution)]
-            orientation = metric_point[2]
-            print(grid_point, orientation)
+            # orientation = metric_point[2]
+            print(grid_point)#, orientation)
             # time.sleep(0.5)
 
             
@@ -236,17 +239,20 @@ class RRT_planner:
 
         # Create a MoveBaseAction message
         action_msg = MoveBaseAction()
-        action_msg.header.stamp = rospy.Time.now()
-        action_msg.header.frame_id = 'odom'
+        action_msg.header = Header()
+
 
         # Loop through the path and add each point as a goal to the action message
         for point in path:
             goal = MoveBaseGoal()
             goal.target_pose.header = action_msg.header
+            goal.target_pose.header.frame_id = "odom"  # has to be in map frame
+            goal.target_pose.header.stamp = rospy.Time.now()
             goal.target_pose.pose.position.x = point[0]
             goal.target_pose.pose.position.y = point[1]
             goal.target_pose.pose.orientation.w = 0.0  # Assuming no rotation?
             action_msg.goals.append(goal)
+            print(action_msg.goals.append(goal))
 
         # Publish the action message to the move_base action server
         # self.move_base_publisher.publish(action_msg)
