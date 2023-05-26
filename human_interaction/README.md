@@ -10,4 +10,13 @@ Speech engine needed
 sudo apt-get install espeak
 ```
 
-minor changes to checkout merging
+
+For the GUI
+
+'''
+sudo apt-get install python3-tk
+
+pip install customtkinter
+
+'''
+
