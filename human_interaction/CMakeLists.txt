@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   actionlib_msgs
   actionlib
+  rqt_gui_py
 )
 
 add_action_files(DIRECTORY action FILES Conversation.action)
@@ -165,7 +166,7 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-
+    scripts/bracelet_gui.py
     scripts/recognize_speech.py
     scripts/recognize_speech_client.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -193,11 +194,11 @@ catkin_install_python(PROGRAMS
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(FILES
+plugin.xml
+   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+ )
+
 
 #############
 ## Testing ##
