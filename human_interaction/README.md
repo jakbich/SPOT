@@ -30,12 +30,12 @@ These packages can be used in combination with the other ROS packages contained 
 
 2. [Getting Started](#gs)\
     2.1 [Prerequisites](#pr)\
-    2.2 [Cloning the Repositories](#ctr)\
-    2.3 [Building the Packages](#btp)
+    2.2 [Installation](#i)
 
 3. [Usage](#u)\
-    3.1 [Running Nodes individually](#rni)\
-    3.2 [Launch the complete Solution](#ltcs) 
+    3.1 [Running the bracelet_gui_node](#rbrac)\
+    3.2 [Running the conversation server](#rconv)
+    
     
 4. [File Structure](#fs)
 
@@ -77,9 +77,11 @@ An example of the conversation is shown below:
 
 
 # 2. Getting Started <a name="gs"></a>
-### Prerequisites <a name="pr"></a>
+## Prerequisites <a name="pr"></a>
 This project was developed and tested on a Ubuntu 20.04 LTS machine running ROS Noetic. The following steps will guide you through the process of setting up the workspace and running the project.
 
+
+## Installation <a name="i"></a>
 **1. CHAMP installation**
 
 If you have not done so yet, follow the instructions to setup the CHAMP workspace on your machine: 
@@ -110,11 +112,11 @@ sudo apt-get install espeak
 ```
 
 # 3. Usage <a name="u"></a>
-## Running Nodes <a name="rni"></a>
+
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files.
 
 
-### Running the ``bracelet_gui_node``
+### Running the ``bracelet_gui_node`` <a name="rbrac"></a>
 
 ```
 roslaunch human_interaction bracelet_gui.launch
@@ -154,7 +156,7 @@ The status is determined by the rostopic ``/spot/mission_status`` that is publis
 
 The button ``Trigger soft stop`` can be used to trigger the soft stop function. This will trigger the rosservice ``/spot/soft_stop`` that triggers SPOT's soft stop. The statemachine will publish a status message ``RED`` to the rostopic ``/spot/mission_status``.
 
-### Running the ``conversation_server``
+### Running the ``conversation_server`` <a name="rconv"></a>
 
 ```
 roslaunch human_interaction conversation_server.launch
@@ -182,8 +184,9 @@ If the installation was succesfull the conversation server should start in the t
 │   ├── bracelet_GUI_2.png
 │   └── conversation.png
 ├── launch                          # Launch files for the package
-│   ├── conversation_client.launch
-│   └── conversation_server.launch
+    ├── bracelet_gui.launch                      
+    ├── conversation_client.launch
+    └── conversation_server.launch
 ├── package.xml                     # Package.xml for the package
 ├── plugin.xml          
 ├── README.md                       # README
