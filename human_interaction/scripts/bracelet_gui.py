@@ -54,10 +54,10 @@ class GUI:
         self.window.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
 
         # Create the left buttons
-        self.button1 = customtkinter.CTkButton(self.left_frame, text="New mission (Speech)", command=self.button1_click, corner_radius=2, width=200, height=100, font=("Roboto", 25))
+        self.button1 = customtkinter.CTkButton(self.left_frame, text="New mission (Speech)", command=self.button1_click, corner_radius=4, width=200, height=100, font=("Roboto", 25))
         self.button1.pack(pady=20)
 
-        self.button2 = customtkinter.CTkButton(self.left_frame, text="New mission (Text)", command=self.button2_click, corner_radius=2, width=200, height=100, font=("Roboto", 25))
+        self.button2 = customtkinter.CTkButton(self.left_frame, text="New mission (Text)", command=self.button2_click, corner_radius=4, width=200, height=100, font=("Roboto", 25))
         self.button2.pack(pady=20)
 
         # Create a canvas widget
@@ -69,7 +69,7 @@ class GUI:
         self.status_label.pack()
 
         # Create the right button for soft stop
-        self.button3 = customtkinter.CTkButton(self.right_frame, text="Trigger soft stop", fg_color= "red",command=self.button3_click, corner_radius=2, width=200, height=100, font=("Roboto", 25))
+        self.button3 = customtkinter.CTkButton(self.right_frame, text="Trigger soft stop", fg_color= "red",command=self.button3_click, corner_radius=4, width=200, height=100, font=("Roboto", 25))
         self.button3.pack(pady=40)
 
         # Draw a rectangle to show the status
