@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="rrt" type="rrt.py" name="rrt" output="screen"/>
+    <node pkg="slam" type="grid_position_transform.py" name="grid_position_transform" output="screen"/>    
+    
+    <!-- Launch the spwan_robot.launch file from the spot_config package -->
+    <include file="$(find slam)/launch/mapping.launch" /> 
+
+    <!-- <include file="$(find champ_teleop)/launch/teleop.launch" launch-prefix="xterm -e" /> -->
+</launch>
