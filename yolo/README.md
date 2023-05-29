@@ -22,20 +22,15 @@ This package can be used in combination with the other ROS packages contained in
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node trajectory_node](#r1)
+    1.1 [ROS-Node detection_node](#r1)
 
 2. [Getting Started](#gs)\
     2.1 [Prerequisites](#pr)\
     2.2 [Installation](#i)
 
 3. [Usage](#u)\
-    3.1 [Running the trajectory_node](#rbrac)
+    3.1 [Running the detection_node](#rbrac)
     
-    
-4. [File Structure](#fs)
-
-
-
 
 ---
 
@@ -64,7 +59,7 @@ If you have not done so yet, follow the instructions to setup the CHAMP workspac
 
 **2. Install the following dependencies:**
 
-```
+```python
 cv2
 numpy
 os
@@ -87,6 +82,7 @@ Depending on your system you might want to change the configuration of the yolo 
 
 
 # 3. Usage <a name="u"></a>
+## Running the detection_node <a name="rbrac"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) the code can be run using: 
 
