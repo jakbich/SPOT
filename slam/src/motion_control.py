@@ -48,7 +48,6 @@ class MotionControl:
         rospy.logwarn("Get goal")
         self.goal_pos = [goal.target_pose.pose.position.x, goal.target_pose.pose.position.y]
         self.goal_yaw = tf.transformations.euler_from_quaternion([goal.target_pose.pose.orientation.x, goal.target_pose.pose.orientation.y, goal.target_pose.pose.orientation.z, goal.target_pose.pose.orientation.w], 'sxyz')[-1] 
-        self.goal_yaw = math.pi/2
 
         # if self.robot_pos is not None and self.robot_yaw is not None:
         self.move_to_goal(self.goal_pos, self.goal_yaw)
