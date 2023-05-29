@@ -23,8 +23,8 @@ class Exploration:
     def __init__(self):
         self.pub_goal = rospy.Publisher("/spot/mapping/active_slam/goal", Marker, queue_size=3)
         self.pub_cost_map = rospy.Publisher("/spot/mapping/active_slam/cost_map", OccupancyGrid, queue_size=1)
-        self.__move_base_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
-        self.__move_base_client.wait_for_server()
+        self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
+        self.rrt_path_client.wait_for_server()
 
     def image_gradient(self, I, operator='Sobel'):
         """ Outputs an image's gradient based on one of three operators.
@@ -127,15 +127,15 @@ class Exploration:
             self.pub_goal.publish(marker)
 
 
-            self.__move_base_client.send_goal(goal)
-            self.__move_base_client.wait_for_result(timeout=rospy.Duration(10.0))
-            result = self.__move_base_client.get_result()
+            self.rrt_path_client.send_goal(goal)
+            self.rrt_path_client.wait_for_result()
+            result = self.rrt_path_client.get_result()
 
             if result:
                 rospy.loginfo("Goal reached!")
             else:
                 rospy.loginfo("Failed to reach goal!")
-                self.__move_base_client.cancel_goal()
+                self.rrt_path_client.cancel_goal()
 
 
             map_msg = OccupancyGrid()

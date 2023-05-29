@@ -2,5 +2,5 @@
 
 *Ros-numpy:*
 ```console
-sudo apt-get install ros-$release-ros-numpy
+sudo apt-get install ros-noetic-ros-numpy
 ```

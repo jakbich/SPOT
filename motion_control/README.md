@@ -15,7 +15,7 @@ The package provides the necessary code to build and run the RRT-algorithm that 
 
   
 It contains all necessary files to build the one ROS node, namely: 
-- ``trajectory_node`` 
+- ``motion_control_node`` 
 
 TThis package can be used in combination with the other ROS packages contained in the parent repository ``champ_spot`` to simulate and run autonomous missions designed for the healthcare sector on a [Boston Dynamics SPOT robot](https://www.bostondynamics.com/products/spot).
 
@@ -24,14 +24,14 @@ TThis package can be used in combination with the other ROS packages contained i
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node trajectory_node](#r1)
+    1.1 [ROS-Node motion_control_node](#r1)
 
 2. [Getting Started](#gs)\
     2.1 [Prerequisites](#pr)\
     2.2 [Installation](#i)
 
 3. [Usage](#u)\
-    3.1 [Running the trajectory_node](#rbrac)
+    3.1 [Running the motion_control_node](#rbrac)
     
     
 4. [File Structure](#fs)
@@ -46,10 +46,10 @@ TThis package can be used in combination with the other ROS packages contained i
 
 
 
-## ROS-Node trajectory_node <a name="r1"></a>
-The package contains all the necessary files to build and run ``trajectory_node`` that:
-- Acts as an ROS Action Server that is called by the ``rrt_path_node`` to execute the given path.
-- Receives as an input a GoalStatusArray consisting of a list of MoveBaseGoals. Sends each MoveBaseGoal to the ``motion_control`` node to execute the path. 
+## ROS-Node motion_control_node <a name="r1"></a>
+The package contains all the necessary files to build and run ``motion_control_node`` that:
+- Acts as an ROS Action Server that is called by the ``trajectory_node`` to send the Spot Robot from its current position to a goal position.
+- Confirms whether the goal position is reached or not.
 
 
 # 2. Getting Started <a name="gs"></a>

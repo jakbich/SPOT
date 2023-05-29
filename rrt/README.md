@@ -24,14 +24,14 @@ TThis package can be used in combination with the other ROS packages contained i
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node rrt_path_node](#r1)\
+    1.1 [ROS-Node rrt_path_node](#r1)
 
 2. [Getting Started](#gs)\
     2.1 [Prerequisites](#pr)\
     2.2 [Installation](#i)
 
 3. [Usage](#u)\
-    3.1 [Running the rrt_path_node](#rbrac)\
+    3.1 [Running the rrt_path_node](#rbrac)
     
     
 4. [File Structure](#fs)
@@ -49,7 +49,7 @@ TThis package can be used in combination with the other ROS packages contained i
 ## ROS-Node rrt_path_node <a name="r1"></a>
 The package contains all the necessary files to build and run ``rrt_path_node`` that:
 - Given a the goal position in the OccupancyGrid and using the RRT algorithm, creates a path consisting of MoveBaseAction goals.
-- Publishes the path as a list of MoveBaseAction goals to the topic ``/spot/planning/mission_path``.
+- Sends a GoalStatusArray to the ``trajectory_node`` to execute the path.
 
 
 
