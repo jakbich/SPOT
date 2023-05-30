@@ -36,7 +36,7 @@ class RRTPath:
             --> code
     """
 
-    def __init__(self, start, goal, grid) -> None:
+    def __init__(self) -> None:
         rospy.init_node('rrt_path')
         
         # Initialize server
