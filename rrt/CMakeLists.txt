@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(rrt_msg)
+project(rrt)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -174,7 +174,8 @@ include_directories(
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
   src/rrt_msg_node.py
-  src/rrt_star_node.py
+  src/rrt_path.py
+  src/yaml_to_map.py
   
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

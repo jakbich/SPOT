@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rrt_msg</name>
+  <name>rrt</name>
   <version>0.0.0</version>
   <description>The rrt_msg package</description>
 
