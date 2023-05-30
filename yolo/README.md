@@ -139,15 +139,17 @@ The part behind yolo_detection.py makes sure terminal is not flooded with warnin
 
 ```txt
 ├── CMakeLists.txt
+├── launch
+│   └── world_spot.launch
 ├── package.xml
 ├── README.md
 ├── src
-│   └── yolo_detection.py       # python file containg the yolo detection code
+│   └── yolo_detection.py
 └── yolo_config
-    ├── coco.names              # class names for yolo detections
-    ├── yolov3.cfg              # yolov3 configuration file
-    ├── yolov3.weights          # yolov3 weight file
-    ├── yolov7x.cfg             # yolov7 configuration file
-    └── yolov7x.weights         # yolov7 weight file
+    ├── coco.names
+    ├── yolov3.cfg
+    ├── yolov3.weights
+    ├── yolov7x.cfg
+    └── yolov7x.weights
 ```
 
