@@ -30,17 +30,13 @@ These packages can be used in combination with the other ROS packages contained 
     1.2 [ROS-Node plane_segmentation](#r2)\
     1.3 [ROS-Node occupancy_map](#r3)
 
-2. [Getting Started](#gs)\
-    2.1 [Prerequisites](#pr)\
-    2.2 [Installation](#i)
-
-3. [Usage](#u)\
+2. [Usage](#u)\
     3.1 [Starting the simulation](#rsim)\
     3.2 [Running SLAM](#rslam)\
     3.3 [Running all the nodes individually](#rind)
     
     
-4. [File Structure](#fs)
+3. [File Structure](#fs)
 
 
 
@@ -60,7 +56,7 @@ This node is subscribed and publishes to the topics below.
 |-------------------------------|-----------------------------------|
 | depth/frontright/camera/image | /spot/depth/frontright/pointcloud |
 | depth/frontleft/camera/image  | /spot/depth/frontleft/pointcloud  |
-\
+
 The incoming depth images and the resulting point clouds should look like this.
 
 <div style="text-align:center">
@@ -75,11 +71,11 @@ This node is subscribed and publishes to the topics below.
 |-----------------------------------|-------------------------------------------|
 | /spot/depth/frontright/pointcloud | /spot/depth/plane_segmentation/non_ground |
 | /spot/depth/frontleft/pointcloud  | /spot/depth/plane_segmentation/ground     |
-\
+
 The node creates two separate point clouds, one containing only the ground points and one containing only all the non-ground points.
 
 <div style="text-align:center">
- <img src="images/segmentation.png">
+ <img src="images/segmentation.png", height=300>
 </div>
 
 ## ROS-Node occupancy_map <a name="r3"></a>
@@ -91,46 +87,12 @@ This node is subscribed and publishes to the topics below.
 | /spot/depth/plane_segmentation/non_ground | /spot/mapping/occupancy_grid |
 | /spot/depth/plane_segmentation/ground     |                              |
 | /odom/ground_truth                        |                              |
-\
+
 The created occupancy map updates dynamically when SPOT is moving. 
 
 ![](images/update_slam.gif)
 
-# 2. Getting Started <a name="gs"></a>
-## Prerequisites <a name="pr"></a>
-This project was developed and tested on a Ubuntu 20.04 LTS machine running ROS Noetic. The following steps will guide you through the process of setting up the workspace and running the project.
-
-
-## Installation <a name="i"></a>
-**1. CHAMP installation**
-
-If you have not done so yet, follow the instructions to setup the CHAMP workspace on your machine: 
-[CHAMP Installation](https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot). This will guide you through the installation of our version of the CHAMP repository containing all the necessary packages to run the project.
-
-
-**2. Install the following dependencies:**
-
-```
-actionlib==1.14.0
-customtkinter==5.1.3
-pyaudio==0.2.13
-pyttsx3==2.90
-rospy==1.16.0
-SpeechRecognition==3.10.0
-ttkthemes==3.2.2
-```
-This can be done either manually or with these commands :
-
-```console
-cd path/to/champ_spot/human_interaction
-pip install -r requirements.txt
-```
-
-```console
-sudo apt-get install ros-noetic-ros-numpy
-```
-
-# 3. Usage <a name="u"></a>
+# 2. Usage <a name="u"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
 
@@ -163,7 +125,7 @@ The created occupancy map can be visualized in Rviz by clicking on:
 
 This should display the occupancy map as shown in the image below. 
 <div style="text-align:center">
- <img src="images/occupancy_map.png">
+ <img src="images/occupancy_map.png", height=300>
 </div
 
 Note however, that the robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
@@ -175,31 +137,48 @@ roslaunch champ_teleop teleop.launch
 When you now move arround SPOT, the occupancy map will update accordingly as visible GIF above.
 
 ### Running all the nodes individually <a name="rind"></a>
-If you prefer to launch all the nodes individually, you need to take the dependencies in mind.
+Every node has his own launch file to control the dependencies.
 
-## 4. File Structure <a name="fs"></a>
+Run the node ``image2pointcloud``:
+```console
+roslaunch slam image2pointcloud.launch
+```
+
+Run the node ``plane_segmentation``:
+```console
+roslaunch slam plane_segmentation.launch
+```
+
+## 3. File Structure <a name="fs"></a>
 
 ````
-├── action                          # Action files for the conversation server
-│   └── Conversation.action         
-├── CMakeLists.txt                  # CMakeLists.txt for the package
-├── config
-│   └── recognize_speech.yaml       # Configuration file for the speech recognition
-├── images                          # Images used in the README
-│   ├── bracelet_GUI_1.png          
-│   ├── bracelet_gui_2.png
-│   ├── bracelet_GUI_2.png
-│   └── conversation.png
-├── launch                          # Launch files for the package
-    ├── bracelet_gui.launch                      
-    ├── conversation_client.launch
-    └── conversation_server.launch
-├── package.xml                     # Package.xml for the package
-├── plugin.xml          
-├── README.md                       # README
-└── scripts                         # Scripts used in the package
-    ├── bracelet_gui.py
-    ├── recognize_speech_client.py
-    └── recognize_speech.py
-
+├── action
+│   └── Motion.action                   # Action files for the conversation server
+├── CMakeLists.txt                      # CMakeLists.txt for the package
+├── config                              # Configuration files for both packages
+│   ├── occupancy_grid.yaml
+│   └── plane_segmentation.yaml
+├── images                              # Images and GIFs used in the README
+│   ├── depth_image.png
+│   ├── occupancy_map.png
+│   ├── segmentation.png
+│   ├── simulation.png
+│   └── update_slam.gif
+├── launch                              # Launch files
+│   ├── active_slam.launch
+│   ├── frontier_exploration.launch
+│   ├── image2pointcloud.launch
+│   ├── mapping.launch
+│   └── plane_segmentation.launch
+├── package.xml
+├── README.md
+└── src
+    ├── change_frame_id.py
+    ├── explore_frontiers.py
+    ├── explore.py
+    ├── grid_position_transform.py
+    ├── image2pointcloud.py             # Definition of the image2pointcloud node
+    ├── motion_control.py
+    ├── occupancy_map.py                # Definition of the occupancy_map node
+    └── plane_segmentation.py           # Definition of the plane_segmentation node
 ```` 
