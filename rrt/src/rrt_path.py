@@ -43,8 +43,8 @@ class RRTPath:
         self.server = actionlib.SimpleActionServer('rrt_path', MoveBaseAction, self.run_rrt, False)
         self.server.start()
 
-        self.trajectory_client = actionlib.SimpleActionClient('trajectory', GoalStatusArray)
-        self.trajectory_client.wait_for_server()
+        # self.trajectory_client = actionlib.SimpleActionClient('trajectory', GoalStatusArray)
+        # self.trajectory_client.wait_for_server()
 
         # Initialize variables
         self.margin = 3  # Margin for the grid
@@ -59,11 +59,10 @@ class RRTPath:
 
         # Create MoveBaseAction template
         self.move_base_goal_msg = MoveBaseGoal()
-        self.move_base_goal_msg.target_pose.header.frame_id = "map"
+        self.move_base_goal_msg.target_pose.header.frame_id = "odom"
         
 
         # Setup publisher
-        self.path_pub = rospy.Publisher("/spot/planning/path", GoalStatusArray, queue_size=1)
         self.pub_goal = rospy.Publisher("/spot/planning/path_steps", Marker, queue_size=3)
 
 
@@ -74,10 +73,18 @@ class RRTPath:
 
         
         pos_msg = rospy.wait_for_message("/spot/mapping/grid_location", Float64MultiArray)
+        rospy.logwarn("Received position")
         self.pos = pos_msg.data[:2]
         self.yaw = pos_msg.data[2]
 
-        grid_msg = rospy.wait_for_message("/spot/mapping/grid", OccupancyGrid)
+        grid_msg = rospy.wait_for_message("/spot/mapping/occupancy_grid", OccupancyGrid)
+        rospy.logwarn("Received grid")
+
+        grid_width = grid_msg.info.width
+        grid_height = grid_msg.info.height
+        grid_resolution = grid_msg.info.resolution
+        grid_origin = np.array([grid_msg.info.origin.position.x, grid_msg.info.origin.position.y]) 
+
         self.grid = np.array(grid_msg.data).reshape((grid_msg.info.height, grid_msg.info.width))
 
         if self.pos is None or self.grid is None:
@@ -85,6 +92,7 @@ class RRTPath:
             return
         
         # Run RRT
+        rospy.logwarn("Start RRT Algorithm")
         self.rrt_path = self.rrt_planning(self.pos, self.goal_pos)
         if self.rrt_path is None:
             rospy.logwarn("No path found")
@@ -92,13 +100,14 @@ class RRTPath:
         
         # Debug 
         if self.DEBUG:
-            for goal in self.rrt_path:
+            rospy.logwarn("DEBUGGING")
+            for i, goal in enumerate(self.rrt_path):
                 marker = Marker()
                 marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
                 marker.type = Marker.SPHERE
                 marker.action = Marker.ADD
-                marker.pose.position.x = goal.target_pose.pose.position.x # Modify the coordinates as per your desired point
-                marker.pose.position.y = goal.target_pose.pose.position.y
+                marker.pose.position.x = grid_origin[1] + goal.target_pose.pose.position.y * grid_resolution # Modify the coordinates as per your desired point
+                marker.pose.position.y = grid_origin[0] + goal.target_pose.pose.position.x * grid_resolution
                 marker.pose.position.z = 0.0
                 marker.pose.orientation.x = 0.0
                 marker.pose.orientation.y = 0.0
@@ -113,44 +122,54 @@ class RRTPath:
                 marker.color.b = 1.0
 
                 self.pub_debug.publish(marker)
+                rospy.logwarn("Published marker {}".format(i))
+
+        rospy.sleep(rospy.Duration(30))
         
-        # Send path to client
-        goal_status_array = GoalStatusArray()
-        goal_status_array.header.stamp = rospy.Time.now()
-        goal_status_array.status_list =  self.rrt_path
+        # # Send path to client
+        # goal_status_array = GoalStatusArray()
+        # goal_status_array.header.stamp = rospy.Time.now()
+        # goal_status_array.status_list =  self.rrt_path
         
-        self.trajectory_client.send_goal(goal_status_array)
-        self.trajectory_client.wait_for_result()
-        result = self.trajectory_client.get_result()
+        # self.trajectory_client.send_goal(goal_status_array)
+        # self.trajectory_client.wait_for_result()
+        # result = self.trajectory_client.get_result()
 
-        if result:
-            rospy.logwarn("Path executed successfully")
+        # if result:
+        #     rospy.logwarn("Path executed successfully")
 
-            # Return succes 
-            result = MoveBaseResult()
-            result.header.stamp = rospy.Time.now()
-            result.status.status = 0 # Set the status code, where 0 represents success
-            result.status.text = "Path executed successfully"
+        #     # Return succes 
+        #     result = MoveBaseResult()
+        #     result.header.stamp = rospy.Time.now()
+        #     result.status.status = 0 # Set the status code, where 0 represents success
+        #     result.status.text = "Path executed successfully"
 
-            self.server.set_succeeded(result)
-        else:
-            rospy.logwarn("Path execution failed")
+        #     self.server.set_succeeded(result)
+        # else:
+        #     rospy.logwarn("Path execution failed")
 
 
         
 
-    def rrt_planning(self, start, goal, max_iter=100000, step_size=1):
+    def rrt_planning(self, start, goal, max_iter=10, step_size=1):
         # tree = {start: None}
         tree = {(start[0], start[1]): None}
 
         for _ in range(max_iter):
             rand_point = self.generate_random_point()
+            rospy.logwarn("Random point: {}".format(rand_point))
             nearest_point = self.find_nearest_point(tree, rand_point)
+            rospy.logwarn("Nearest point: {}".format(nearest_point))
             new_point = self.extend(nearest_point, rand_point, step_size)
+            rospy.logwarn("New point: {}".format(new_point))
+
+            rospy.logwarn(self.is_point_valid(new_point))
 
             if new_point and self.is_point_valid(new_point):
                 tree[new_point] = nearest_point
+                rospy.logwarn("New point added to tree: {}".format(new_point))
                 if self.is_goal_reached(new_point, goal):
+                    rospy.logwarn("Goal reached")
                     return self.generate_path(tree, start, new_point)
 
         return None
@@ -169,6 +188,7 @@ class RRTPath:
         min_distance = float('inf')
 
         for p in tree.keys():
+            rospy.logwarn("Point: {}".format(p))
             distance = math.sqrt((p[0] - point[0])**2 + (p[1] - point[1])**2)
             if distance < min_distance:
                 min_distance = distance
@@ -191,7 +211,9 @@ class RRTPath:
             return end + (math.atan2(end[1] - start[1], end[0] - start[0]),)  # Append yaw angle
 
     def is_point_valid(self, point):
-        if not self.grid:
+        rospy.logwarn("Checking if point is valid")
+        if self.grid is None:
+            rospy.logwarn("Grid is None")
             return False
         
         grid_width = self.grid.shape[0]
@@ -199,9 +221,11 @@ class RRTPath:
 
         # Check if the point is outside the grid bounds
         if point[0] < 0 or point[0] >= grid_width or point[1] < 0 or point[1] >= grid_height:
+            rospy.logwarn("Point is outside grid bounds")
             return False
         
         if self.grid[int(point[0]), int(point[1])] > 50 or self.grid[int(point[0]), int(point[1])] < 0:
+            rospy.logwarn("Point is in obstacle")
             return False
         
         return True
