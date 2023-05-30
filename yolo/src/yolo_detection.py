@@ -8,7 +8,6 @@ import tf
 import rospkg
 import ros_numpy
 from sensor_msgs.msg import PointCloud2
-from geometry_msgs import PointStamped
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import CameraInfo
 from message_filters import Subscriber,ApproximateTimeSynchronizer
@@ -40,7 +39,7 @@ class Yolo:
 
         #create publishers
         self.image_pub = rospy.Publisher('/spot/camera/boundingBoxCamera', Image, queue_size=2)
-        self.points_pub = rospy.Publisher('/spot/depth/detection_center',PointStamped,queue_size=10)
+        
     
 
         self.get_camera_info()
@@ -65,22 +64,25 @@ class Yolo:
         sub_right = Subscriber('/spot/camera/frontright/image', Image, queue_size=2)
         sub_pc = Subscriber('/spot/depth/plane_segmentation/non_ground', PointCloud2, queue_size=2)
 
+        #sub_right = Subscriber('/test', Image, queue_size=2)
+
         ts = ApproximateTimeSynchronizer([sub_right, sub_left,sub_pc], queue_size=2, slop=0.5)
+        # ts = ApproximateTimeSynchronizer([sub_right], queue_size=2, slop=0.5)
         ts.registerCallback(self.callback)
 
     def initialize_yolo(self):
         self.bridge = CvBridge()  # for conversion between OpenCV and ROS
 
         '''YOLO SETUP'''
-        self.confidence_threshold = 0.1
+        self.confidence_threshold = 0.45
 
         #get the file path to the yolo package
         rospack = rospkg.RosPack()
         path_relative = str(rospack.get_path('yolo'))
 
         # Construct the updated file path to yolo initialisation files
-        file_path_cfg = 'yolo_config/yolov3.cfg'
-        file_path_weight = 'yolo_config/yolov3.weights'
+        file_path_cfg = 'yolo_config/yolov7x.cfg'
+        file_path_weight = 'yolo_config/yolov7x.weights'
         file_path_names = 'yolo_config/coco.names'
         absolute_path_cfg = os.path.join(path_relative, file_path_cfg)
         absolute_path_weight = os.path.join(path_relative, file_path_weight)
@@ -110,7 +112,7 @@ class Yolo:
         try:
             if self.net is not None:
                 rospy.loginfo('Data received...')
-                img_encoding = left_msg.encoding
+                img_encoding = right_msg.encoding
                 
                 #convert msg into cv2 readable image
                 cv_image_left = self.bridge.imgmsg_to_cv2(left_msg,img_encoding)
@@ -119,14 +121,16 @@ class Yolo:
                 cv_image_left = cv2.rotate(cv_image_left, cv2.ROTATE_90_COUNTERCLOCKWISE)
                 cv_image_right = cv2.rotate(cv_image_right, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-                #self.cv_image = np.concatenate((cv_image_right, cv_image_left), axis=1)
-
+                #if the image is gray, make it rgb like
+                if cv_image_right.shape[2] != None:
+                    cv_image_right = np.stack((cv_image_right,cv_image_right,cv_image_right),axis=-1)
+              
                 self.cv_image = cv_image_right
 
                 outputs = self.detect(self.cv_image)      #apply yolo to image
                 centers = self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
 
-                # turn pc_msg to numpy array
+                #turn pc_msg to numpy array
                 pc_base = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(pc_msg)
                 pc_hom_base = np.hstack((pc_base, np.ones(len(pc_base)).reshape(-1, 1)))
 
@@ -153,16 +157,10 @@ class Yolo:
 
                 #TODO: write a function that combines the point information with detection information e.g: label point with detection class name (maybe confidence)
 
-                #contruct center point message
-                point_msg = PointStamped()
-                point_msg.header.stamp = rospy.Time.now()
-                point_msg.header.frame_id = "base_footprint"
-                point_msg.points = center_3d_base
-
+               
                 # Convert the image to ROS format and publish it
-                bounding_box_image = self.bridge.cv2_to_imgmsg(self.cv_image, encoding=img_encoding)
+                bounding_box_image = self.bridge.cv2_to_imgmsg(self.cv_image[:,:,0], encoding=img_encoding)
                 self.image_pub.publish(bounding_box_image)
-                self.points_pub.publish(point_msg)
 
                 rospy.loginfo('Information published')
             else:
@@ -218,12 +216,14 @@ class Yolo:
         np.random.seed(42)
         self.colors = np.random.randint(0, 255, size=(len(self.classes), 3), dtype='uint8')
 
-        blob = cv2.dnn.blobFromImage(img, 1/255.0, (416, 416), swapRB=False, crop=False)
+        #yolov3 needs (416,416) input, yolov7 needs (640,640)
+        #blob = cv2.dnn.blobFromImage(img, scalefactor=1/255, size=(416, 416),swapRB=False)
+        blob = cv2.dnn.blobFromImage(img, scalefactor=1/255, size=(640, 640),swapRB=False)
         self.net.setInput(blob)
 
         # determine the output layer
         layer_names = self.net.getLayerNames()
-        ln = [layer_names[i - 1] for i in self.net.getUnconnectedOutLayers()]
+        ln = [layer_names[int(i - 1)] for i in self.net.getUnconnectedOutLayers()]
         
         return np.vstack(self.net.forward(ln))
 
