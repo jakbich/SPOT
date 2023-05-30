@@ -82,15 +82,17 @@ class GridMapping:
         self.map_msg.info.origin.position.y = -self.map_size[1] / 2
 
         # Set up subscriber and publisher
-        sub_non_ground_points = Subscriber("/spot/depth/plane_segmentation/non_ground", PointCloud2, queue_size=5)
-        sub_ground_points = Subscriber("/spot/depth/plane_segmentation/ground", PointCloud2, queue_size=5)
-        sub_robot_pos = Subscriber("/odom/ground_truth", Odometry, queue_size=20)
-        self.pub = rospy.Publisher("/spot/mapping/occupancy_grid", OccupancyGrid, queue_size=1)
+        sub_non_ground_points = Subscriber("/spot/depth/plane_segmentation/non_ground", PointCloud2, queue_size=2)
+        sub_ground_points = Subscriber("/spot/depth/plane_segmentation/ground", PointCloud2, queue_size=2)
+        sub_robot_pos = Subscriber("/odom/ground_truth", Odometry, queue_size=15)
+        self.pub = rospy.Publisher("/spot/mapping/occupancy_grid", OccupancyGrid, queue_size=2)
 
         # Synchronize the subscribers based on their timestamps
         # ts = TimeSynchronizer([sub_non_ground_points, sub_ground_points], 5)
-        ts = ApproximateTimeSynchronizer([sub_non_ground_points, sub_ground_points, sub_robot_pos], queue_size=10, slop=0.1) # Slop is time tollerance
+        ts = ApproximateTimeSynchronizer([sub_non_ground_points, sub_ground_points, sub_robot_pos], queue_size=50, slop=0.1) # Slop is time tollerance
         ts.registerCallback(self.update_map)
+
+        rospy.logwarn("Initilaized")
 
 
     def test(self, msg):
@@ -98,6 +100,7 @@ class GridMapping:
 
     def update_map(self, msg_non_ground_points, msg_ground_points, msg_robot_pos) -> None:
         time = msg_non_ground_points.header.stamp
+        rospy.logwarn("Yes")
         
         robot_pose = msg_robot_pos.pose.pose
         position = np.array([robot_pose.position.x, robot_pose.position.y, robot_pose.position.z])
