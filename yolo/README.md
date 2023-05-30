@@ -135,6 +135,14 @@ rosrun yolo yolo_detection.py 2> >(grep -v TF_REPEATED_DATA buffer_core)
 
 The part behind yolo_detection.py makes sure terminal is not flooded with warnings from tf (tf has a known issue that is non-critical)
 
+You can then add the image with bounding boxes to rviz to view the result, it should look something like this:
+
+<div style="text-align:center">
+ <img src="images/EXAMPLE.png">
+</div>
+
+
+
 ## 4. File Structure <a name="fs"></a>
 
 ```txt
