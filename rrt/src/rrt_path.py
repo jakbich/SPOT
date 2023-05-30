@@ -16,7 +16,8 @@ from std_msgs.msg import Header
 
 import actionlib
 from actionlib_msgs.msg import GoalStatusArray
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback, MoveBaseResult
+from visualization_msgs.msg import Marker
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback, MoveBaseResult, MoveBaseActionResult
 
 class RRTPath:
     """"
@@ -36,10 +37,14 @@ class RRTPath:
     """
 
     def __init__(self, start, goal, grid) -> None:
+        rospy.init_node('rrt_path')
         
         # Initialize server
         self.server = actionlib.SimpleActionServer('rrt_path', MoveBaseAction, self.run_rrt, False)
         self.server.start()
+
+        self.trajectory_client = actionlib.SimpleActionClient('trajectory', GoalStatusArray)
+        self.trajectory_client.wait_for_server()
 
         # Initialize variables
         self.margin = 3  # Margin for the grid
@@ -50,6 +55,8 @@ class RRTPath:
         self.goal_pos = None
         self.goal_yaw = None
 
+        self.DEBUG = True
+
         # Create MoveBaseAction template
         self.move_base_goal_msg = MoveBaseGoal()
         self.move_base_goal_msg.target_pose.header.frame_id = "map"
@@ -57,6 +64,7 @@ class RRTPath:
 
         # Setup publisher
         self.path_pub = rospy.Publisher("/spot/planning/path", GoalStatusArray, queue_size=1)
+        self.pub_goal = rospy.Publisher("/spot/planning/path_steps", Marker, queue_size=3)
 
 
     def run_rrt(self, goal: MoveBaseGoal):
@@ -82,11 +90,52 @@ class RRTPath:
             rospy.logwarn("No path found")
             return
         
-        # Publish path
+        # Debug 
+        if self.DEBUG:
+            for goal in self.rrt_path:
+                marker = Marker()
+                marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
+                marker.type = Marker.SPHERE
+                marker.action = Marker.ADD
+                marker.pose.position.x = goal.target_pose.pose.position.x # Modify the coordinates as per your desired point
+                marker.pose.position.y = goal.target_pose.pose.position.y
+                marker.pose.position.z = 0.0
+                marker.pose.orientation.x = 0.0
+                marker.pose.orientation.y = 0.0
+                marker.pose.orientation.z = 0.0
+                marker.pose.orientation.w = 1.0
+                marker.scale.x = 0.2
+                marker.scale.y = 0.2
+                marker.scale.z = 0.2
+                marker.color.a = 1.0
+                marker.color.r = 0.0
+                marker.color.g = 0.0
+                marker.color.b = 1.0
+
+                self.pub_debug.publish(marker)
+        
+        # Send path to client
         goal_status_array = GoalStatusArray()
         goal_status_array.header.stamp = rospy.Time.now()
         goal_status_array.status_list =  self.rrt_path
-        self.path_pub.publish(goal_status_array)
+        
+        self.trajectory_client.send_goal(goal_status_array)
+        self.trajectory_client.wait_for_result()
+        result = self.trajectory_client.get_result()
+
+        if result:
+            rospy.logwarn("Path executed successfully")
+
+            # Return succes 
+            result = MoveBaseResult()
+            result.header.stamp = rospy.Time.now()
+            result.status.status = 0 # Set the status code, where 0 represents success
+            result.status.text = "Path executed successfully"
+
+            self.server.set_succeeded(result)
+        else:
+            rospy.logwarn("Path execution failed")
+
 
         
 
@@ -211,6 +260,7 @@ class RRTPath:
 if __name__ == '__main__':
     try:
         rrt = RRTPath()
+        rospy.logwarn("Starting rrt path server")
         rospy.spin()
     except rospy.ROSInterruptException:
         rospy.logwarn("The node rrt_path could not be launched")

@@ -7,6 +7,17 @@ project(slam)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/move_base_msgs/;$CMAKE_PREFIX_PATH")
+set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/rospy/;$CMAKE_PREFIX_PATH")
+set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/ros_numpy/;$CMAKE_PREFIX_PATH")
+
+# set(ros_numpy_DIR "/opt/ros/noetic/share/ros_numpy/cmake")
+# set(rospy_DIR "/opt/ros/noetic/share/rospy/cmake")\
+
+# list(APPEND CMAKE_PREFIX_PATH "~/opt/ros/noetic")
+# set(ros_numpy_DIR "~/opt/ros/noetic/share/ros_numpy/cmake")
+# set(rospy_DIR "~/opt/ros/noetic/share/rospy/cmake")
+
 find_package(catkin REQUIRED COMPONENTS
   rospy
   ros_numpy
@@ -63,9 +74,9 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 # Generate actions in the 'action' folder
-add_action_files(
-  DIRECTORY action FILES Motion.action
-)
+# add_action_files(
+#   DIRECTORY action FILES Motion.action
+# )
 
 # Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -170,6 +181,7 @@ catkin_install_python(PROGRAMS
    src/motion_control.py
    src/explore.py
    src/grid_position_transform.py
+   src/image2pointcloud.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
