@@ -64,7 +64,7 @@ This node is subscribed and publishes to the topics below.
 The incoming depth images and the resulting point clouds should look like this.
 
 <div style="text-align:center">
- <img src="images/bracelet_gui_2.png">
+ <img src="images/depth_image.png">
 </div>
 
 ## ROS-Node plane_segmentation <a name="r2"></a>
@@ -79,7 +79,7 @@ This node is subscribed and publishes to the topics below.
 The node creates two separate point clouds, one containing only the ground points and one containing only all the non-ground points.
 
 <div style="text-align:center">
- <img src="images/conversation.png">
+ <img src="images/segmentation.png">
 </div>
 
 ## ROS-Node occupancy_map <a name="r3"></a>
@@ -94,9 +94,7 @@ This node is subscribed and publishes to the topics below.
 \
 The created occupancy map updates dynamically when SPOT is moving. 
 
-<div style="text-align:center">
- <img src="images/conversation.png">
-</div>
+![](images/update_slam.gif)
 
 # 2. Getting Started <a name="gs"></a>
 ## Prerequisites <a name="pr"></a>
@@ -152,7 +150,7 @@ roslaunch spot_config spawn_robot.launch
 This will startup both Gazebo and Rviz, SPOT should also be visible wihtin the Gazebo world.
 
 <div style="text-align:center">
- <img src="images/bracelet_GUI_1.png">
+ <img src="images/simulation.png">
 </div>
 
 ### Running SLAM <a name="rslam"></a>
@@ -165,7 +163,7 @@ The created occupancy map can be visualized in Rviz by clicking on:
 
 This should display the occupancy map as shown in the image below. 
 <div style="text-align:center">
- <img src="images/bracelet_GUI_2.png">
+ <img src="images/occupancy_map.png">
 </div
 
 Note however, that the robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
