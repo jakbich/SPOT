@@ -147,6 +147,8 @@ You can then add the image with bounding boxes to rviz to view the result, it sh
 
 ```txt
 ├── CMakeLists.txt
+├── images
+│   └── EXAMPLE.png
 ├── launch
 │   └── world_spot.launch
 ├── package.xml

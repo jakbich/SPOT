@@ -1,9 +1,0 @@
-cv_bridge==1.16.2
-message_filters==1.16.0
-numpy==1.17.4
-opencv_python==4.7.0.72
-rospkg==1.5.0
-rospkg_modules==1.5.0
-rospy==1.16.0
-sensor_msgs==1.13.1
-tf==1.13.2
