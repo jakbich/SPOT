@@ -15,7 +15,7 @@ The package provides the necessary code to build and run the RRT-algorithm that 
 
   
 It contains all necessary files to build the one ROS node, namely: 
-- ``rrt_path_node`` 
+- ``rrt_path`` 
 
 TThis package can be used in combination with the other ROS packages contained in the parent repository ``champ_spot`` to simulate and run autonomous missions designed for the healthcare sector on a [Boston Dynamics SPOT robot](https://www.bostondynamics.com/products/spot).
 
@@ -24,18 +24,15 @@ TThis package can be used in combination with the other ROS packages contained i
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node rrt_path_node](#r1)
+    1.1 [ROS-Node rrt_path](#r1)
 
-2. [Getting Started](#gs)\
-    2.1 [Prerequisites](#pr)\
-    2.2 [Installation](#i)
-
-3. [Usage](#u)\
-    3.1 [Running the rrt_path_node](#rbrac)
+2. [Usage](#u)\
+    3.1 [Starting the simulation](#rsim)\
+    3.2 [Running RRT](#rslam)\
+    3.3 [Running all the nodes individually](#rind)
     
     
-4. [File Structure](#fs)
-
+3. [File Structure](#fs)
 
 
 
@@ -46,130 +43,100 @@ TThis package can be used in combination with the other ROS packages contained i
 
 
 
-## ROS-Node rrt_path_node <a name="r1"></a>
-The package contains all the necessary files to build and run ``rrt_path_node`` that:
-- Given a the goal position in the OccupancyGrid and using the RRT algorithm, creates a path consisting of MoveBaseAction goals.
-- Sends a GoalStatusArray to the ``trajectory_node`` to execute the path.
+## ROS-Node rrt_path <a name="r1"></a>
+The ``rrt_path`` node contains the file that computes the path for SPOT to follow. This path is computed using the Rapidly exploring Random Tree algorithm in the OccupancyGrid. The node acts as an ActionServer that is triggered when it receives a MoveBaseGoal. After receiving the goal the path is computed. For each point in this path the ``motion_control`` ClientServer is called, after this servers notifies a succes, the next point in the path is send to the server. For testing purposes the ``rrt_path`` node publishes two Marker and one Path message to visualize the result. 
 
 
+This node is subscribed and publishes to the topics below and is client to the server below.
+| **Subscribes:**               | **Client to server:**     | **Publishes:**                |
+|-------------------------------|---------------------------|-------------------------------|
+| /spot/mapping/grid_location   | motion_control            | /spot/planning/path_steps     |
+| /spot/mapping/occupancy_grid  | rrt_path                  | /spot/planning/path_marker    |
+|                               |                           | /spot/planning/path_marker2   |
 
-# 2. Getting Started <a name="gs"></a>
-## Prerequisites <a name="pr"></a>
-This project was developed and tested on a Ubuntu 20.04 LTS machine running ROS Noetic. The following steps will guide you through the process of setting up the workspace and running the project.
-
-
-## Installation <a name="i"></a>
-**1. CHAMP installation**
-
-If you have not done so yet, follow the instructions to setup the CHAMP workspace on your machine: 
-[CHAMP Installation](https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot). This will guide you through the installation of our version of the CHAMP repository containing all the necessary packages to run the project.
-<!-- 
-
-**2. Install the following dependencies:**
-
-```
-actionlib==1.14.0
-customtkinter==5.1.3
-pyaudio==0.2.13
-pyttsx3==2.90
-rospy==1.16.0
-SpeechRecognition==3.10.0
-ttkthemes==3.2.2
-```
-This can be done either manually or with these commands :
-
-```
-cd path/to/champ_spot/human_interaction
-pip install -r requirements.txt
-```
-
-If your machine does not yet have a speech engine installed, you can install [espeak](https://espeak.sourceforge.net/) with the following command:
-```
-sudo apt-get install espeak
-```
-
-# 3. Usage <a name="u"></a>
-
-After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files.
-
-
-### Running the ``bracelet_gui_node`` <a name="rbrac"></a>
-
-```
-roslaunch human_interaction bracelet_gui.launch
-```
-This will startup both the GUI and the ``conversation_server`` nodes and open a new window with the GUI. The GUI will look like this after startup:
-
+The vizualized result of the ``rrt_path`` node should look like this:
 <div style="text-align:center">
- <img src="images/bracelet_GUI_1.png">
+ <img src="images/rrt_image.png">
 </div>
 
+> Note: Due to troubleshooting the SPOT is not ready moving steadily to the goal. This is caused by the RRT path being to tight around obstacles. We are currently working on adding more constraints to the algorithm so that this will be fixed. 
+> Note: he robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Therefore, it is recommended to hide the robot model in Rviz. The blue marker represents the robot position. 
 
-If the installation was successful, after clicking the button ``New mission(Speech)`` the conversation should start in the terminal with the following question that is both displayed and read out loud:
-```
-SPOT: Hello, I am SPOT you assistance dog, do you need anything?
-```
-After giving an affirmative answer to the question, the next question will be asked:
-``` 
-SPOT: Which item do you need?
-```
-The conversation will continue, but these two steps verify your installation was successful, since it tests GUI, speech recognition, text-to-speech and the speech engine.
+# 2. Usage <a name="u"></a>
 
-Clicking on the button ``New mission(Text)`` will open a text entry field (Which item do you want?) where the user can type in the mission/ object to get. It should look like this:
+After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
+
+
+### Starting the simulation <a name="rsim"></a>
+The simulation should be running (the world in Gazebo and SPOT in Rviz), before the nodes within this package can be launched. This can be done using the two commands below.
+
+Launch the world in Gazebo.
+```console
+roslaunch spot_config spawn_world.launch
+```
+Launch SPOT in Rviz.
+```console
+roslaunch spot_config spawn_robot.launch
+```
+
+This will startup both Gazebo and Rviz, SPOT should also be visible wihtin the Gazebo world.
+
 <div style="text-align:center">
- <img src="images/bracelet_GUI_2.png">
+ <img src="images/simulation.png">
 </div>
 
-
-
-
-The top right status field will display the current status of the mission. The status can be one of the following:
-
-- GREEN: SPOT is available and ready to start a new mission
-- YELLOW: SPOT is currently executing a mission
-- RED: SPOT is currently not available or the soft stop function is triggered
-
-The status is determined by the rostopic ``/spot/mission_status`` that is published by the ``state_machine`` node from the package ``state_machine``. The ``state_machine`` node is responsible for executing the missions and publishing the current status of the mission.
-
-The button ``Trigger soft stop`` can be used to trigger the soft stop function. This will trigger the rosservice ``/spot/soft_stop`` that triggers SPOT's soft stop. The statemachine will publish a status message ``RED`` to the rostopic ``/spot/mission_status``.
-
-### Running the ``conversation_server`` <a name="rconv"></a>
-
-```
-roslaunch human_interaction conversation_server.launch
-```
-This will startup only the ``conversation_server`` node. This is useful for running the project without using the ```bracelet_gui_node```. The ```state_machine``` node from the package ```state_machine ``` can be used to trigger the ```conversation_server``` node that implements the ROS action server for running conversations with the user to determine objects to get.
-If the installation was succesfull the conversation server should start in the terminal with a similar message:
-
-```
-[INFO] [1685183869.602140]: Action Server Conversation started...
-```
-
-
-
-## 4. File Structure <a name="fs"></a>
-
+### Running RRT <a name="rslam"></a>
+If the simulation started, the node described in this README can be started together with all the packages it needs to run with one launch file:
+````console
+roslaunch rrt full_rrt.launch
 ````
-├── action                          # Action files for the conversation server
-│   └── Conversation.action         
-├── CMakeLists.txt                  # CMakeLists.txt for the package
-├── config
-│   └── recognize_speech.yaml       # Configuration file for the speech recognition
-├── images                          # Images used in the README
-│   ├── bracelet_GUI_1.png          
-│   ├── bracelet_gui_2.png
-│   ├── bracelet_GUI_2.png
-│   └── conversation.png
-├── launch                          # Launch files for the package
-    ├── bracelet_gui.launch                      
-    ├── conversation_client.launch
-    └── conversation_server.launch
-├── package.xml                     # Package.xml for the package
-├── plugin.xml          
-├── README.md                       # README
-└── scripts                         # Scripts used in the package
-    ├── bracelet_gui.py
-    ├── recognize_speech_client.py
-    └── recognize_speech.py
 
-````  -->
+To test whether the ``rrt_path`` node has succesfully launched, the result of the node can be visualized by clicking on: 
+``Panels`` &rarr; ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_steps``, ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_marker`` and ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_marker2``. 
+
+This should show a similar result as the image above. However, the goal and path may not be exactly the same due the goal being a random goal in the frontier and the path being random by nature. 
+
+### Running all the nodes individually <a name="rind"></a>
+The RRT package consists only of the ``rrt_path`` node. However for this node to run, other depencies from other packages also need to run. 
+
+Run the node ``rrt_path``:
+````console
+roslaunch rrt rrt.launch
+````
+
+Run the the node ``explore.py`` from SLAM:
+````console
+rosrun slam explore.py
+````
+
+Run the package Mapping:
+````console
+roslaunch slam mapping.launch
+````
+
+Run the package Motion_Control:
+````console
+roslaunch motion_control motion_control.launch
+````
+
+> Note: Each command needs to be run in a new terminal that is sources each time. 
+
+## 3. File Structure <a name="fs"></a>
+````
+├── CMakeLists.txt              # CMakeLists.txt for the package
+├── images                      # Images used in the README 
+│   └── rrt_image.png
+├── launch                      # Launch files
+│   ├── full_rrt.launch
+│   ├── planning_msg.launch     # IGNORE: old file
+│   ├── rrt.launch
+│   └── yaml.launch             # IGNORE: old file
+├── map_final.yaml              # IGNORE: old file
+├── package.xml     
+├── README.md
+└── src
+    ├── rrt_msg_node.py        # IGNORE: old file
+    ├── rrt_path.py            # Definition of the rrt_path node
+    └── yaml_to_map.py         # IGNORE: old file
+````
+> Note: There are some old files in the package. These will be removed once they are of no more use to us. Currently we are still using them a bit for looking up old code. 

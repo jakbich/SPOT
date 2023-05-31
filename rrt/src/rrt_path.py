@@ -313,7 +313,7 @@ class RRTPath:
 
             marker = Marker()
             # x_marker, y_marker = self.pos
-            y_marker, x_marker = start_pos
+            x_marker, y_marker = self.rrt_path[-1]
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD

@@ -15,7 +15,7 @@ The package provides the necessary code to build and run the RRT-algorithm that 
 
   
 It contains all necessary files to build the one ROS node, namely: 
-- ``motion_control_node`` 
+- ``motion_control`` 
 
 TThis package can be used in combination with the other ROS packages contained in the parent repository ``champ_spot`` to simulate and run autonomous missions designed for the healthcare sector on a [Boston Dynamics SPOT robot](https://www.bostondynamics.com/products/spot).
 
@@ -24,17 +24,15 @@ TThis package can be used in combination with the other ROS packages contained i
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node motion_control_node](#r1)
+    1.1 [ROS-Node motion_control](#r1)
 
-2. [Getting Started](#gs)\
-    2.1 [Prerequisites](#pr)\
-    2.2 [Installation](#i)
-
-3. [Usage](#u)\
-    3.1 [Running the motion_control_node](#rbrac)
+2. [Usage](#u)\
+    3.1 [Starting the simulation](#rsim)\
+    3.2 [Running Motion_Control](#rslam)\
     
     
-4. [File Structure](#fs)
+3. [File Structure](#fs)
+
 
 
 
@@ -47,128 +45,125 @@ TThis package can be used in combination with the other ROS packages contained i
 
 
 ## ROS-Node motion_control_node <a name="r1"></a>
-The package contains all the necessary files to build and run ``motion_control_node`` that:
-- Acts as an ROS Action Server that is called by the ``trajectory_node`` to send the Spot Robot from its current position to a goal position.
-- Confirms whether the goal position is reached or not.
+The ``motion_control`` node contains the file that is neccesary to send SPOT from one location in the OccupancyGrid to one another. This node acts as an ActionServer that receives MoveBaseGoal and by sending linear and angular velocities to the driver it allows SPOT to reach the goal that started the Action. Once the goal is reached the action is succeeded and this is send to the server. 
 
+This node is subscribed and publishes to the topics below and is client to the server below.
+| **Subscribes:**               | **Client to server:**     | **Publishes:**         |
+|-------------------------------|---------------------------|------------------------|
+| /spot/mapping/grid_location   | motion_control            | cmd_vel                |
 
-# 2. Getting Started <a name="gs"></a>
-## Prerequisites <a name="pr"></a>
-This project was developed and tested on a Ubuntu 20.04 LTS machine running ROS Noetic. The following steps will guide you through the process of setting up the workspace and running the project.
-
-
-## Installation <a name="i"></a>
-**1. CHAMP installation**
-
-If you have not done so yet, follow the instructions to setup the CHAMP workspace on your machine: 
-[CHAMP Installation](https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot). This will guide you through the installation of our version of the CHAMP repository containing all the necessary packages to run the project.
-<!-- 
-
-**2. Install the following dependencies:**
-
-```
-actionlib==1.14.0
-customtkinter==5.1.3
-pyaudio==0.2.13
-pyttsx3==2.90
-rospy==1.16.0
-SpeechRecognition==3.10.0
-ttkthemes==3.2.2
-```
-This can be done either manually or with these commands :
-
-```
-cd path/to/champ_spot/human_interaction
-pip install -r requirements.txt
-```
-
-If your machine does not yet have a speech engine installed, you can install [espeak](https://espeak.sourceforge.net/) with the following command:
-```
-sudo apt-get install espeak
-```
-
-# 3. Usage <a name="u"></a>
-
-After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files.
-
-
-### Running the ``bracelet_gui_node`` <a name="rbrac"></a>
-
-```
-roslaunch human_interaction bracelet_gui.launch
-```
-This will startup both the GUI and the ``conversation_server`` nodes and open a new window with the GUI. The GUI will look like this after startup:
-
-<div style="text-align:center">
- <img src="images/bracelet_GUI_1.png">
-</div>
-
-
-If the installation was successful, after clicking the button ``New mission(Speech)`` the conversation should start in the terminal with the following question that is both displayed and read out loud:
-```
-SPOT: Hello, I am SPOT you assistance dog, do you need anything?
-```
-After giving an affirmative answer to the question, the next question will be asked:
-``` 
-SPOT: Which item do you need?
-```
-The conversation will continue, but these two steps verify your installation was successful, since it tests GUI, speech recognition, text-to-speech and the speech engine.
-
-Clicking on the button ``New mission(Text)`` will open a text entry field (Which item do you want?) where the user can type in the mission/ object to get. It should look like this:
-<div style="text-align:center">
- <img src="images/bracelet_GUI_2.png">
-</div>
-
-
-
-
-The top right status field will display the current status of the mission. The status can be one of the following:
-
-- GREEN: SPOT is available and ready to start a new mission
-- YELLOW: SPOT is currently executing a mission
-- RED: SPOT is currently not available or the soft stop function is triggered
-
-The status is determined by the rostopic ``/spot/mission_status`` that is published by the ``state_machine`` node from the package ``state_machine``. The ``state_machine`` node is responsible for executing the missions and publishing the current status of the mission.
-
-The button ``Trigger soft stop`` can be used to trigger the soft stop function. This will trigger the rosservice ``/spot/soft_stop`` that triggers SPOT's soft stop. The statemachine will publish a status message ``RED`` to the rostopic ``/spot/mission_status``.
-
-### Running the ``conversation_server`` <a name="rconv"></a>
-
-```
-roslaunch human_interaction conversation_server.launch
-```
-This will startup only the ``conversation_server`` node. This is useful for running the project without using the ```bracelet_gui_node```. The ```state_machine``` node from the package ```state_machine ``` can be used to trigger the ```conversation_server``` node that implements the ROS action server for running conversations with the user to determine objects to get.
-If the installation was succesfull the conversation server should start in the terminal with a similar message:
-
-```
-[INFO] [1685183869.602140]: Action Server Conversation started...
-```
-
-
-
-## 4. File Structure <a name="fs"></a>
+The node should receive the current position in the OccupancyGrid like this: ``[x, y, yaw]`` where x and y can be between 0-150 and yaw in radians between -pi and pi. It receives the goal as a MoveBaseGoal like this:
+````
+MoveBaseGoal:
+  target_pose:
+    header:
+      seq: 0
+      stamp:
+        secs: 0
+        nsecs: 0
+      frame_id: ''
+    pose:
+      position:
+        x: 63.0
+        y: 11.0
+        z: 0.0
+      orientation:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+        w: 0.0
 
 ````
-├── action                          # Action files for the conversation server
-│   └── Conversation.action         
-├── CMakeLists.txt                  # CMakeLists.txt for the package
-├── config
-│   └── recognize_speech.yaml       # Configuration file for the speech recognition
-├── images                          # Images used in the README
-│   ├── bracelet_GUI_1.png          
-│   ├── bracelet_gui_2.png
-│   ├── bracelet_GUI_2.png
-│   └── conversation.png
-├── launch                          # Launch files for the package
-    ├── bracelet_gui.launch                      
-    ├── conversation_client.launch
-    └── conversation_server.launch
-├── package.xml                     # Package.xml for the package
-├── plugin.xml          
-├── README.md                       # README
-└── scripts                         # Scripts used in the package
-    ├── bracelet_gui.py
-    ├── recognize_speech_client.py
-    └── recognize_speech.py
+Where x and y represent the goal position in the OccupancyGrid. 
 
-````  -->
+The node sends a velocity command as a Twist message that looks like this:
+````
+Twist:
+  linear:
+    x: 0.5
+    y: 0.0
+    z: 0.0
+  angular:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+
+````
+
+# 2. Usage <a name="u"></a>
+
+After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
+
+
+### Starting the simulation <a name="rsim"></a>
+The simulation should be running (the world in Gazebo and SPOT in Rviz), before the nodes within this package can be launched. This can be done using the two commands below.
+
+Launch the world in Gazebo.
+```console
+roslaunch spot_config spawn_world.launch
+```
+Launch SPOT in Rviz.
+```console
+roslaunch spot_config spawn_robot.launch
+```
+
+This will startup both Gazebo and Rviz, SPOT should also be visible wihtin the Gazebo world.
+
+<div style="text-align:center">
+ <img src="images/simulation.png">
+</div>
+
+## Running Motion_Control <a name="rslam"></a>
+If the simulation started, all the nodes described within this README can be launched using one launch file:
+```console
+roslaunch motion_control motion_control.launch
+```
+
+To test whether the ``motion_control`` node has succesfully launched without using other packages, one could give the node manually a goal. To do this you first need to open another terminal and source this. Then the following command can be run:
+````
+rostopic pub /motion_control/goal move_base_msgs/MoveBaseActionGoal "{
+  header: {
+    seq: 0,
+    stamp: { secs: 0, nsecs: 0 },
+    frame_id: ''
+  },
+  goal_id: {
+    stamp: { secs: 0, nsecs: 0 },
+    id: ''
+  },
+  goal: {
+    target_pose: {
+      header: {
+        seq: 0,
+        stamp: { secs: 0, nsecs: 0 },
+        frame_id: 'map'
+      },
+      pose: {
+        position: {
+          x: 63.0,
+          y: 11.0,
+          z: 0.0
+        },
+        orientation: {
+          x: 0.0,
+          y: 0.0,
+          z: 0.0,
+          w: 0.0
+        }
+      }
+    }
+  }
+}"
+```` 
+If launched correctly, SPOT should be moving the the position (63, 11) in the OccupancyGrid. 
+
+## 3. File Structure <a name="fs"></a>
+````
+├── CMakeLists.txt                  # CMakeLists.txt for the package
+├── launch
+│   └── motion_control.launch       # Launch file
+├── package.xml
+├── README.md
+└── src
+    └── motion_control.py           # Definition of the motion_control node
+    ````
