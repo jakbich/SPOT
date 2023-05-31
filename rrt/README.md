@@ -60,6 +60,7 @@ The vizualized result of the ``rrt_path`` node should look like this:
 </div>
 
 > Note: Due to troubleshooting the SPOT is not ready moving steadily to the goal. This is caused by the RRT path being to tight around obstacles. We are currently working on adding more constraints to the algorithm so that this will be fixed. 
+
 > Note: he robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Therefore, it is recommended to hide the robot model in Rviz. The blue marker represents the robot position. 
 
 # 2. Usage <a name="u"></a>
