@@ -7,35 +7,6 @@
 
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
-<style>
-    .image-container {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .image-box {
-        width: 30%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .image-box img {
-        width: 100%;
-    }
-</style>
-
-<div class="image-container">
-    <div class="image-box">
-        <img src="readme_images/tud.png" alt="Image 1" style="margin-top: -42px;">
-    </div>
-    <div class="image-box">
-        <img src="readme_images/cor.png" alt="Image 2" style="margin-top: 25px;">
-    </div>
-    <div class="image-box">
-        <img src="readme_images/tno.png" alt="Image 3" style="margin-top: 30px;">
-    </div>
-</div>
 
 
 # Table of Contents
@@ -61,35 +32,25 @@ This repository contains all necessary files to build all 10 ROS nodes of the 7 
     - ``bracelet_gui_node`` 
     - ``conversation_server``
     
-    <br/>
-    
+
 - motion control ([Link to README](motion_control/README.md))
     - ``motion_control``
-    
-<br/>
 
 - rrt ([Link to README](rrt/README.md))
     - ``rrt_path_node``
-    
-        <br/>
+
         
 - slam ([Link to README](slam/README.md))
     - ``image2pointcloud`` 
     - ``plane_segmentation``
     - ``occupancy_map`` 
-    
-        <br/>
-        
+
 - state machine ([Link to README](state_machine/README.md))
     - ``state_machine``
-    
-        <br/>
-        
+
 - trajectory ([Link to README](trajectory/README.md))
     - ``trajectory_node``
-    
-        <br/>
-        
+
 - yolo ([Link to README](yolo/README.md))
     - ``detection``
 
