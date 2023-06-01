@@ -1,0 +1,6 @@
+<launch>
+    <rosparam command="load" file="$(find slam)/config/plane_segmentation.yaml"/>
+    
+    <node pkg="slam" type="image2pointcloud.py" name="image2pointcloud" output="screen"/>
+    <node pkg="slam" type="plane_segmentation.py" name="plane_segmentation" output="screen"/>
+</launch>

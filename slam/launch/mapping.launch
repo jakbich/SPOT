@@ -7,11 +7,6 @@
     <node pkg="slam" type="image2pointcloud.py" name="image2pointcloud" output="screen"/>
     <node pkg="slam" type="plane_segmentation.py" name="plane_segmentation" output="screen"/>
     <node pkg="slam" type="occupancy_map.py" name="occupancy_map" output="screen"/>
-    
-    <!-- Launch the spwan_robot.launch file from the spot_config package -->
-    <!-- <include file="$(find spot_config)/launch/spawn_robot.launch">
-        <arg name="rviz" value="true" />
-    </include> -->
 
     <!-- <include file="$(find champ_teleop)/launch/teleop.launch" launch-prefix="xterm -e" /> -->
 </launch>

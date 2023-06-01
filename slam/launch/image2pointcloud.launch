@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="slam" type="image2pointcloud.py" name="image2pointcloud" output="screen"/>
+</launch>
