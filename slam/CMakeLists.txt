@@ -184,6 +184,7 @@ catkin_install_python(PROGRAMS
    src/explore.py
    src/grid_position_transform.py
    src/exploring.py
+   src/change_frame_id.py
 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

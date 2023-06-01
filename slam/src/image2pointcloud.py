@@ -8,19 +8,25 @@ from sensor_msgs.point_cloud2 import create_cloud_xyz32, PointField
 import numpy as np
 from message_filters import TimeSynchronizer, Subscriber
 
+
 class CreatePointClouds:
     def __init__(self) -> None:
         # Initialize node
         rospy.init_node("CreatePointClouds")
 
-        self.fx = 319.9988245765257  # Focal length in x-direction
-        self.fy = 319.9988245765257  # Focal length in y-direction
-        self.cx = 320.5  # Principal point x-coordinate
-        self.cy = 240.5  # Principal point y-coordinate
+        # self.fx = 319.9988245765257  # Focal length in x-direction
+        # self.fy = 319.9988245765257  # Focal length in y-direction
+        # self.cx = 320.5  # Principal point x-coordinate
+        # self.cy = 240.5  # Principal point y-coordinate
+
+        self.fx = 214  # Focal length in x-direction
+        self.fy = 214 # Focal length in y-direction
+        self.cx = 207  # Principal point x-coordinate
+        self.cy = 119  # Principal point y-coordinate
 
         # Set up subscriber and publisher
-        sub_right_image = Subscriber("/spot/depth/frontright/image", Image, queue_size=1)
-        sub_left_image = Subscriber("/spot/depth/frontleft/image", Image, queue_size=1)
+        sub_right_image = Subscriber("/test", Image, queue_size=1)
+        sub_left_image = Subscriber("/test", Image, queue_size=1)
 
         self.pub_right = rospy.Publisher("/spot/depth/right/pointcloud", PointCloud2, queue_size=2)
         self.pub_left = rospy.Publisher("/spot/depth/left/pointcloud", PointCloud2, queue_size=2)
@@ -42,8 +48,14 @@ class CreatePointClouds:
         depth_image = bridge.imgmsg_to_cv2(image_msg, desired_encoding='passthrough')
 
         # Create an empty point cloud message
+        # header = Header()
+        # header.stamp = rospy.Time.now()
+        # header.frame_id = "frontright_depth_frame"
+
         point_cloud_msg = PointCloud2()
         point_cloud_msg.header = image_msg.header
+        # print(point_cloud_msg.header)
+        point_cloud_msg.header.frame_id = "odom"
         point_cloud_msg.height = depth_image.shape[0]
         point_cloud_msg.width = depth_image.shape[1]
         point_cloud_msg.fields.append(PointField(
