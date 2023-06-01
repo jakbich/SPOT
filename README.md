@@ -7,6 +7,11 @@
 
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
+ 
+
+<img src="readme_images/cor.png" alt="Image 2" width="300" /> 
+<img src="readme_images/tno.png" alt="Image 3" width="320" />
+
 
 
 # Table of Contents
