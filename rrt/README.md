@@ -96,14 +96,8 @@ The created occupancy map can be visualized in Rviz by clicking on:
 
 This should display the occupancy map as shown in the image below. 
 
-<style>
-.rotate {
-  transform: rotate(90deg);
-}
-</style>
-
-<div class="rotate">
-  <img src="images/occupancy_map.png">
+<div style="text-align:center">
+ <img src="images/occupancy_map_2.png">
 </div>
 
 > Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
