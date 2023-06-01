@@ -7,7 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   sensor_msgs
   message_filters
-  vision_msgs
   geometry_msgs
 )
 
@@ -19,7 +18,6 @@ catkin_package(
     cv_bridge
     sensor_msgs
     message_filters
-    vision_msgs
     geometry_msgs
 )
 
