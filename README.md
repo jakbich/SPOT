@@ -78,7 +78,7 @@ This repository is based on [CHAMP](https://github.com/chvmp/champ) and [zoo](ht
 
 
 Clone and install all dependencies:
-```
+```bash
 sudo apt install -y python3-rosdep
 cd <your_ws>/src
 git clone --recursive https://github.com/chvmp/champ
@@ -89,7 +89,7 @@ rosdep install --from-paths src --ignore-src -r -y
 ### Spot robot simulation
 
 You need a git SSH key setup. Navigate to `src` directory in your workspace, then:
-```
+```bash
  git clone https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot
  cd champ_spot
  git submodule init
@@ -98,7 +98,7 @@ You need a git SSH key setup. Navigate to `src` directory in your workspace, the
 
 ### Build your workspace
 
-```
+```bash
  cd <your_ws>
  catkin build
  source <your_ws>/devel/setup.bash
@@ -107,7 +107,7 @@ You need a git SSH key setup. Navigate to `src` directory in your workspace, the
 
 ### Gazebo Worlds
 Add `models` directory to the GAZEBO_MODEL_PATH environment variable. You can add the following line to the end of your ~/.bashrc:
-```
+```bash
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path to>/models
 ```
 Examples: https://github.com/leonhartyao/gazebo_models_worlds_collection
@@ -115,12 +115,12 @@ Examples: https://github.com/leonhartyao/gazebo_models_worlds_collection
 ### Quick Start Guide
 
 Run the Gazebo environment:
-```
+```bash
 roslaunch spot_config spawn_world.launch
 ```
 
 Spawn the robot:
-```
+```bash
 roslaunch spot_config spawn_robot.launch rviz:=true
 ```
 
@@ -137,7 +137,7 @@ In order to install the driver, follow the README instructions from [Boston Dyna
 
 ## 3.3 Installing project dependencies <a name="ins_project"></a>
 
-```
+```python
 actionlib==1.14.0
 bosdyn_api==3.2.3
 bosdyn_client==3.2.3
@@ -168,18 +168,26 @@ ttkthemes==3.2.2
 ```
 This can be done either manually or with these commands :
 
-```
+```bash
 cd path/to/champ_spot
 pip install -r requirements.txt
 ```
 
 If your machine does not yet have a speech engine installed, you can install [espeak](https://espeak.sourceforge.net/) with the following command:
-```
+```bash 
 sudo apt-get install espeak
 ```
+
+You need to download the weights for the yolo package inside of its configuration folder, this can be done with the folowing commands:
+```bash
+cd path/to/champ_spot/yolo/yolo_config
+wget https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov7x.weights
+```
+
+
 Build your workspace
 
-```
+```bash
  cd <your_ws>
  catkin build
  source <your_ws>/devel/setup.bash
