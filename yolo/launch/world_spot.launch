@@ -1,0 +1,7 @@
+<launch>
+<!-- LAUNCH SPOT AND THE SLAM NODE-->    
+    <include file="$(find spot_config)/launch/spawn_robot.launch" launch-prefix="rviz:=true"" />
+    
+    <!-- LAUNCH THE MAPPING-->
+    <include file="$(find slam)/launch/mapping.launch" />
+</launch>
