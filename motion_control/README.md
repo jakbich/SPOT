@@ -28,7 +28,7 @@ TThis package can be used in combination with the other ROS packages contained i
 
 2. [Usage](#u)\
     3.1 [Starting the simulation](#rsim)\
-    3.2 [Running Motion_Control](#rslam)\
+    3.2 [Running Motion_Control](#rslam)
     
     
 3. [File Structure](#fs)
