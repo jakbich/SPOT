@@ -7,5 +7,6 @@
     "python.analysis.extraPaths": [
         "/home/jurjen/MDP_RO47007/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }
