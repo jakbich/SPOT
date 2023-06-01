@@ -1,23 +1,19 @@
-
-
-
 # 1. About the package <a name="atp"></a>
  **Course:**  Multidisciplinary Project (RO47007) \
  **Program:** Msc Robotics @ TU Delft            
  **Developer Group:**  Group 19 - SpotOnCare                     
  **Last Maintained Date:**  01.06.2023   
 
-
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
 
-The package provides the necessary code to build and run the RRT-algorithm that is part of the planning/navigation part of the assignment.
+The package provides the necessary code to build and run the RRT-algorithm that is part of the planning/navigation part of the project.
 
   
-It contains all necessary files to build the one ROS node, namely: 
-- ``rrt_path`` 
+It contains all necessary files to build one ROS node, namely: 
+- ``rrt_path_node`` 
 
-TThis package can be used in combination with the other ROS packages contained in the parent repository ``champ_spot`` to simulate and run autonomous missions designed for the healthcare sector on a [Boston Dynamics SPOT robot](https://www.bostondynamics.com/products/spot).
+This package can be used in combination with the other ROS packages contained in the parent repository ``champ_spot`` to simulate and run autonomous missions designed for the healthcare sector on a [Boston Dynamics SPOT robot](https://www.bostondynamics.com/products/spot).
 
 --- 
 
@@ -46,6 +42,7 @@ TThis package can be used in combination with the other ROS packages contained i
 ## ROS-Node rrt_path <a name="r1"></a>
 The ``rrt_path`` node contains the file that computes the path for SPOT to follow. This path is computed using the Rapidly exploring Random Tree algorithm in the OccupancyGrid. The node acts as an ActionServer that is triggered when it receives a MoveBaseGoal. After receiving the goal the path is computed. For each point in this path the ``motion_control`` ClientServer is called, after this servers notifies a succes, the next point in the path is send to the server. For testing purposes the ``rrt_path`` node publishes two Marker and one Path message to visualize the result. 
 
+TODO: RIGHT TOPIC NAMES!
 
 This node is subscribed and publishes to the topics below and is client to the server below.
 | **Subscribes:**               | **Client to server:**     | **Publishes:**                |
@@ -67,6 +64,7 @@ The vizualized result of the ``rrt_path`` node should look like this:
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
 
+### Running RRT <a name="rbrac"></a>
 
 ### Starting the simulation <a name="rsim"></a>
 The simulation should be running (the world in Gazebo and SPOT in Rviz), before the nodes within this package can be launched. This can be done using the two commands below.
