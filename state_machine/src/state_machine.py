@@ -3,6 +3,10 @@
 import rospy
 import smach
 import smach_ros
+import actionlib
+
+from human_interaction.msg import ConversationAction, ConversationGoal
+
 
 initialization = True
 searching = True
@@ -11,6 +15,9 @@ help_needed = True
 pick_item = True
 item_conformation = True
 action_confirmed = True
+
+
+
 
 # Initialization state
 class Initialization(smach.State):
@@ -50,6 +57,9 @@ class TrajectoryExecution(smach.State):
         smach.State.__init__(self, 
                              outcomes=["item_reached", "returned_to_person", "person_reached", "moved_aborted"],
                              input_keys=["item_id", "goal_location", "item_holding"])
+        
+        rospy.loginfo("Waiting for 'conversation' action server...")
+
 
     def execute(self, userdata):
         rospy.loginfo("Executing state TrajectoryExecution, goal: %s", str(userdata.goal_location))
@@ -69,9 +79,23 @@ class HelpNeeded(smach.State):
         smach.State.__init__(self, 
                              outcomes=["help_needed", "no_help_needed"],
                              output_keys=["item_id"])
+        
+
+        self.client = actionlib.SimpleActionClient('conversation', ConversationAction)
+        rospy.loginfo("Waiting for 'conversation' action server...")
+        self.client.wait_for_server()
+        self.goal = ConversationGoal()
+
 
     def execute(self, userdata):
         rospy.loginfo("Executing state HelpNeeded")
+ 
+        self.goal.conv_type = "give_mission"  # Change this based on your requirements
+        rospy.loginfo(f"Started conversation \"{self.goal.conv_type}\"")
+        self.client.send_goal(self.goal)
+        self.client.wait_for_result()
+        result = self.client.get_result()
+ 
         if help_needed:
             userdata.item_id = "Apple"
             return "help_needed"
@@ -176,6 +200,7 @@ if __name__ == '__main__':
                                transitions={"help_needed": "SEREACH", 
                                             "no_help_needed": "finished"},
                                remapping={"item_id": "item_id"})
+        
         
         smach.StateMachine.add("PICK_ITEM", PickItem(), 
                                transitions={"pick_succeeded": "APPROCH_GOAL", 
