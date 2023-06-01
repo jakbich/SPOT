@@ -23,9 +23,9 @@ This package can be used in combination with the other ROS packages contained in
     1.1 [ROS-Node rrt_path](#r1)
 
 2. [Usage](#u)\
-    3.1 [Starting the simulation](#rsim)\
-    3.2 [Running RRT](#rslam)\
-    3.3 [Running all the nodes individually](#rind)
+    2.1 [Starting the simulation](#rsim)\
+    2.2 [Running RRT](#rslam)\
+    2.3 [Running all the nodes individually](#rind)
     
     
 3. [File Structure](#fs)
@@ -40,9 +40,7 @@ This package can be used in combination with the other ROS packages contained in
 
 
 ## ROS-Node rrt_path <a name="r1"></a>
-The ``rrt_path`` node contains the file that computes the path for SPOT to follow. This path is computed using the Rapidly exploring Random Tree algorithm in the OccupancyGrid. The node acts as an ActionServer that is triggered when it receives a MoveBaseGoal. After receiving the goal the path is computed. For each point in this path the ``motion_control`` ClientServer is called, after this servers notifies a succes, the next point in the path is send to the server. For testing purposes the ``rrt_path`` node publishes two Marker and one Path message to visualize the result. 
-
-TODO: RIGHT TOPIC NAMES!
+The ``rrt_path`` node contains the file that computes the path for SPOT to follow. This path is computed using the Rapidly exploring Random Tree algorithm in the OccupancyGrid. The node acts as an ActionServer that is triggered when it receives a MoveBaseGoal. This MoveBaseGoal will come from the ``yolo_detection``, ``bracelet_gui_node/conversation_server`` or ``explore`` nodes. After receiving the goal the path is computed. For each point in this path the ``motion_control`` ClientServer is called, after this servers notifies a succes, the next point in the path is send to the server. For testing purposes the ``rrt_path`` node publishes two Marker and one Path message to visualize the result. 
 
 This node is subscribed and publishes to the topics below and is client to the server below.
 | **Subscribes:**               | **Client to server:**     | **Publishes:**                |
@@ -63,8 +61,6 @@ The vizualized result of the ``rrt_path`` node should look like this:
 # 2. Usage <a name="u"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
-
-### Running RRT <a name="rbrac"></a>
 
 ### Starting the simulation <a name="rsim"></a>
 The simulation should be running (the world in Gazebo and SPOT in Rviz), before the nodes within this package can be launched. This can be done using the two commands below.
@@ -90,10 +86,45 @@ If the simulation started, the node described in this README can be started toge
 roslaunch rrt full_rrt.launch
 ````
 
+It is important to note that in this launch file the ``explore`` will provide the MoveBaseGoal for the RRT path.
+This can also come from the ``yolo_detection``, ``bracelet_gui_node/conversation_server`` or ``explore`` nodes.
+
+
+#### Occupancy map
+The created occupancy map can be visualized in Rviz by clicking on:
+``Panels`` &rarr; ``Add`` &rarr; ``Topics`` &rarr; ``/spot/mapping/occupancy_grid``
+
+This should display the occupancy map as shown in the image below. 
+
+<style>
+.rotate {
+  transform: rotate(90deg);
+}
+</style>
+
+<div class="rotate">
+  <img src="images/occupancy_map.png">
+</div>
+
+> Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
+
+
+#### RRT
 To test whether the ``rrt_path`` node has succesfully launched, the result of the node can be visualized by clicking on: 
 ``Panels`` &rarr; ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_steps``, ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_marker`` and ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_marker2``. 
 
-This should show a similar result as the image above. However, the goal and path may not be exactly the same due the goal being a random goal in the frontier and the path being random by nature. 
+This should show a similar result as the image below. However, the goal and path may not be exactly the same due the goal being a random goal in the frontier and the path being random by nature. 
+
+
+<div style="text-align:center">
+ <img src="images/rrt_image.png">
+</div>
+
+Where:
+- The Green line: is the path created by the RRT Algorithm.
+- The Blue Point: is the starting position of the Spot.
+- The Green Point: is the goal position where Spot will go while following the path.
+
 
 ### Running all the nodes individually <a name="rind"></a>
 The RRT package consists only of the ``rrt_path`` node. However for this node to run, other depencies from other packages also need to run. 
@@ -118,13 +149,15 @@ Run the package Motion_Control:
 roslaunch motion_control motion_control.launch
 ````
 
-> Note: Each command needs to be run in a new terminal that is sources each time. 
+> Note: Each command needs to be run in a new terminal that is sourced each time. 
 
 ## 3. File Structure <a name="fs"></a>
 ````
 ├── CMakeLists.txt              # CMakeLists.txt for the package
 ├── images                      # Images used in the README 
-│   └── rrt_image.png
+│   ├── occupancy_map.png
+│   ├── rrt_image.png
+│   └── simulation.png
 ├── launch                      # Launch files
 │   ├── full_rrt.launch
 │   ├── planning_msg.launch     # IGNORE: old file
