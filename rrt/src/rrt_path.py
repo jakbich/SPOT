@@ -43,6 +43,8 @@ class RRT:
         self.max_iter = int(max_iter)
         self.step_size = step_size
 
+        self.collision_free_area = 3 # grid cells
+
         self.goal_proximity = 15 # grid distance to goal to consider goal reached
 
 
@@ -75,10 +77,17 @@ class RRT:
         x1, y1 = node1.x, node1.y
         x2, y2 = node2.x, node2.y
 
-        if self.grid[int(x1), int(y1)] >= 50 or self.grid[int(x2), int(y2)] >= 50:
+        if self.grid[int(x1), int(y1)] >= 25 or self.grid[int(x2), int(y2)] >= 25:
             return False
         elif self.grid[int(x1), int(y2)] < 0 or self.grid[int(x2), int(y1)] < 0:
             return False
+        
+        # Check if node2 has enough space around it for SPOT to turn
+        if node2 != self.goal:
+            for i in range(-self.collision_free_area, self.collision_free_area):
+                for j in range(-self.collision_free_area, self.collision_free_area):
+                    if self.grid[int(x2 + i), int(y2 + j)] >= 25 or self.grid[int(x2 + i), int(y2 + j)] < 0:
+                        return False
         
         dx = abs(x2 - x1)
         dy = abs(y2 - y1)
@@ -313,7 +322,7 @@ class RRTPath:
 
             marker = Marker()
             # x_marker, y_marker = self.pos
-            x_marker, y_marker = self.rrt_path[-1]
+            x_marker, y_marker = self.rrt_path[-2]
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD
@@ -342,10 +351,14 @@ class RRTPath:
         rospy.logwarn("Motion server found")
 
         for i, point in enumerate(self.rrt_path):
+            # Skip the last point
+            if i == len(self.rrt_path) - 1:
+                break
+
             action_goal = MoveBaseGoal()
             # action_goal.header.stamp = rospy.Time.now()
             # action_goal.header.frame_id = "odom"
-            x, y = point
+            y, x = point # Mirrored
 
             # Location in the grid map
             action_goal.target_pose.pose.position.x = x
@@ -360,6 +373,8 @@ class RRTPath:
                 rospy.logwarn("Point {} executed successfully".format(i))
             else:
                 rospy.logwarn("Point {} execution failed".format(i))
+
+            rospy.sleep(rospy.Duration(2.5))
         
         rospy.logwarn("Path executed successfully")
 
