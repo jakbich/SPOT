@@ -1,0 +1,7 @@
+<launch>
+    
+    <include file="$(find slam)/launch/mapping.launch"/>
+    <include file="$(find motion_control)/launch/motion_control.launch"/>
+    <!-- <include file="$(find human_interaction)/launch/conversation_server.launch" output="screen"/>  -->
+    <!-- <node pkg="state_machine" type="state_machine.py" name="state_machine" output="screen"/> -->
+</launch>
