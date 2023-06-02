@@ -1,7 +1,5 @@
 .idea/
 yolov3.weights
-
-# explore/
 motion_control/
 readme_images/
 rrt/
@@ -10,7 +8,6 @@ slam/
 trajectory/
 yolo/
 human_interaction/
-
 .vscode
 *.weights
 *.bag
