@@ -43,20 +43,23 @@ class RRT:
         self.max_iter = int(max_iter)
         self.step_size = step_size
 
+        self.collision_free_area = 3 # grid cells
+
         self.goal_proximity = 15 # grid distance to goal to consider goal reached
 
-
+    # calculate distance between two points
     def get_distance(self, node1, node2):
         return math.sqrt((node1.x - node2.x)**2 + (node1.y - node2.y)**2)
 
-    
+
+    # generate random node 
     def generate_random_node(self):
         x = int(random.uniform(-self.grid.shape[0], self.grid.shape[0]))
         y = int(random.uniform(-self.grid.shape[1], self.grid.shape[1]))
 
         return Node(x, y)
     
-
+    # find nearest node to random node
     def find_nearest_node(self, node):
         min_dist = float('inf')
         closest_node = None
@@ -70,16 +73,25 @@ class RRT:
         
         return closest_node
     
-
+    # check if line between two nodes is collision free
     def is_collision_free(self, node1, node2):
         x1, y1 = node1.x, node1.y
         x2, y2 = node2.x, node2.y
 
+        # check if both nodes are valid
         if self.grid[int(x1), int(y1)] >= 50 or self.grid[int(x2), int(y2)] >= 50:
             return False
         elif self.grid[int(x1), int(y2)] < 0 or self.grid[int(x2), int(y1)] < 0:
             return False
         
+        # Check if node2 has enough space around it for SPOT to turn
+        if node2 != self.goal:
+            for i in range(-self.collision_free_area, self.collision_free_area):
+                for j in range(-self.collision_free_area, self.collision_free_area):
+                    if self.grid[int(x2 + i), int(y2 + j)] >= 25 or self.grid[int(x2 + i), int(y2 + j)] < 0:
+                        return False
+        
+        # check if line between nodes is collision free
         dx = abs(x2 - x1)
         dy = abs(y2 - y1)
         if dx < self.step_size and dy < self.step_size:
@@ -109,7 +121,7 @@ class RRT:
         
         return True
 
-
+    # extend tree towards random node
     def extend(self):
         random_node = self.generate_random_node()
         # rospy.logwarn("random x, y: {}, {}".format(random_node.x, random_node.y))
@@ -135,7 +147,7 @@ class RRT:
         
         return None
     
-
+    # plan path from start to goal
     def plan_path(self):
         rospy.logwarn("Planning path")
         self.nodes.append(self.start)
@@ -155,7 +167,7 @@ class RRT:
 
                     return self.get_path()
 
-
+    # get path from start to goal
     def get_path(self):
         path = []
         node = self.goal
@@ -313,7 +325,7 @@ class RRTPath:
 
             marker = Marker()
             # x_marker, y_marker = self.pos
-            x_marker, y_marker = self.rrt_path[-1]
+            x_marker, y_marker = self.rrt_path[-2]
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD
@@ -342,10 +354,14 @@ class RRTPath:
         rospy.logwarn("Motion server found")
 
         for i, point in enumerate(self.rrt_path):
+            # Skip the last point
+            if i == len(self.rrt_path) - 1:
+                break
+
             action_goal = MoveBaseGoal()
             # action_goal.header.stamp = rospy.Time.now()
             # action_goal.header.frame_id = "odom"
-            x, y = point
+            y, x = point # Mirrored
 
             # Location in the grid map
             action_goal.target_pose.pose.position.x = x
@@ -360,6 +376,8 @@ class RRTPath:
                 rospy.logwarn("Point {} executed successfully".format(i))
             else:
                 rospy.logwarn("Point {} execution failed".format(i))
+
+            rospy.sleep(rospy.Duration(0.5))
         
         rospy.logwarn("Path executed successfully")
 
@@ -370,184 +388,6 @@ class RRTPath:
         result.status.text = "Path executed successfully"
 
         self.server.set_succeeded(result)
-
-
-
-        
-        # # Send path to client
-        # goal_status_array = GoalStatusArray()
-        # goal_status_array.header.stamp = rospy.Time.now()
-        # goal_status_array.status_list =  self.rrt_path
-        
-        # self.trajectory_client.send_goal(goal_status_array)
-        # self.trajectory_client.wait_for_result()
-        # result = self.trajectory_client.get_result()
-
-        # if result:
-        #     rospy.logwarn("Path executed successfully")
-
-        #     # Return succes 
-        #     result = MoveBaseResult()
-        #     result.header.stamp = rospy.Time.now()
-        #     result.status.status = 0 # Set the status code, where 0 represents success
-        #     result.status.text = "Path executed successfully"
-
-        #     self.server.set_succeeded(result)
-        # else:
-        #     rospy.logwarn("Path execution failed")
-
-
-
-
-        
-
-    # def rrt_planning(self, start, goal, max_iter=10, step_size=5):
-    #     # tree = {start: None}
-    #     tree = {(start[0], start[1]): None}
-
-    #     for _ in range(max_iter):
-    #         rand_point = self.generate_random_point(tree)
-    #         # rospy.logwarn("Random point: {}".format(rand_point))
-    #         nearest_point = self.find_nearest_point(tree, rand_point)
-    #         rospy.logwarn("Nearest point: {}".format(nearest_point))
-    #         new_point = self.extend(nearest_point, rand_point, step_size)
-    #         rospy.logwarn("New point: {}".format(new_point))
-
-    #         # rospy.logwarn(self.is_point_valid(new_point))
-
-    #         if new_point and self.is_point_valid(new_point):
-    #             tree[new_point] = nearest_point
-    #             # rospy.logwarn("New point added to tree: {}".format(new_point))
-    #             if self.is_goal_reached(new_point, goal):
-    #                 rospy.logwarn("Goal reached")
-    #                 return self.generate_path(tree, start, new_point)
-
-    #     return None
-
-    # def generate_random_point(self, tree):
-    #     # Generate a random point around the last point of the tree within a certain radius
-    #     last_point = list(tree.keys())[-1]
-    #     last_x = last_point[0]
-    #     last_y = last_point[1]
-    #     rospy.logwarn("Last point: {}".format(last_point))
-    #     x = int(random.uniform(last_x - 10, last_x + 10))
-    #     y = int(random.uniform(last_y - 10, last_y + 10))
-    #     rospy.logwarn("Random point: {}".format((x, y)))
-
-    #     return (x, y)
-
-
-    # def find_nearest_point(self, tree, point):
-    #     # Find the nearest point in the tree to the given point
-    #     nearest_point = None
-    #     min_distance = float('inf')
-
-    #     for p in tree.keys():
-    #         # rospy.logwarn("Point: {}".format(p))
-    #         distance = math.sqrt((p[0] - point[0])**2 + (p[1] - point[1])**2)
-    #         if distance < min_distance:
-    #             min_distance = distance
-    #             nearest_point = p
-
-    #     return nearest_point        
-
-    # def extend(self, start, end, step_size=1):
-    #     # Extend the start point towards the end point within the step size in 2D
-    #     new_point = (
-    #         start[0] + end[0],
-    #         start[1] + end[1],
-    #         math.atan2(end[1] - start[1], end[0] - start[0])
-    #     )
-
-    #     return new_point
-    
-    #     # distance = math.sqrt((end[0] - start[0])**2 + (end[1] - start[1])**2)
-    #     # if distance > step_size:
-    #     #     scale = step_size / distance
-    #     #     new_point = (
-    #     #         start[0] + (end[0] - start[0]) * scale,
-    #     #         start[1] + (end[1] - start[1]) * scale,
-    #     #         math.atan2(end[1] - start[1], end[0] - start[0])  # Calculate yaw angle
-    #     #     )
-    #     #     return new_point
-    #     # else:
-    #     #     return end + (math.atan2(end[1] - start[1], end[0] - start[0]),)  # Append yaw angle
-
-    # def is_point_valid(self, point):
-    #     # rospy.logwarn("Checking if point is valid")
-    #     if self.grid is None:
-    #         # rospy.logwarn("Grid is None")
-    #         return False
-        
-    #     grid_width = self.grid.shape[0]
-    #     grid_height = self.grid.shape[1]
-
-    #     # Check if the point is outside the grid bounds
-    #     if point[0] < 0 or point[0] >= grid_width or point[1] < 0 or point[1] >= grid_height:
-    #         # rospy.logwarn("Point is outside grid bounds")
-    #         return False
-        
-    #     if self.grid[int(point[0]), int(point[1])] > 50:
-    #         # rospy.logwarn("Point is in obstacle")
-    #         return False
-    #     # if self.grid[int(point[0]), int(point[1])] > 50 or self.grid[int(point[0]), int(point[1])] < 0:
-    #     #     rospy.logwarn("Point is in obstacle")
-    #     #     return False
-        
-    #     return True
-
-    # def is_goal_reached(self, point, goal):
-    #     # Check if the goal has been reached from the given point in 2D
-    #     distance = math.sqrt((point[0] - goal[0])**2 + (point[1] - goal[1])**2)
-    #     # print(point, goal)
-    #     # rospy.logwarn("Distance to goal: {}".format(distance))
-    #     rospy.logwarn(distance < self.margin)
-    #     angle_diff = abs(point[2] - math.atan2(goal[1] - point[1], goal[0] - point[0]))
-
-    #     # Define thresholds for reaching the goal position and orientation
-    #     return distance < self.margin
-
-    # def generate_path(self, tree, start, end):
-    #     # Generate the path from start to end using the tree dictionary
-    #     path = []
-
-    #     # Convert x,y coordinates to MoveBaseAction
-    #     self.move_base_goal_msg.target_pose.pose.position.x = int(end[0])
-    #     self.move_base_goal_msg.target_pose.pose.position.y = int(end[1])
-
-    #     self.move_base_goal_msg.target_pose.header.stamp = rospy.Time.now()
-
-    #     # UITWERKEN 
-    #     # Convert the yaw angle to quaternion
-    #     # quaternion = tf.transformations.quaternion_from_euler(0, 0, end[2], axes='sxyz')
-    #     # self.move_base_goal_msg.target_pose.pose.orientation.x = quaternion[0]
-    #     # self.move_base_goal_msg.target_pose.pose.orientation.y = quaternion[1]
-    #     # self.move_base_goal_msg.target_pose.pose.orientation.z = quaternion[2]
-    #     # self.move_base_goal_msg.target_pose.pose.orientation.w = quaternion[3]
-
-    #     path.append(self.move_base_goal_msg)
-
-    #     current = end
-    #     while current != start:
-    #         current = tree[current]
-    #         self.move_base_goal_msg.target_pose.pose.position.x = int(current[0])
-    #         self.move_base_goal_msg.target_pose.pose.position.y = int(current[1])
-
-    #         self.move_base_goal_msg.target_pose.header.stamp = rospy.Time.now()
-
-    #         # UITWERKEN 
-    #         # Convert the yaw angle to quaternion
-    #         # quaternion = tf.transformations.quaternion_from_euler(0, 0, current[2], axes='sxyz')
-    #         # self.move_base_goal_msg.target_pose.pose.orientation.x = quaternion[0]
-    #         # self.move_base_goal_msg.target_pose.pose.orientation.y = quaternion[1]
-    #         # self.move_base_goal_msg.target_pose.pose.orientation.z = quaternion[2]
-    #         # self.move_base_goal_msg.target_pose.pose.orientation.w = quaternion[3]
-
-    #         path.append(self.move_base_goal_msg)
-        
-    #     path.reverse()
-    #     return path
-        
 
 
 if __name__ == '__main__':

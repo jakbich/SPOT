@@ -92,7 +92,7 @@ class GridMapping:
         ts = ApproximateTimeSynchronizer([sub_non_ground_points, sub_ground_points, sub_robot_pos], queue_size=50, slop=0.1) # Slop is time tollerance
         ts.registerCallback(self.update_map)
 
-        rospy.logwarn("Initilaized")
+        # rospy.logwarn("Initilaized")
 
 
     def test(self, msg):
@@ -100,7 +100,7 @@ class GridMapping:
 
     def update_map(self, msg_non_ground_points, msg_ground_points, msg_robot_pos) -> None:
         time = msg_non_ground_points.header.stamp
-        rospy.logwarn("Yes")
+        # rospy.logwarn("Yes")
         
         robot_pose = msg_robot_pos.pose.pose
         position = np.array([robot_pose.position.x, robot_pose.position.y, robot_pose.position.z])
