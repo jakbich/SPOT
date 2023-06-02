@@ -56,8 +56,8 @@ class GridPositionTransform:
             # Publish grid location
             self.grid_location_msg.data = [grid_location[0], grid_location[1], yaw]
 
-            rospy.logwarn("Grid location: " + str(grid_location))
-            rospy.logwarn("Yaw: " + str(yaw))
+            # rospy.logwarn("Grid location: " + str(grid_location))
+            # rospy.logwarn("Yaw: " + str(yaw))
 
             self.grid_location_pub.publish(self.grid_location_msg)
 
