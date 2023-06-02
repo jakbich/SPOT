@@ -59,8 +59,8 @@ class MotionControl:
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD
-            marker.pose.position.x = -7.5 + y_marker * 0.1 
-            marker.pose.position.y = -7.5 + x_marker * 0.1
+            marker.pose.position.x = -7.5 + x_marker * 0.1 
+            marker.pose.position.y = -7.5 + y_marker * 0.1
             marker.pose.position.z = 0.0
             marker.pose.orientation.x = 0.0
             marker.pose.orientation.y = 0.0
