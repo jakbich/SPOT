@@ -11,13 +11,11 @@
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
 
-This package provides the necessary code to build and run the Self-Localization And Mapping (later referred to as SLAM) part of the project.
+This package provides the necessary code to build and run the exploring which is part of the planning/navigation part of the project.
 
   
-It contains all necessary files to build two ROS nodes, namely: 
-- ``image2pointcloud`` 
-- ``plane_segmentation``
-- ``occupancy_map`` 
+It contains all necessary files to build one ROS node, namely:
+- ``explore``
 
 These packages can be used in combination with the other ROS packages contained in the parent repository ``champ_spot`` to simulate and run autonomous missions designed for the healthcare sector on a [Boston Dynamics SPOT robot](https://www.bostondynamics.com/products/spot).
 
@@ -26,13 +24,11 @@ These packages can be used in combination with the other ROS packages contained 
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node image2pointcloud](#r1)\
-    1.2 [ROS-Node plane_segmentation](#r2)\
-    1.3 [ROS-Node occupancy_map](#r3)
+    1.1 [ROS-Node explore](#r1)
 
 2. [Usage](#u)\
     3.1 [Starting the simulation](#rsim)\
-    3.2 [Running SLAM](#rslam)\
+    3.2 [Running Explore](#rslam)\
     3.3 [Running all the nodes individually](#rind)
     
     
@@ -48,49 +44,24 @@ These packages can be used in combination with the other ROS packages contained 
 
 
 
-## ROS-Node image2pointcloud <a name="r1"></a>
-The ``image2pointcloud`` node contains all the necessary files to transform depth images measured/created by SPOT into 3D point clouds. These point clouds are then used by other machine perception and planning nodes.
+## ROS-Node explore <a name="r1"></a>
+The ``explore`` node contains the file that is needed for SPOT to autonomously explore the room. The exploring is based of the Frontier Based Exploration Algorithm that uses the OccupancyGrid to compute the frontiers using gradients. When the node is called, it finds a random point on the frontier. This point send to the ``rrt_path`` server using a MoveBaseGoal. The node publishes a Marker and a CostMap for visualizing purposes.  
+
+
 
 This node is subscribed and publishes to the topics below.
-| **Subscribes:**               | **Publishes:**                    |
-|-------------------------------|-----------------------------------|
-| depth/frontright/camera/image | /spot/depth/frontright/pointcloud |
-| depth/frontleft/camera/image  | /spot/depth/frontleft/pointcloud  |
+| **Subscribes:**               | **Client to server:**     | **Publishes:**                    |
+|-------------------------------|---------------------------|-----------------------------------|
+| /spot/mapping/occupancy_grid  | rrt_path                  | /spot/depth/frontright/pointcloud |
+| /odom/ground_truth            |                           | /spot/depth/frontleft/pointcloud  |
 
-The incoming depth images and the resulting point clouds should look like this.
+The visualized result of the ``explore`` node should look like this:
 
 <div style="text-align:center">
  <img src="images/depth_image.png">
 </div>
 
-## ROS-Node plane_segmentation <a name="r2"></a>
-The ``plane_segmentation`` node contains all the necessary files to perform ground plane segmentation. The segmentation is defined by a hardcoded Z-height threshold to reduce computational time and under the assumption that the ground is flat. The segmented point cloud is used in another node to create an occupancy map.
 
-This node is subscribed and publishes to the topics below.
-| **Subscribes:**                   | **Publishes:**                            |
-|-----------------------------------|-------------------------------------------|
-| /spot/depth/frontright/pointcloud | /spot/depth/plane_segmentation/non_ground |
-| /spot/depth/frontleft/pointcloud  | /spot/depth/plane_segmentation/ground     |
-
-The node creates two separate point clouds, one containing only the ground points and one containing only all the non-ground points.
-
-<div style="text-align:center">
- <img src="images/segmentation.png", height=300>
-</div>
-
-## ROS-Node occupancy_map <a name="r3"></a>
-The ``occupancy_map`` node contains all the necessary files to create an [occupancy map](https://automaticaddison.com/what-is-an-occupancy-grid-map/). This occupancy map is created using the segmented point clouds and maps the environment in 2D based on the occupancy likelihood. Each gridcell within the map has an occupied likelihood between 0 and 100 or is undiscovered, indicated by a value of -1.
-
-This node is subscribed and publishes to the topics below.
-| **Subscribes:**                           | **Publishes:**               |
-|-------------------------------------------|------------------------------|
-| /spot/depth/plane_segmentation/non_ground | /spot/mapping/occupancy_grid |
-| /spot/depth/plane_segmentation/ground     |                              |
-| /odom/ground_truth                        |                              |
-
-The created occupancy map updates dynamically when SPOT is moving. 
-
-![](images/update_slam.gif)
 
 # 2. Usage <a name="u"></a>
 

@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="trajectory" type="trajectory.py" name="trajectory" output="screen"/>
+
+    <!-- Launch the spwan_robot.launch file from the spot_config package -->
+    <include file="$(find rrt)/launch/rrt.launch" /> 
+
+    <!-- <include file="$(find champ_teleop)/launch/teleop.launch" launch-prefix="xterm -e" /> -->
+</launch>

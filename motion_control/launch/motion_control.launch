@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="motion_control" type="motion_control.py" name="motion_control" output="screen"/>
+    <node pkg="slam" type="grid_position_transform.py" name="grid_position_transform" output="screen"/>
+
+    <!-- Launch the spwan_robot.launch file from the spot_config package -->
+    <!-- <include file="$(find trajectory)/launch/trajectory.launch" />  -->
+
+    <!-- <include file="$(find champ_teleop)/launch/teleop.launch" launch-prefix="xterm -e" /> -->
+</launch>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(slam)
+project(explore)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -7,17 +7,6 @@ project(slam)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/move_base_msgs/;$CMAKE_PREFIX_PATH")
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/rospy/;$CMAKE_PREFIX_PATH")
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/ros_numpy/;$CMAKE_PREFIX_PATH")
-
-# set(ros_numpy_DIR "/opt/ros/noetic/share/ros_numpy/cmake")
-# set(rospy_DIR "/opt/ros/noetic/share/rospy/cmake")\
-
-# list(APPEND CMAKE_PREFIX_PATH "~/opt/ros/noetic")
-# set(ros_numpy_DIR "~/opt/ros/noetic/share/ros_numpy/cmake")
-# set(rospy_DIR "~/opt/ros/noetic/share/rospy/cmake")
-
 find_package(catkin REQUIRED COMPONENTS
   rospy
   ros_numpy
@@ -119,7 +108,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES slam
- CATKIN_DEPENDS rospy ros_numpy std_msgs actionlib_msgs move_base_msgs actionlib
+CATKIN_DEPENDS rospy ros_numpy std_msgs actionlib_msgs move_base_msgs actionlib
 #  DEPENDS system_lib
 )
 
@@ -175,14 +164,7 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-   src/plane_segmentation.py
-   src/occupancy_map.py
-   src/explore_frontiers.py
-   src/motion_control.py
    src/explore.py
-   src/grid_position_transform.py
-   src/image2pointcloud.py
-   src/change_frame_id.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
