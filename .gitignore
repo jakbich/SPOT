@@ -1,13 +1,13 @@
 .idea/
 yolov3.weights
-motion_control/
-readme_images/
-rrt/
-state_machine/
-slam/
-trajectory/
-yolo/
-human_interaction/
+# motion_control/
+# readme_images/
+# rrt/
+# state_machine/
+# slam/
+# trajectory/
+# yolo/
+# human_interaction/
 .vscode
 *.weights
 *.bag
