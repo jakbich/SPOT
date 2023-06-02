@@ -1,6 +1,5 @@
 
 
-
 # 1. About the package <a name="atp"></a>
  **Course:**  Multidisciplinary Project (RO47007) \
  **Program:** Msc Robotics @ TU Delft            
