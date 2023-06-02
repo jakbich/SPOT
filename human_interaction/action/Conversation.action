@@ -1,8 +1,0 @@
-# Define the goal
-string conv_type
----
-# Define the result
-string answer
----
-# Define a feedback message
-string current_question
