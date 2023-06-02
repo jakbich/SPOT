@@ -22,8 +22,8 @@ class MotionControl:
         self.server.start()
 
         # Robot variables
-        self.linear_vel = 0.5 # m/s
-        self.angular_vel = 0.5 # rad/s
+        self.linear_vel = 0.15 # m/s
+        self.angular_vel = 0.15 # rad/s
         self.robot_pos = None
         self.robot_yaw = None
         self.goal_pos = None
@@ -122,8 +122,41 @@ class MotionControl:
         # Spot is at the goal
         self.twist_msg.linear.x = 0
 
-        # Publish twist
+        # Publish the final twist message
         self.cmd_vel_pub.publish(self.twist_msg)
+
+        # distance_to_goal = 1000 # Initialize to a large number
+        # # While loop for rotating and moving to the goal orientation
+        # while abs(angle_to_goal) > self.angle_tol or distance_to_goal > self.pos_tol:
+        #     # Update 
+        #     new_msg = rospy.wait_for_message("/spot/mapping/grid_location", Float64MultiArray)
+        #     new_pos = new_msg.data[:2]
+        #     new_yaw = new_msg.data[2]
+
+        #     angle_to_goal = math.atan2(goal[1] - new_pos[1], goal[0] - new_pos[0]) - new_yaw
+        #     distance_to_goal = math.sqrt((goal[0] - new_pos[0])**2 + (goal[1] - new_pos[1])**2)
+
+        #     if abs(angle_to_goal) > self.angle_tol:
+        #         rospy.logwarn("Rotating")
+        #         self.twist_msg.angular.z = self.angular_vel * np.sign(angle_to_goal)
+        #     else:
+        #         self.twist_msg.angular.z = 0
+
+        #     # move to goal only if the angle is withing -45 to 45 degrees to the goal
+        #     if distance_to_goal > self.pos_tol and abs(angle_to_goal) < math.pi/4:
+        #         rospy.logwarn("Moving")
+        #         self.twist_msg.linear.x = self.linear_vel
+        #     else:
+        #         self.twist_msg.linear.x = 0
+
+        #     self.cmd_vel_pub.publish(self.twist_msg)
+        
+        # # Spot is at the goal
+        # self.twist_msg.linear.x = 0
+        # self.twist_msg.angular.z = 0
+
+        # # Publish twist
+        # self.cmd_vel_pub.publish(self.twist_msg)
 
         # # While loop to take care of the final rotation
         # angle_to_orientation = self.goal_yaw - new_yaw
