@@ -54,12 +54,13 @@ This node is subscribed and publishes to the topics below.
 | /spot/mapping/occupancy_grid  | rrt_path                  | /spot/depth/frontright/pointcloud |
 | /odom/ground_truth            |                           | /spot/depth/frontleft/pointcloud  |
 
-The visualized result of the ``explore`` node should look like this:
-
+Two different results of the node could be like:
 <div style="text-align:center">
- <img src="images/depth_image.png">
+ <img src="images/explore_1.png" alt="Image 2" width="400" /> 
+ <img src="images/explore_3.png" alt="Image 3" width="430" />
 </div>
 
+> Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Therefore, it is recommended to hide the robot model in Rviz. The red marker represents goal position. 
 
 
 # 2. Usage <a name="u"></a>
@@ -85,70 +86,68 @@ This will startup both Gazebo and Rviz, SPOT should also be visible wihtin the G
  <img src="images/simulation.png">
 </div>
 
-### Running SLAM <a name="rslam"></a>
+### Running Explore <a name="rslam"></a>
 If the simulation started, all the nodes described within this README can be launched using one launch file:
 ```console
-roslaunch slam mapping.launch
+roslaunch explore full_explore.launch
 ```
+
+
+#### Occupancy map
 The created occupancy map can be visualized in Rviz by clicking on:
 ``Panels`` &rarr; ``Add`` &rarr; ``Topics`` &rarr; ``/spot/mapping/occupancy_grid``
 
 This should display the occupancy map as shown in the image below. 
+
 <div style="text-align:center">
- <img src="images/occupancy_map.png", height=300>
-</div
+ <img src="images/occupancy_map_2.png">
+</div>
 
-Note however, that the robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
+> Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
 
-To visualize how the occupancy map updates over time, the movement of SPOT can be simulated using the keyboard. This can be done by running the command below:
-```console
-roslaunch champ_teleop teleop.launch
-```
-When you now move arround SPOT, the occupancy map will update accordingly as visible GIF above.
+
+#### Explore
+To test whether the ``explore`` node has succesfully launched, the result of the node can be visualized by clicking on: 
+``Panels`` &rarr; ``Add`` &rarr; ``Topics`` &rarr; ``/spot/mapping/active_slam/goal``.
+
+This should show a similar result as the image above. However, the goal may not be exactly the same due the goal being a random goal in the frontier.
+
 
 ### Running all the nodes individually <a name="rind"></a>
-Every node has his own launch file to control the dependencies.
+The Explore package consists only of the ``explore`` node. However for this node to run, other depencies from other packages also need to run. 
 
-Run the node ``image2pointcloud``:
-```console
-roslaunch slam image2pointcloud.launch
-```
+Run the the node ``explore.py`` from SLAM:
+````console
+rosrun slam explore.py
+````
 
-Run the node ``plane_segmentation``:
-```console
-roslaunch slam plane_segmentation.launch
-```
+Run the node ``rrt_path``:
+````console
+roslaunch rrt rrt.launch
+````
+
+Run the package Mapping:
+````console
+roslaunch slam mapping.launch
+````
+
+
+> Note: Each command needs to be run in a new terminal that is sourced each time. 
 
 ## 3. File Structure <a name="fs"></a>
-
 ````
-├── action
-│   └── Motion.action                   # Action files for the conversation server
-├── CMakeLists.txt                      # CMakeLists.txt for the package
-├── config                              # Configuration files for both packages
-│   ├── occupancy_grid.yaml
-│   └── plane_segmentation.yaml
-├── images                              # Images and GIFs used in the README
-│   ├── depth_image.png
-│   ├── occupancy_map.png
-│   ├── segmentation.png
-│   ├── simulation.png
-│   └── update_slam.gif
-├── launch                              # Launch files
-│   ├── active_slam.launch
-│   ├── frontier_exploration.launch
-│   ├── image2pointcloud.launch
-│   ├── mapping.launch
-│   └── plane_segmentation.launch
+├── CMakeLists.txt              # CMakeLists.txt for the package
+├── images                      # Images used in the README
+│   ├── explore_1.png
+│   ├── explore_3.png
+│   └── simulation.png
+├── launch                      # Launch files  
+│   ├── explore.launch
+│   └── full_explore.launch
 ├── package.xml
 ├── README.md
 └── src
-    ├── change_frame_id.py
-    ├── explore_frontiers.py
-    ├── explore.py
-    ├── grid_position_transform.py
-    ├── image2pointcloud.py             # Definition of the image2pointcloud node
-    ├── motion_control.py
-    ├── occupancy_map.py                # Definition of the occupancy_map node
-    └── plane_segmentation.py           # Definition of the plane_segmentation node
-```` 
+    └── explore.py              # Definition of the explore node
+
+````
+

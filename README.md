@@ -40,7 +40,10 @@ The project group would like to express our gratitude to the TNO company for pro
 
 # 2. Node overview <a name="nov"></a>
 
-This repository contains all necessary files to build all 10 ROS nodes of the 7 packages, namely: 
+This repository contains all necessary files to build all 11 ROS nodes of the 8 packages, namely: 
+
+- explore ([Link to README](explore/README.md))
+    - ``explore`` 
 
 - human interaction ([Link to README](human_interaction/README.md))
     - ``bracelet_gui_node`` 
@@ -205,6 +208,8 @@ Build your workspace
 
 ## 3.4 Confirming installation <a name="ins_confirm"></a>
 To confirm that all the packages are installed correctly, refer to the linked READMEs of each package:
+
+- [README explore](explore/README.md)
 
 - [README human_interaction](human_interaction/README.md)
 

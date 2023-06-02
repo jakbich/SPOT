@@ -49,14 +49,12 @@ This node is subscribed and publishes to the topics below and is client to the s
 | /spot/mapping/occupancy_grid  | rrt_path                  | /spot/planning/path_marker    |
 |                               |                           | /spot/planning/path_marker2   |
 
-The vizualized result of the ``rrt_path`` node should look like this:
-<div style="text-align:center">
- <img src="images/rrt_image.png">
-</div>
+In combination with the dependency with ``motion_control`` SPOT is able to follow the path. This is visualized below with a playback speed of 2x: 
+![](images/rrt.gif)
 
-> Note: Due to troubleshooting the SPOT is not ready moving steadily to the goal. This is caused by the RRT path being to tight around obstacles. We are currently working on adding more constraints to the algorithm so that this will be fixed. 
+> Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Therefore, it is recommended to hide the robot model in Rviz. The blue marker represents the robot position. 
 
-> Note: he robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Therefore, it is recommended to hide the robot model in Rviz. The blue marker represents the robot position. 
+> Note: The path is executed except for the last point. This point will be at the frontier of the unkown OccupancyGrid and therefore we do not know yet wheter it is occupied or free. So after the second to last point is reached, the node reports a succes. 
 
 # 2. Usage <a name="u"></a>
 
@@ -150,7 +148,8 @@ roslaunch motion_control motion_control.launch
 ├── CMakeLists.txt              # CMakeLists.txt for the package
 ├── images                      # Images used in the README 
 │   ├── occupancy_map.png
-│   ├── rrt_image.png
+│   ├── rrt.gif
+│   ├── rrt_image_2.png
 │   └── simulation.png
 ├── launch                      # Launch files
 │   ├── full_rrt.launch
@@ -165,4 +164,6 @@ roslaunch motion_control motion_control.launch
     ├── rrt_path.py            # Definition of the rrt_path node
     └── yaml_to_map.py         # IGNORE: old file
 ````
+
 > Note: There are some old files in the package. These will be removed once they are of no more use to us. Currently we are still using them a bit for looking up old code. 
+
