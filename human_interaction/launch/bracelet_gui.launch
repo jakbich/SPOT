@@ -1,0 +1,22 @@
+<launch>
+   
+	<rosparam 
+   	command="load" 
+   	file="$(find human_interaction)/config/recognize_speech.yaml" 
+   	/>
+
+	<node 
+	pkg="human_interaction" 
+	type="recognize_speech.py" 
+	name="conversation_server" 
+	output="screen"
+/>
+
+	<node 
+	pkg="human_interaction" 
+	type="bracelet_gui.py" 
+	name="bracelet_gui_node" 
+	output="screen"
+/>
+
+</launch>
