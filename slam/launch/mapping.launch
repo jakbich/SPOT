@@ -3,10 +3,8 @@
     <rosparam command="load" file="$(find slam)/config/occupancy_grid.yaml" />
     <rosparam command="load" file="$(find slam)/config/plane_segmentation.yaml"/>
     
-    <!-- Start the ground_plane_removal node -->
-    <node pkg="slam" type="image2pointcloud.py" name="image2pointcloud" output="screen"/>
+    <include file="$(find slam)/launch/image2pointcloud.launch"/>
+
     <node pkg="slam" type="plane_segmentation.py" name="plane_segmentation" output="screen"/>
     <node pkg="slam" type="occupancy_map.py" name="occupancy_map" output="screen"/>
-
-    <!-- <include file="$(find champ_teleop)/launch/teleop.launch" launch-prefix="xterm -e" /> -->
 </launch>
