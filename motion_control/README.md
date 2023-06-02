@@ -1,6 +1,5 @@
 
 
-
 # 1. About the package <a name="atp"></a>
  **Course:**  Multidisciplinary Project (RO47007) \
  **Program:** Msc Robotics @ TU Delft            
@@ -27,8 +26,8 @@ TThis package can be used in combination with the other ROS packages contained i
     1.1 [ROS-Node motion_control](#r1)
 
 2. [Usage](#u)\
-    3.1 [Starting the simulation](#rsim)\
-    3.2 [Running Motion_Control](#rslam)
+    2.1 [Starting the simulation](#rsim)\
+    2.2 [Running Motion_Control](#rslam)
     
     
 3. [File Structure](#fs)
