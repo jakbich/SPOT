@@ -1,4 +1,6 @@
-.vscode
+.idea/
+yolov3.weights
+
 # explore/
 motion_control/
 readme_images/
@@ -8,7 +10,6 @@ slam/
 trajectory/
 yolo/
 human_interaction/
-.idea/
 
 .vscode
 *.weights
