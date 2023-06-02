@@ -1,1 +1,14 @@
+.vscode/
+
 .idea/
+yolov3.weights
+
+explore/
+motion_control/
+readme_images/
+# rrt/
+state_machine/
+slam/
+trajectory/
+yolo/
+human_interaction/
