@@ -7,6 +7,7 @@ import actionlib
 
 from human_interaction.msg import ConversationAction, ConversationGoal
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from std_srvs.srv import Trigger, TriggerRequest
 
 
 # define state HelpNeeded
@@ -65,8 +66,8 @@ class Approach(smach.State):
         #     print("Object ID: ", userdata.object_id)
         #     return 'failed_goal_reached'
         
-        self.goal.target_pose.pose.position.x = 80
-        self.goal.target_pose.pose.position.y = 80
+        # self.goal.target_pose.pose.position.x = 80
+        # self.goal.target_pose.pose.position.y = 80
 
         self.client.send_goal(self.goal)
         self.client.wait_for_result(rospy.Duration(60))
@@ -95,6 +96,20 @@ class Mapping(smach.State):
 
     def execute(self, userdata):
         rospy.loginfo(f"Executing state mapping for the {self.round_counter} time")
+
+        rospy.loginfo("Waiting for service /spot/explore_frontiers...")
+        rospy.wait_for_service('/spot/explore_frontiers')
+        rospy.loginfo("Service /spot/explore_frontiers is available")
+
+        # Create the connection to the service. Remeber it's a Trigger service
+        frontier_service = rospy.ServiceProxy('/spot/explore_frontiers', Trigger)
+
+        # Create an object of type TriggerRequest. We need a TriggerRequest for a Trigger service
+        # We don't need to pass any argument because it doesn't take any
+        frontier_trigger = TriggerRequest()
+
+        # Now send the request through the connection
+        result = frontier_service(frontier_trigger)
 
         if self.round_counter == 10:
             rospy.loginfo("Mapping done")
