@@ -5,14 +5,23 @@
  **Last Maintained Date:**  01.06.2023   
 
 
+
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
  
 
-<img src="readme_images/cor.png" alt="Image 2" width="300" /> 
-<img src="readme_images/tno.png" alt="Image 3" width="320" />
+<img src="readme_images/cor.png" alt="Image 2" width="260" /> 
+<img src="readme_images/spot_cartoon.png" alt="Image 3" width="240" />
+<img src="readme_images/tno.png" alt="Image 4" width="260" />
 
+#### Project Description
+In this project the SPOT robot will navigate through a care environment. For the sake of simplicity the demo will take place on a flat floor with no stairs or height differences. The SPOT robot that is currently available at CoR is operated using ROS driver. With the ROS driver it is able to send Twist ROS messages to move the robot. The SPOT is also equipped with an arm. This will be pick up hand-sized objects and place them somewhere else.
 
+#### Challenge
+The primary challenge of this project is to develop an object delivery system where the SPOT robot picks up a specific object. Once the object is grasped, the robot should navigate within a predefined space, searching for the correct person to deliver the object. The robot's camera will be used to detect and identify the correct person. In case SPOT has found the person the Spot will walk to the person and place the object on the ground. The operation of the arm is done manually.
+
+#### Acknowledgments
+The project group would like to express our gratitude to the TNO company for providing this exciting case study and opportunity. Additionally, the project group appreciates the support and resources provided by CoR for providing the SPOT robot and available simulation for this project.
 
 # Table of Contents
 
@@ -31,7 +40,10 @@ This repository is part the submission for the project of the course **Multidisc
 
 # 2. Node overview <a name="nov"></a>
 
-This repository contains all necessary files to build all 10 ROS nodes of the 7 packages, namely: 
+This repository contains all necessary files to build all 11 ROS nodes of the 8 packages, namely: 
+
+- explore ([Link to README](explore/README.md))
+    - ``explore`` 
 
 - human interaction ([Link to README](human_interaction/README.md))
     - ``bracelet_gui_node`` 
@@ -196,6 +208,8 @@ Build your workspace
 
 ## 3.4 Confirming installation <a name="ins_confirm"></a>
 To confirm that all the packages are installed correctly, refer to the linked READMEs of each package:
+
+- [README explore](explore/README.md)
 
 - [README human_interaction](human_interaction/README.md)
 

@@ -1,5 +1,3 @@
-from tkinter import font
-from tkinter import ttk 
 import tkinter
 from ttkthemes import ThemedTk
 import customtkinter 
