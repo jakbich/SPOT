@@ -170,7 +170,6 @@ catkin_install_python(PROGRAMS
    src/motion_control.py
    src/explore.py
    src/grid_position_transform.py
-   src/image2pointcloud.py
    src/change_frame_id.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
