@@ -47,15 +47,14 @@ class Yolo():
         self.camera_target = '/base_footprint'
 
         # Get transformatin matrix between base footpint (origin of pointcloud) to each camera frame
-        self.right_base_cam = self.get_transformation(str('/base_footprint'),str('/frontright_rgb_optical_frame'))
-        self.left_base_cam = self.get_transformation(str('/base_footprint'),str('/frontleft_rgb_optical_frame' ))
-
-
-        
+        self.right_trans = self.get_transformation(str('/base_footprint'),str('/frontright_rgb_optical_frame'))
+        self.left_trans = self.get_transformation(str('/base_footprint'),str('/frontleft_rgb_optical_frame' ))
 
         #create publishers
         self.image_pub = rospy.Publisher('/spot/camera/boundingBoxCamera', Image, queue_size=2)
         
+    
+
         self.get_camera_info()
 
         if self.intrinsic_calibration_left == None:
@@ -66,8 +65,8 @@ class Yolo():
 
         else:
             rospy.loginfo("Camera Information Successfully Obtained")
-            self.intrinsic_calibration_right = np.array(self.intrinsic_calibration_right).reshape(3,3)
-            self.intrinsic_calibration_left = np.array(self.intrinsic_calibration_left).reshape(3,3)
+            self.intrinsic_calibration_right_inv = np.linalg.inv(np.array(self.intrinsic_calibration_right).reshape(3,3))
+            self.intrinsic_calibration_left_inv = np.linalg.inv(np.array(self.intrinsic_calibration_left).reshape(3,3))
 
 
         self.initialize_yolo()
@@ -142,14 +141,14 @@ class Yolo():
 
                 outputs = self.detect(self.cv_image)      #apply yolo to image
                 centers,confidences,class_names = self.draw_bounding_box(outputs,self.cv_image)  #contains multiple post-prosessing steps including non-maximum suppression
-                rospy.loginfo(self.intrinsic_calibration_right)
+
 
                 #turn pc_msg to numpy array
                 pc_base = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(pc_msg)
                 pc_hom_base = np.hstack((pc_base, np.ones(len(pc_base)).reshape(-1, 1)))
 
                 # Apply transformation and convert back to normal coordinates
-                pc_hom_camR = np.dot(self.right_base_cam, pc_hom_base.T).T
+                pc_hom_camR = np.dot(self.right_trans, pc_hom_base.T).T
                 pc_camR = pc_hom_camR[:, :3] / pc_hom_camR[:, -1:]
 
                 #for each detection by yolo find the closest pointcloud point that corresponds to this pixel coordinate
@@ -160,30 +159,26 @@ class Yolo():
                     center = centers[i]
                     class_name = class_names[i]
                     confidence = confidences[i]
-                    
-               
 
-                    #transform pc points to pixel coordinates in camera frame, then check closest point
-                    uvs = (self.intrinsic_calibration_right @ pc_camR.T).T
-                    uv = uvs[:,:2] / uvs[0,-1]
-                    dist = np.linalg.norm(uv-center,axis=1)
-                    index = np.argmin(dist)
+                    pixel_hom = np.array([center[0],center[1],1]).reshape(3,1)
+                    pixels = self.intrinsic_calibration_right_inv.dot(pixel_hom)
+                    x_c, y_c, _ = pixels.flatten()
 
-                    closest_point = uvs[index,:]
-                    closest_point_camR = closest_point.dot(np.linalg.inv(self.intrinsic_calibration_right))
+                    # Find the closest point in the point cloud
+                    distances = np.sqrt(np.sum((pc_camR[:, :2] - np.array([x_c, y_c])) ** 2, axis=1))
+                    closest_index = np.argmin(distances)
+                    closest_point_cam = (pc_camR[closest_index])
 
-                    right_cam_odom = self.get_transformation(str('frontright_rgb_optical_frame'),str('odom'))
-                    left_cam_odom = self.get_transformation(str('/frontleft_rgb_optical_frame' ),str('/odom'))
+                    #transform point back to base frame and append it to the list
+                    closest_point_base_hom = np.dot(np.linalg.inv(self.right_trans),np.append(closest_point_cam,1))
+                    closest_point_base =closest_point_base_hom[:3]/closest_point_base_hom[3]
 
-                    #transform point to odom frame 
-                    closest_point_odom_hom = np.dot(right_cam_odom,np.append(closest_point_camR,1))
-                    closest_point_odom =closest_point_odom_hom[:3]/closest_point_odom_hom[3]
-
+                  
                     #check if point already exist if so dont add this detection to the database
-                    unique = self.is_unique(closest_point_odom)
+                    unique = self.is_unique(closest_point_base)
 
                     if unique:
-                        detection = Detection(class_name,confidence,closest_point_odom)
+                        detection = Detection(class_name,confidence,closest_point_base)
                         self.detections.append(detection)
 
                 for detection in self.detections:
@@ -269,7 +264,7 @@ class Yolo():
         try:
             now = rospy.Time.now()
             self.tf_listener.waitForTransform(target, source, now, rospy.Duration(2.0))
-            position, quaternions = self.tf_listener.lookupTransform(target, source, now)
+            position, quaternions = self.tf_listener.lookupTransform(target, source, rospy.Time.now())
         except tf.Exception as e:
             rospy.logwarn("Failed to lookup transform: {}".format(e))
             

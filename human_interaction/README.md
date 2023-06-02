@@ -55,6 +55,16 @@ The package contains all the necessary files to build and run ``bracelet_gui_nod
 - display the current mission status of SPOT
 - triggering the soft stop function when necessary
 
+
+
+
+This node is subscribed and publishes to the topics below and is client to the server below.
+| **Subscribes:**               | **Client to server:**     | **Publishes:**         |
+|-------------------------------|---------------------------|------------------------|
+|/spot/mission_status | conversation_server            |     mission_goal          |
+| | search           |               |
+| | soft_stop           |               |
+
 The GUI after startup should look like this:
 
 <div style="text-align:center">
@@ -68,6 +78,15 @@ The package contains all the necessary files to build and run the ``conversation
 - transcribe the speech input to text
 - make a simple conversation to determine which object the human requires
 - trigger the ROS action server to start the mission with the required object
+
+This node is subscribed and publishes to the topics below and is client to the server below.
+| **Subscribes:**               | **Client to server:**     | **Publishes:**         |
+|-------------------------------|---------------------------|------------------------|
+|               
+| | search           |       mission_goal        |
+| |          |               |
+
+
 
 An example of the conversation is shown below:
 
@@ -110,6 +129,16 @@ If your machine does not yet have a speech engine installed, you can install [es
 ```
 sudo apt-get install espeak
 ```
+
+
+For the GUI
+
+'''
+sudo apt-get install python3-tk
+
+pip install customtkinter
+
+'''
 
 # 3. Usage <a name="u"></a>
 
