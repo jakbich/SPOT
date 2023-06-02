@@ -1,0 +1,8 @@
+<launch>
+    <node pkg="slam" type="active_slam.py" name="active_slam" output="screen"/>
+    
+    <!-- Launch the spwan_robot.launch file from the spot_config package -->
+    <include file="$(find slam)/launch/mapping.launch" /> 
+
+    <!-- <include file="$(find champ_teleop)/launch/teleop.launch" launch-prefix="xterm -e" /> -->
+</launch>
