@@ -14,6 +14,8 @@ from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker
 import matplotlib.pyplot as plt
 
+from std_srvs.srv import Trigger, TriggerResponse
+
 np.set_printoptions(threshold=sys.maxsize)  # for debugging
 
 
@@ -164,16 +166,17 @@ class Exploration:
             # cbar = ax.figure.colorbar(im, ax = ax)
             # cbar.ax.set_ylabel("Color bar", rotation = -90, va = "bottom")
             # plt.show()
-            # break
+
+            break
+        return TriggerResponse(success=True)
 
 
 def main():
     """ The main() function. """
     rospy.init_node('exploration')
     exploration = Exploration()
-    exploration.explore()
-
-
+    explore_service = rospy.Service('/spot/explore_frontiers', Trigger, exploration.explore())
+    
 if __name__ == '__main__':
     try:
         main()
