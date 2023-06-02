@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(slam)
+project(human_interaction)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -7,24 +7,17 @@ project(slam)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/move_base_msgs/;$CMAKE_PREFIX_PATH")
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/rospy/;$CMAKE_PREFIX_PATH")
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/opt/ros/noetic/share/ros_numpy/;$CMAKE_PREFIX_PATH")
-
-# set(ros_numpy_DIR "/opt/ros/noetic/share/ros_numpy/cmake")
-# set(rospy_DIR "/opt/ros/noetic/share/rospy/cmake")\
-
-# list(APPEND CMAKE_PREFIX_PATH "~/opt/ros/noetic")
-# set(ros_numpy_DIR "~/opt/ros/noetic/share/ros_numpy/cmake")
-# set(rospy_DIR "~/opt/ros/noetic/share/rospy/cmake")
-
 find_package(catkin REQUIRED COMPONENTS
   rospy
-  ros_numpy
-  genmsg actionlib_msgs
-  move_base_msgs
+  std_msgs
+  genmsg
+  actionlib_msgs
   actionlib
+  rqt_gui_py
 )
+
+add_action_files(DIRECTORY action FILES Conversation.action)
+generate_messages(DEPENDENCIES actionlib_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -73,18 +66,17 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
-# Generate actions in the 'action' folder
+## Generate actions in the 'action' folder
 # add_action_files(
-#   DIRECTORY action FILES Motion.action
+#   FILES
+#   Action1.action
+#   Action2.action
 # )
 
-# Generate added messages and services with any dependencies listed here
+## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-#   actionlib_msgs
-#   move_base_msgs
-#   actionlib
+#   std_msgs
 # )
 
 ################################################
@@ -118,9 +110,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES slam
- CATKIN_DEPENDS rospy ros_numpy std_msgs actionlib_msgs move_base_msgs actionlib
-#  DEPENDS system_lib
+#  LIBRARIES human_interaction
+  CATKIN_DEPENDS rospy std_msgs actionlib
+  #  DEPENDS system_lib
 )
 
 ###########
@@ -132,12 +124,11 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${numpy_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/slam.cpp
+#   src/${PROJECT_NAME}/human_interaction.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -148,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/slam_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/human_interaction_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -175,18 +166,11 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-   src/plane_segmentation.py
-   src/occupancy_map.py
-   src/image2pointcloud.py
-   src/explore_frontiers.py
-   src/motion_control.py
-   src/explore.py
-   src/grid_position_transform.py
-   src/image2pointcloud.py
-   src/change_frame_id.py
-
+    scripts/bracelet_gui.py
+    scripts/recognize_speech.py
+    scripts/recognize_speech_client.py 
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+ )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
@@ -210,18 +194,18 @@ catkin_install_python(PROGRAMS
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(FILES
+plugin.xml
+   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+ )
+
 
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_slam.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_human_interaction.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

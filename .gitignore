@@ -9,3 +9,9 @@ slam/
 trajectory/
 yolo/
 human_interaction/
+.idea/
+
+.vscode
+*.weights
+*.bag
+
