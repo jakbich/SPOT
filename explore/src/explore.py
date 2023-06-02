@@ -4,10 +4,8 @@
 
 import rospy
 import actionlib
-import tf2_ros
 import numpy as np
 import sys
-import random
 import math
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_msgs.msg import Header
