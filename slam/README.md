@@ -1,5 +1,6 @@
 
 
+
 # 1. About the package <a name="atp"></a>
  **Course:**  Multidisciplinary Project (RO47007) \
  **Program:** Msc Robotics @ TU Delft            
@@ -30,9 +31,9 @@ These packages can be used in combination with the other ROS packages contained 
     1.3 [ROS-Node occupancy_map](#r3)
 
 2. [Usage](#u)\
-    2.1 [Starting the simulation](#rsim)\
-    2.2 [Running SLAM](#rslam)\
-    2.3 [Running all the nodes individually](#rind)
+    3.1 [Starting the simulation](#rsim)\
+    3.2 [Running SLAM](#rslam)\
+    3.3 [Running all the nodes individually](#rind)
     
     
 3. [File Structure](#fs)

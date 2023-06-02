@@ -179,9 +179,13 @@ include
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
+
   # src/rrt_msg_node.py
   # src/rrt_star_node.py
+  src/rrt_msg_node.py
   src/rrt_path.py
+  src/yaml_to_map.py
+
   
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

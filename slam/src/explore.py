@@ -23,8 +23,9 @@ class Exploration:
     def __init__(self):
         self.pub_goal = rospy.Publisher("/spot/mapping/active_slam/goal", Marker, queue_size=3)
         self.pub_cost_map = rospy.Publisher("/spot/mapping/active_slam/cost_map", OccupancyGrid, queue_size=1)
-        self.__move_base_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
-        self.__move_base_client.wait_for_server()
+        self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
+        self.rrt_path_client.wait_for_server()
+        rospy.logwarn("RRT path server is up.")
 
     def image_gradient(self, I, operator='Sobel'):
         """ Outputs an image's gradient based on one of three operators.
@@ -65,11 +66,14 @@ class Exploration:
 
     def explore(self):
         """ Autonomous exploration. Sends pose goals to move_base. """
+        rospy.logwarn("Starting exploration.")
         while True:
 
             # Map data:
             map_data = rospy.wait_for_message("/spot/mapping/occupancy_grid", OccupancyGrid)
+            rospy.logwarn("Received map data.")
             robot_pos = rospy.wait_for_message("/odom/ground_truth", Odometry)
+            rospy.logwarn("Received robot position.")
             robot_pos = np.array([robot_pos.pose.pose.position.x, robot_pos.pose.pose.position.y, robot_pos.pose.pose.position.z])
 
             map = np.array(map_data.data)
@@ -93,6 +97,8 @@ class Exploration:
 
             index = np.random.choice(gradient_indices.shape[0])
             map_x, map_y = gradient_indices[index]
+
+            rospy.logwarn("map x: " + str(map_x) + " map y: " + str(map_y))
 
             goal = MoveBaseGoal()
             goal.target_pose.header.frame_id = "odom"  # has to be in map frame
@@ -125,17 +131,22 @@ class Exploration:
             marker.color.b = 0.0
 
             self.pub_goal.publish(marker)
+            rospy.logwarn(marker.pose.position.x)
+
+            # Transform odom coordinates to map coordinates:
+            goal.target_pose.pose.position.x = map_x
+            goal.target_pose.pose.position.y = map_y
 
 
-            self.__move_base_client.send_goal(goal)
-            self.__move_base_client.wait_for_result(timeout=rospy.Duration(10.0))
-            result = self.__move_base_client.get_result()
+            self.rrt_path_client.send_goal(goal)
+            self.rrt_path_client.wait_for_result()
+            result = self.rrt_path_client.get_result()
 
             if result:
                 rospy.loginfo("Goal reached!")
             else:
                 rospy.loginfo("Failed to reach goal!")
-                self.__move_base_client.cancel_goal()
+                self.rrt_path_client.cancel_goal()
 
 
             map_msg = OccupancyGrid()

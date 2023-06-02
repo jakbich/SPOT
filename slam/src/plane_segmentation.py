@@ -24,6 +24,9 @@ class PlaneSegmentation:
         self.left_camera_source = rospy.get_param("/left_camera/source_frame")
         self.left_camera_target = rospy.get_param("/left_camera/target_frame")
         self.segmentation_treshold = rospy.get_param("/segmentation_treshold")
+        update_rate = rospy.get_param("/update_rate")
+        
+        self.rate = rospy.Rate(update_rate)
 
         # Get fixed transformation matrix between cameras and base of robot
         self.right_trans = self.get_transformation(str(self.right_camera_source),str(self.right_camera_target))
@@ -39,8 +42,16 @@ class PlaneSegmentation:
         ts = TimeSynchronizer([sub_right, sub_left], queue_size=2)
         ts.registerCallback(self.callback)
 
+    
+    # Run the node on the specified rate
+    def run(self) -> None:
+        while not rospy.is_shutdown():
+            self.rate.sleep()
+
+
     # Synchronized callback
     def callback(self, right_msg, left_msg) -> None:
+        rospy.logwarn("Plane segmentation")
         # Read synchronised time
         time = right_msg.header.stamp
 
@@ -110,9 +121,8 @@ class PlaneSegmentation:
 
 if __name__ == '__main__':
     try:
-        PlaneSegmentation()
-        rospy.spin()
-        
+        node = PlaneSegmentation()
+        node.run()
     except rospy.ROSInterruptException:
         rospy.logwarn("The node plane_segmentation could not be launch")
         pass
