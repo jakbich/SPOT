@@ -101,24 +101,36 @@ class Mapping(smach.State):
         rospy.wait_for_service('/spot/explore_frontiers')
         rospy.loginfo("Service /spot/explore_frontiers is available")
 
-        # Create the connection to the service. Remeber it's a Trigger service
-        frontier_service = rospy.ServiceProxy('/spot/explore_frontiers', Trigger)
-
-        # Create an object of type TriggerRequest. We need a TriggerRequest for a Trigger service
-        # We don't need to pass any argument because it doesn't take any
-        frontier_trigger = TriggerRequest()
-
-        # Now send the request through the connection
-        result = frontier_service(frontier_trigger)
-
-        if self.round_counter == 10:
-            rospy.loginfo("Mapping done")
-            return 'done'
         
-        else:
-            self.round_counter += 1
-            rospy.loginfo(self.round_counter)
-            return 'not_done'
+
+        
+
+        for i in range(10):
+                # Create the connection to the service. Remeber it's a Trigger service
+            frontier_service = rospy.ServiceProxy('/spot/explore_frontiers', Trigger)
+
+            # Create an object of type TriggerRequest. We need a TriggerRequest for a Trigger service
+            # We don't need to pass any argument because it doesn't take any
+            frontier_trigger = TriggerRequest()
+            # Now send the request through the connection
+            rospy.loginfo("Calling frontier exploration service")
+            result = frontier_service(frontier_trigger)
+
+            # Print the result given by the service called
+            if result.success:
+                rospy.loginfo("Frontier exploration service called successfully")
+            else:
+                rospy.loginfo("Frontier exploration service call failed")
+
+
+        # if self.round_counter == 10:
+        #     rospy.loginfo("Mapping done")
+        #     return 'done'
+        
+        # else:
+        #     self.round_counter += 1
+        #     rospy.loginfo(f"Exploration no. {self.round_counter} done")
+        #     return 'not_done'
 
 
 if __name__ == '__main__':
