@@ -65,9 +65,6 @@ This repository contains all necessary files to build all 11 ROS nodes of the 8 
 - state machine ([Link to README](state_machine/README.md))
     - ``state_machine``
 
-- trajectory ([Link to README](trajectory/README.md))
-    - ``trajectory_node``
-
 - yolo ([Link to README](yolo/README.md))
     - ``detection``
 
@@ -220,8 +217,6 @@ To confirm that all the packages are installed correctly, refer to the linked RE
 - [README slam](slam/README.md)
 
 - [README state_machine](state_machine/README.md)
-
-- [README trajectory](trajectory/README.md)
 
 - [README yolo](yolo/README.md)
 
