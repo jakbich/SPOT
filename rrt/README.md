@@ -7,7 +7,7 @@
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
 
-The package provides the necessary code to build and run the RRT-algorithm that is part of the planning/navigation part of the project.
+The package provides the necessary code to build and run the RRT*-algorithm that is part of the planning/navigation part of the project.
 
   
 It contains all necessary files to build one ROS node, namely: 
@@ -24,7 +24,7 @@ This package can be used in combination with the other ROS packages contained in
 
 2. [Usage](#u)\
     2.1 [Starting the simulation](#rsim)\
-    2.2 [Running RRT](#rslam)\
+    2.2 [Running RRT*](#rslam)\
     2.3 [Running all the nodes individually](#rind)
     
     
@@ -40,7 +40,7 @@ This package can be used in combination with the other ROS packages contained in
 
 
 ## ROS-Node rrt_path <a name="r1"></a>
-The ``rrt_path`` node contains the file that computes the path for SPOT to follow. This path is computed using the Rapidly exploring Random Tree algorithm in the OccupancyGrid. The node acts as an ActionServer that is triggered when it receives a MoveBaseGoal. This MoveBaseGoal will come from the ``yolo_detection``, ``bracelet_gui_node/conversation_server`` or ``explore`` nodes. After receiving the goal the path is computed. For each point in this path the ``motion_control`` ClientServer is called, after this servers notifies a succes, the next point in the path is send to the server. For testing purposes the ``rrt_path`` node publishes two Marker and one Path message to visualize the result. 
+The ``rrt_path`` node contains the file that computes the path for SPOT to follow. This path is computed using the Rapidly exploring Random Tree Star algorithm in the OccupancyGrid. The node acts as an ActionServer that is triggered when it receives a MoveBaseGoal. This MoveBaseGoal will come from the ``yolo_detection``, ``bracelet_gui_node/conversation_server`` or ``explore`` nodes. After receiving the goal the path is computed. For each point in this path the ``motion_control`` ClientServer is called, after this servers notifies a succes, the next point in the path is send to the server. For testing purposes the ``rrt_path`` node publishes two Marker and one Path message to visualize the result. 
 
 This node is subscribed and publishes to the topics below and is client to the server below.
 | **Subscribes:**               | **Client to server:**     | **Publishes:**                |
@@ -78,13 +78,13 @@ This will startup both Gazebo and Rviz, SPOT should also be visible wihtin the G
  <img src="images/simulation.png">
 </div>
 
-### Running RRT <a name="rslam"></a>
+### Running RRT* <a name="rslam"></a>
 If the simulation started, the node described in this README can be started together with all the packages it needs to run with one launch file:
 ````console
 roslaunch rrt full_rrt.launch
 ````
 
-It is important to note that in this launch file the ``explore`` will provide the MoveBaseGoal for the RRT path.
+It is important to note that in this launch file the ``explore`` will provide the MoveBaseGoal for the RRT* path.
 This can also come from the ``yolo_detection``, ``bracelet_gui_node/conversation_server`` or ``explore`` nodes.
 
 
@@ -101,7 +101,7 @@ This should display the occupancy map as shown in the image below.
 > Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
 
 
-#### RRT
+#### RRT*
 To test whether the ``rrt_path`` node has succesfully launched, the result of the node can be visualized by clicking on: 
 ``Panels`` &rarr; ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_steps``, ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_marker`` and ``Add`` &rarr; ``Topics`` &rarr; ``/spot/planning/path_marker2``. 
 
@@ -113,13 +113,13 @@ This should show a similar result as the image below. However, the goal and path
 </div>
 
 Where:
-- The Green line: is the path created by the RRT Algorithm.
+- The Green line: is the path created by the RRT* Algorithm.
 - The Blue Point: is the starting position of the Spot.
 - The Green Point: is the goal position where Spot will go while following the path.
 
 
 ### Running all the nodes individually <a name="rind"></a>
-The RRT package consists only of the ``rrt_path`` node. However for this node to run, other depencies from other packages also need to run. 
+The RRT* package consists only of the ``rrt_path`` node. However for this node to run, other depencies from other packages also need to run. 
 
 Run the node ``rrt_path``:
 ````console

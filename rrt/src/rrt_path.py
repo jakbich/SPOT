@@ -23,18 +23,19 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseFeedback, M
 
 class Node:
     """"
-    Node for RRT path planning algorithm
+    Node for RRT star path planning algorithm
     """
-    def __init__(self, x, y, parent=None) -> None:
+    def __init__(self, x, y, parent=None, parent_cost=0) -> None:
         self.x = int(x)
         self.y = int(y)
         self.parent = parent
+        self.parent_cost = parent_cost
 
-class RRT:
+class RRT_star:
     """
-    Class for RRT path planning algorithm
+    Class for RRT start path planning algorithm
     """
-    def __init__(self, start, goal, grid, max_iter=1000, step_size=10) -> None:
+    def __init__(self, start, goal, grid, max_iter=1000, step_size=5) -> None:
         self.start = Node(start[1], start[0])
         self.goal = Node(goal[0], goal[1])
         self.grid = grid
@@ -43,7 +44,7 @@ class RRT:
         self.max_iter = int(max_iter)
         self.step_size = step_size
 
-        self.collision_free_area = 3 # grid cells
+        self.collision_free_area = 5 # grid cells
 
         self.goal_proximity = 15 # grid distance to goal to consider goal reached
 
@@ -142,6 +143,16 @@ class RRT:
 
         if self.is_collision_free(nearest_node, new_node):
             new_node.parent = nearest_node
+            new_node.parent_cost = nearest_node.parent_cost + self.get_distance(nearest_node, new_node)
+
+            # Rewire the tree
+            for node in self.nodes:
+                if node != nearest_node and self.get_distance(node, new_node) < self.step_size and self.is_collision_free(node, new_node):
+                    node_cost = node.parent_cost + self.get_distance(node, new_node)
+                    if node_cost < new_node.parent_cost:
+                        new_node.parent = node
+                        new_node.parent_cost = node_cost
+
             self.nodes.append(new_node)
             return new_node
         
@@ -180,8 +191,8 @@ class RRT:
         path.reverse()
 
         return path  
+    
 
-            
 
 
 class RRTPath:
@@ -229,9 +240,10 @@ class RRTPath:
         self.yaw = pos_msg.data[2]
 
         start_pos = [self.pos[0], self.pos[1]]
+        check_start = [self.pos[1], self.pos[0]]
 
         # If the goal is too close to the robot, we just return
-        if np.linalg.norm(np.array(start_pos) - np.array(self.goal_pos)) < 10:
+        if np.linalg.norm(np.array(check_start) - np.array(self.goal_pos)) < 20:
             rospy.logwarn("Goal too close to robot")
             # self.server.set_succeeded()
             return    
@@ -261,7 +273,7 @@ class RRTPath:
 
         # Run RRT
         rospy.logwarn("Start RRT Algorithm")
-        rrt = RRT(start_pos, self.goal_pos, self.grid)
+        rrt = RRT_star(start_pos, self.goal_pos, self.grid)
 
         self.rrt_path = rrt.plan_path()
         if self.rrt_path is None:
