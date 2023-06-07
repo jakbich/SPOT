@@ -35,7 +35,7 @@ class RRT_star:
     """
     Class for RRT start path planning algorithm
     """
-    def __init__(self, start, goal, grid, max_iter=1000, step_size=5) -> None:
+    def __init__(self, start, goal, grid, max_iter=1000, step_size=8) -> None:
         self.start = Node(start[1], start[0])
         self.goal = Node(goal[0], goal[1])
         self.grid = grid
@@ -337,7 +337,7 @@ class RRTPath:
 
             marker = Marker()
             # x_marker, y_marker = self.pos
-            x_marker, y_marker = self.rrt_path[-2]
+            x_marker, y_marker = self.rrt_path[-1]
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD

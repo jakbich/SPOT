@@ -95,7 +95,7 @@ The created occupancy map can be visualized in Rviz by clicking on:
 This should display the occupancy map as shown in the image below. 
 
 <div style="text-align:center">
- <img src="images/occupancy_map_2.png">
+ <img src="images/grid-1.png">
 </div>
 
 > Note: The robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Theirfore, it is recomanded to hide the robot model in Rviz.
@@ -109,7 +109,7 @@ This should show a similar result as the image below. However, the goal and path
 
 
 <div style="text-align:center">
- <img src="images/rrt_image.png">
+ <img src="images/rrt-star-1.png">
 </div>
 
 Where:
