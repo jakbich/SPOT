@@ -6,7 +6,7 @@ import smach_ros
 import actionlib
 
 from human_interaction.msg import ConversationAction, ConversationGoal
-from explore.msg import ExploreAction, ExploreGoal
+from explore.msg import ExploreFrontiersAction, ExploreFrontiersGoal
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_srvs.srv import Trigger, TriggerRequest
 
@@ -89,22 +89,21 @@ class Mapping(smach.State):
                              outcomes=["done", "not_done"])
 
         self.round_counter = 0
-        self.client = actionlib.SimpleActionClient('explore', ExploreAction)
+        self.client = actionlib.SimpleActionClient('explore', ExploreFrontiersAction)
         rospy.loginfo("Waiting for 'explore' action server...")
         self.client.wait_for_server()
-        self.goal = ExploreGoal()
+        self.goal = ExploreFrontiersGoal()
 
 
     def execute(self, userdata):
-        rospy.loginfo(f"Executing state mapping for the {self.round_counter} time")
  
         # self.goal.start = True  # Change this based on your requirements
         rospy.loginfo(f"Started exploring")
-        for i in range(10):
+        for i in range(2):
+            rospy.loginfo("Calling frontier exploration service for the {i}. time")
             self.client.send_goal(self.goal)
             self.client.wait_for_result(rospy.Duration(120))
             result = self.client.get_result()
-
             rospy.loginfo(result)
             rospy.loginfo("Frontier exploration service called successfully")
 
@@ -150,15 +149,15 @@ if __name__ == '__main__':
     with sm:
         # Add states to the container
         smach.StateMachine.add("MAPPING", Mapping(), 
-                        transitions={"done": "APPROACH", 
+                        transitions={"done": "CONVERSATION", 
                                     "not_done": "MAPPING"},
                         remapping={"item_id": "item_id"})
         
 
-        # smach.StateMachine.add("CONVERSATION", Conversation(), 
-        #                        transitions={"object_specified": "APPROACH", 
-        #                                     "object_not_specified": "failed"},
-        #                        remapping={"item_id": "item_id"})
+        smach.StateMachine.add("CONVERSATION", Conversation(), 
+                               transitions={"object_specified": "APPROACH", 
+                                            "object_not_specified": "failed"},
+                               remapping={"item_id": "item_id"})
 
         smach.StateMachine.add("APPROACH", Approach(), 
                         transitions={"goal_reached": "finished", 

@@ -64,7 +64,7 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
-add_action_files(DIRECTORY action FILES Explore.action)
+add_action_files(DIRECTORY action FILES ExploreFrontiers.action)
 generate_messages(DEPENDENCIES actionlib_msgs)
 
 ################################################

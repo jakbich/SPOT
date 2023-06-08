@@ -1,9 +1,9 @@
 <launch>
-    
     <include file="$(find slam)/launch/mapping.launch"/>
     <include file="$(find motion_control)/launch/motion_control.launch"/>
-    <node pkg="rrt" type="rrt_path.py" name="rrt" output="screen"/>
-    <node pkg="explore" type="explore_env.py" name="explore_env" output="screen"/>
-    <!-- <include file="$(find human_interaction)/launch/conversation_server.launch" output="screen"/>  -->
+    <!-- <include file="$(find rrt)/launch/rrt.launch"  output="screen"/> -->
+    <node pkg="rrt" type="rrt_path.py" name="rrt" output="screen" />
+    <node pkg="explore" type="explore_env.py" name="explore_env" output="screen" />
+    <include file="$(find human_interaction)/launch/conversation_server.launch" output="screen"/> 
     <!-- <node pkg="state_machine" type="state_machine.py" name="state_machine" output="screen"/> -->
 </launch>
