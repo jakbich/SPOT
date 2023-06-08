@@ -1,0 +1,8 @@
+# Define the goal
+bool start
+---
+# Define the result
+bool finished
+---
+# Define a feedback message
+string points_found

@@ -6,6 +6,7 @@ import smach_ros
 import actionlib
 
 from human_interaction.msg import ConversationAction, ConversationGoal
+from explore.msg import ExploreAction, ExploreGoal
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_srvs.srv import Trigger, TriggerRequest
 
@@ -88,39 +89,44 @@ class Mapping(smach.State):
                              outcomes=["done", "not_done"])
 
         self.round_counter = 0
-        self.client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
-        rospy.loginfo("Waiting for 'motion_control' action server...")
+        self.client = actionlib.SimpleActionClient('explore', ExploreAction)
+        rospy.loginfo("Waiting for 'explore' action server...")
         self.client.wait_for_server()
-        self.goal = MoveBaseGoal()
+        self.goal = ExploreGoal()
 
 
     def execute(self, userdata):
         rospy.loginfo(f"Executing state mapping for the {self.round_counter} time")
-
-        rospy.loginfo("Waiting for service /spot/explore_frontiers...")
-        rospy.wait_for_service('/spot/explore_frontiers')
-        rospy.loginfo("Service /spot/explore_frontiers is available")
-
-        
-
-        
-
+ 
+        # self.goal.start = True  # Change this based on your requirements
+        rospy.loginfo(f"Started exploring")
         for i in range(10):
-                # Create the connection to the service. Remeber it's a Trigger service
-            frontier_service = rospy.ServiceProxy('/spot/explore_frontiers', Trigger)
+            self.client.send_goal(self.goal)
+            self.client.wait_for_result(rospy.Duration(120))
+            result = self.client.get_result()
 
-            # Create an object of type TriggerRequest. We need a TriggerRequest for a Trigger service
-            # We don't need to pass any argument because it doesn't take any
-            frontier_trigger = TriggerRequest()
-            # Now send the request through the connection
-            rospy.loginfo("Calling frontier exploration service")
-            result = frontier_service(frontier_trigger)
+            rospy.loginfo(result)
+            rospy.loginfo("Frontier exploration service called successfully")
 
-            # Print the result given by the service called
-            if result.success:
-                rospy.loginfo("Frontier exploration service called successfully")
-            else:
-                rospy.loginfo("Frontier exploration service call failed")
+        return "done"
+        
+
+        # for i in range(10):
+        #         # Create the connection to the service. Remeber it's a Trigger service
+        #     frontier_service = rospy.ServiceProxy('/spot/explore_frontiers', Trigger)
+
+        #     # Create an object of type TriggerRequest. We need a TriggerRequest for a Trigger service
+        #     # We don't need to pass any argument because it doesn't take any
+        #     frontier_trigger = TriggerRequest()
+        #     # Now send the request through the connection
+        #     rospy.loginfo("Calling frontier exploration service")
+        #     result = frontier_service(frontier_trigger)
+
+        #     # Print the result given by the service called
+        #     if result.success:
+        #         rospy.loginfo("Frontier exploration service called successfully")
+        #     else:
+        #         rospy.loginfo("Frontier exploration service call failed")
 
 
         # if self.round_counter == 10:
@@ -144,15 +150,15 @@ if __name__ == '__main__':
     with sm:
         # Add states to the container
         smach.StateMachine.add("MAPPING", Mapping(), 
-                        transitions={"done": "CONVERSATION", 
+                        transitions={"done": "APPROACH", 
                                     "not_done": "MAPPING"},
                         remapping={"item_id": "item_id"})
         
 
-        smach.StateMachine.add("CONVERSATION", Conversation(), 
-                               transitions={"object_specified": "APPROACH", 
-                                            "object_not_specified": "failed"},
-                               remapping={"item_id": "item_id"})
+        # smach.StateMachine.add("CONVERSATION", Conversation(), 
+        #                        transitions={"object_specified": "APPROACH", 
+        #                                     "object_not_specified": "failed"},
+        #                        remapping={"item_id": "item_id"})
 
         smach.StateMachine.add("APPROACH", Approach(), 
                         transitions={"goal_reached": "finished", 

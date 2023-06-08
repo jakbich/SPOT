@@ -189,8 +189,10 @@ class RRTPath:
         rospy.init_node('rrt_path')
         
         # Initialize server
+        rospy.logwarn("Starting rrt path server")
         self.server = actionlib.SimpleActionServer('rrt_path', MoveBaseAction, self.run_rrt, False)
         self.server.start()
+        
 
         # Initialize client
         self.motion_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
@@ -393,7 +395,6 @@ class RRTPath:
 if __name__ == '__main__':
     try:
         rrt = RRTPath()
-        rospy.logwarn("Starting rrt path server")
         rospy.spin()
     except rospy.ROSInterruptException:
         rospy.logwarn("The node rrt_path could not be launched")

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 # source: https://github.com/ctsaitsao/turtlebot3-slam/blob/main/nodes/exploration
 
@@ -13,18 +13,22 @@ from nav_msgs.msg import OccupancyGrid, Odometry
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker
 import matplotlib.pyplot as plt
-
 from std_srvs.srv import Trigger, TriggerResponse
+
+from explore.msg import ExploreAction, ExploreFeedback, ExploreResult
 
 np.set_printoptions(threshold=sys.maxsize)  # for debugging
 
 
 class Exploration:
     def __init__(self):
-        self.pub_goal = rospy.Publisher("/spot/mapping/active_slam/goal", Marker, queue_size=3)
-        self.pub_cost_map = rospy.Publisher("/spot/mapping/active_slam/cost_map", OccupancyGrid, queue_size=1)
-        self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
-        self.rrt_path_client.wait_for_server()
+        # Initialize server
+        self.server = actionlib.SimpleActionServer('explore', ExploreAction, self.explore, False)
+        self.server.start()
+
+        # Initialize client
+        self.motion_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
+
         rospy.logwarn("RRT path server is up.")
 
     def image_gradient(self, I, operator='Sobel'):
@@ -64,7 +68,7 @@ class Exploration:
 
         return mag, theta
 
-    def explore(self):
+    def explore(self, goal):
         """ Autonomous exploration. Sends pose goals to move_base. """
         rospy.logwarn("Starting exploration.")
         while True:
@@ -168,14 +172,14 @@ class Exploration:
             # plt.show()
 
             break
-        return TriggerResponse(success=True)
+        return True
 
 
 def main():
     """ The main() function. """
-    rospy.init_node('exploration')
+    rospy.init_node('explore')
     exploration = Exploration()
-    explore_service = rospy.Service('/spot/explore_frontiers', Trigger, exploration.explore())
+    rospy.spin()
     
 if __name__ == '__main__':
     try:

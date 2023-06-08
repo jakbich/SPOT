@@ -9,10 +9,12 @@ project(explore)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
-  ros_numpy
-  genmsg actionlib_msgs
-  move_base_msgs
+  std_msgs
+  genmsg
+  actionlib_msgs
   actionlib
+  move_base_msgs
+  ros_numpy
 )
 
 ## System dependencies are found with CMake's conventions
@@ -62,19 +64,8 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
-# Generate actions in the 'action' folder
-# add_action_files(
-#   DIRECTORY action FILES Motion.action
-# )
-
-# Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-#   actionlib_msgs
-#   move_base_msgs
-#   actionlib
-# )
+add_action_files(DIRECTORY action FILES Explore.action)
+generate_messages(DEPENDENCIES actionlib_msgs)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -108,7 +99,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES slam
-CATKIN_DEPENDS rospy ros_numpy std_msgs actionlib_msgs move_base_msgs actionlib
+CATKIN_DEPENDS rospy ros_numpy std_msgs move_base_msgs actionlib
 #  DEPENDS system_lib
 )
 
@@ -164,7 +155,7 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-   src/explore.py
+   src/explore_env.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
