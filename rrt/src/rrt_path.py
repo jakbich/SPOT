@@ -208,6 +208,8 @@ class RRTPath:
 
         self.DEBUG = True
 
+
+
         # Create MoveBaseAction template
         self.move_base_goal_msg = MoveBaseGoal()
         self.move_base_goal_msg.target_pose.header.frame_id = "odom"
@@ -261,6 +263,11 @@ class RRTPath:
             start_pos[0] += 10 * math.cos(self.yaw)
             start_pos[1] += 10 * math.sin(self.yaw)
 
+        if goal.target_pose.pose.position.z == 2:
+            flag = "object"
+        else:
+            flag = "exploration"
+
         # Run RRT
         rospy.logwarn("Start RRT Algorithm")
         rrt = RRT(start_pos, self.goal_pos, self.grid)
@@ -268,7 +275,8 @@ class RRTPath:
         self.rrt_path = rrt.plan_path()
         if self.rrt_path is None:
             rospy.logwarn("No path found")
-            rospy.sleep(rospy.Duration(5))
+            rospy.sleep(rospy.Duration(3))
+            self.server.set_aborted()
             return
         
         rospy.logwarn("Path: {}".format(self.rrt_path))
@@ -357,8 +365,11 @@ class RRTPath:
 
         for i, point in enumerate(self.rrt_path):
             # Skip the last point
-            if i == len(self.rrt_path) - 1:
-                break
+            if flag == "exploration":
+                if i == len(self.rrt_path) - 1:
+                    break
+
+                    
 
             action_goal = MoveBaseGoal()
             # action_goal.header.stamp = rospy.Time.now()

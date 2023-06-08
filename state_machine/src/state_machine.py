@@ -9,6 +9,7 @@ from human_interaction.msg import ConversationAction, ConversationGoal
 from explore.msg import ExploreFrontiersAction, ExploreFrontiersGoal
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_srvs.srv import Trigger, TriggerRequest
+from yolo.msg import DetectionInfo, DetectionArray
 
 
 # define state HelpNeeded
@@ -43,32 +44,67 @@ class Conversation(smach.State):
             return 'object_not_specified'
 
 
-class Approach(smach.State):
+class Approach_ITEM(smach.State):
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["goal_reached", "failed_goal_reached"],
                              input_keys=["object_id"])
 
+
+        self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
+        self.rrt_path_client.wait_for_server()
+        rospy.logwarn("RRT path server is up.")
+
+
+    def execute(self, userdata):
+
+                
+        # Getting snapshot of the detection database
+        database = rospy.wait_for_message("/spot/database", DetectionArray)
+
+        rospy.logwarn(f"Database was recorded as {database}")
+
+
+        for detection in database.detections:
+            if detection.type in userdata.object_id:
+                rospy.logwarn(f"Found object {detection.type} in database")
+            
+
+        self.goal = MoveBaseGoal()
+
+        self.goal.target_pose.pose.position.x = 80
+        self.goal.target_pose.pose.position.y = 80
+
+        self.rrt_path_client.send_goal(self.goal)
+        result = self.rrt_path_client.wait_for_result(rospy.Duration(60))
+
         
+        if result:  
+            # Action completed successfully
+            rospy.loginfo("Goal reached")
+            return 'goal_reached'
+        else:
+            # Action did not complete within the timeout
+            return 'failed_goal_reached'
+        
+
+class Approach_PERSON(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, 
+                             outcomes=["goal_reached", "failed_goal_reached"],
+                             input_keys=["object_id"])
+
+
         self.client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
         rospy.loginfo("Waiting for 'motion_control' action server...")
         self.client.wait_for_server()
         self.goal = MoveBaseGoal()
-
+        
 
     def execute(self, userdata):
-        rospy.loginfo("Executing state motion_control")
- 
-        # if userdata.object_id == "orange":
-        #     print("Object ID: ", userdata.object_id)
-        #     return 'goal_reached'
-        
-        # else:
-        #     print("Object ID: ", userdata.object_id)
-        #     return 'failed_goal_reached'
-        
-        # self.goal.target_pose.pose.position.x = 80
-        # self.goal.target_pose.pose.position.y = 80
+
+        self.goal.target_pose.pose.position.x = 80
+        self.goal.target_pose.pose.position.y = 80
 
         self.client.send_goal(self.goal)
         self.client.wait_for_result(rospy.Duration(60))
@@ -83,6 +119,23 @@ class Approach(smach.State):
             return 'failed_goal_reached'
         
 
+class Human_Operation(smach.State):
+    def __init__(self):
+        smach.State.__init__(self, 
+                             outcomes=["finished", "failed"],
+                             input_keys=["object_id"])
+        
+
+    def execute(self, userdata):
+
+        rospy.logwarn("Please pick up the item using the controller")
+        rospy.logwarn("After picking up, please press enter to continue")
+        # wait until enter key is pressed to continue
+        input("Press Enter to continue...")
+
+        return "finished"
+
+
 class Mapping(smach.State):
     def __init__(self):
         smach.State.__init__(self, 
@@ -94,13 +147,11 @@ class Mapping(smach.State):
         self.client.wait_for_server()
         self.goal = ExploreFrontiersGoal()
 
-
     def execute(self, userdata):
- 
-        # self.goal.start = True  # Change this based on your requirements
+
         rospy.loginfo(f"Started exploring")
         for i in range(2):
-            rospy.loginfo("Calling frontier exploration service for the {i}. time")
+            rospy.loginfo(f"Calling frontier exploration service for the {i}. time")
             self.client.send_goal(self.goal)
             self.client.wait_for_result(rospy.Duration(120))
             result = self.client.get_result()
@@ -109,33 +160,6 @@ class Mapping(smach.State):
 
         return "done"
         
-
-        # for i in range(10):
-        #         # Create the connection to the service. Remeber it's a Trigger service
-        #     frontier_service = rospy.ServiceProxy('/spot/explore_frontiers', Trigger)
-
-        #     # Create an object of type TriggerRequest. We need a TriggerRequest for a Trigger service
-        #     # We don't need to pass any argument because it doesn't take any
-        #     frontier_trigger = TriggerRequest()
-        #     # Now send the request through the connection
-        #     rospy.loginfo("Calling frontier exploration service")
-        #     result = frontier_service(frontier_trigger)
-
-        #     # Print the result given by the service called
-        #     if result.success:
-        #         rospy.loginfo("Frontier exploration service called successfully")
-        #     else:
-        #         rospy.loginfo("Frontier exploration service call failed")
-
-
-        # if self.round_counter == 10:
-        #     rospy.loginfo("Mapping done")
-        #     return 'done'
-        
-        # else:
-        #     self.round_counter += 1
-        #     rospy.loginfo(f"Exploration no. {self.round_counter} done")
-        #     return 'not_done'
 
 
 if __name__ == '__main__':
@@ -150,16 +174,28 @@ if __name__ == '__main__':
         # Add states to the container
         smach.StateMachine.add("MAPPING", Mapping(), 
                         transitions={"done": "CONVERSATION", 
-                                    "not_done": "MAPPING"},
+                                    "not_done": "failed"},
                         remapping={"item_id": "item_id"})
         
 
         smach.StateMachine.add("CONVERSATION", Conversation(), 
-                               transitions={"object_specified": "APPROACH", 
-                                            "object_not_specified": "failed"},
+                               transitions={"object_specified": "APPROACH_ITEM", 
+                                            "object_not_specified": "CONVERSATION"},
                                remapping={"item_id": "item_id"})
 
-        smach.StateMachine.add("APPROACH", Approach(), 
+        smach.StateMachine.add("APPROACH_ITEM", Approach_ITEM(), 
+                        transitions={"goal_reached": "HUMAN_OPERATION", 
+                                    "failed_goal_reached": "failed"},
+                        remapping={"item_id": "item_id"})
+        
+
+        smach.StateMachine.add("HUMAN_OPERATION", Human_Operation(), 
+                transitions={"finished": "APPROACH_PERSON", 
+                            "failed": "failed"},
+                remapping={"item_id": "item_id"})
+
+
+        smach.StateMachine.add("APPROACH_PERSON", Approach_PERSON(), 
                         transitions={"goal_reached": "finished", 
                                     "failed_goal_reached": "failed"},
                         remapping={"item_id": "item_id"})

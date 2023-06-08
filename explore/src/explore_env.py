@@ -145,6 +145,8 @@ class Exploration:
             # Transform odom coordinates to map coordinates:
             goal.target_pose.pose.position.x = map_x
             goal.target_pose.pose.position.y = map_y
+            # Set z to one cto omit last path point
+            goal.target_pose.pose.position.z = 1
 
 
             self.rrt_path_client.send_goal(goal)
