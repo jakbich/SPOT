@@ -345,7 +345,9 @@ class ConversationServer:
             # If the answer is yes, deliver the item
             if "yes" in answer:
                 self.print_say("There you go!")
-                item_delivered = True
+
+                self.result = ConversationResult()
+                self.server.set_succeeded(self.result) 
                 break
 
             # If the answer is no, ask which item is wanted instead

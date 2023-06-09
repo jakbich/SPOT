@@ -5,6 +5,7 @@ import rospy
 import actionlib
 
 from std_msgs.msg import String
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from human_interaction.msg import ConversationAction, ConversationGoal, ConversationFeedback
 
 class GUI:
@@ -16,11 +17,13 @@ class GUI:
         Initialize the GUI
         """
         # Create a ROS action client 
-        self.client = actionlib.SimpleActionClient('conversation', ConversationAction)
+        self.conv_client = actionlib.SimpleActionClient('conversation', ConversationAction)
         rospy.loginfo("Waiting for 'conversation' action server...")
-        self.client.wait_for_server()
+        self.conv_client.wait_for_server()
         self.goal = ConversationGoal()
 
+        self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
+        self.motion_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
         # Create a ROS subscriber for the mission status
         sub = rospy.Subscriber("/spot/missions_status", String, self.status_callback)
 
@@ -87,9 +90,9 @@ class GUI:
         starts a new conversation with the conversation server
         """    
         self.goal.conv_type = "give_mission" 
-        self.client.send_goal(self.goal)
-        self.client.wait_for_result()
-        result = self.client.get_result()
+        self.conv_client.send_goal(self.goal)
+        self.conv_client.wait_for_result()
+        result = self.conv_client.get_result()
         rospy.loginfo(f"Finished first conversation {self.goal.conv_type}... with result {result}")
 
 

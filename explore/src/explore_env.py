@@ -184,7 +184,7 @@ class Exploration:
 
 def main():
     """ The main() function. """
-    rospy.init_node('explore')
+    rospy.init_node('explore_node')
     exploration = Exploration()
     rospy.spin()
     

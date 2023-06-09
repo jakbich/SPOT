@@ -3,7 +3,7 @@
     <include file="$(find motion_control)/launch/motion_control.launch"/>
     <!-- <include file="$(find rrt)/launch/rrt.launch"  output="screen"/> -->
     <node pkg="rrt" type="rrt_path.py" name="rrt" output="screen" />
-    <node pkg="explore" type="explore_env.py" name="explore_env" output="screen" />
+    <node pkg="explore" type="explore_env.py" name="explore_node" output="screen" />
     <node pkg="yolo" type="yolo_detection.py" name="yolo_detection" output="screen" />
     <include file="$(find human_interaction)/launch/conversation_server.launch"/> 
     <!-- <node pkg="state_machine" type="state_machine.py" name="state_machine" output="screen"/> -->
