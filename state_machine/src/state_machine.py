@@ -358,18 +358,18 @@ if __name__ == '__main__':
                                     "failed_goal_reached": "ESTOP"},
                         remapping={"item_id": "item_id"})
 
+        smach.StateMachine.add("CONFIRM_MISSION", ConfirmMission(), 
+                transitions={"mission_confirmed": "PLACE_ITEM",
+                            "mission_not_confirmed": "APPROACH_ITEM"},
+                remapping={"item_id": "item_id"})
 
         smach.StateMachine.add("PLACE_ITEM", PlaceItem(), 
-                transitions={"successfully_placed": "CONFIRM_MISSION",
+                transitions={"successfully_placed": "IDLE",
                             "failed": "PLACE_ITEM", 
                             "failed_more_than_3_times": "ESTOP"},
                 remapping={"item_id": "item_id"})
         
 
-        smach.StateMachine.add("CONFIRM_MISSION", ConfirmMission(), 
-                transitions={"mission_confirmed": "IDLE", 
-                            "mission_not_confirmed": "APPROACH_ITEM"},
-                remapping={"item_id": "item_id"})
     
     sis = smach_ros.IntrospectionServer('server_name', sm, '/SYSTEM_LAUNCH')
     sis.start()
