@@ -7,7 +7,7 @@ import actionlib
 from std_msgs.msg import String
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from human_interaction.msg import ConversationAction, ConversationGoal, ConversationFeedback
-
+from std_srvs.srv import Trigger, TriggerResponse, TriggerRequest
 class GUI:
     """
     A simple GUI for the SPOT control panel
@@ -25,10 +25,13 @@ class GUI:
         self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
         self.motion_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
         # Create a ROS subscriber for the mission status
-        sub = rospy.Subscriber("/spot/missions_status", String, self.status_callback)
+        sub = rospy.Subscriber("/spot/mission_status", String, self.status_callback)
 
         # Create a ROS service client for the soft stop
-        #service_client = rospy.ServiceProxy("/spot/trigger_soft_stop", TriggerSoftStop)
+        self.service_client = rospy.ServiceProxy("/spot/trigger_soft_stop", Trigger)
+
+        # Create a publisher to publish text request
+        self.text_pub = rospy.Publisher("/spot/text_request", String, queue_size=10)
 
 
         # customtkinter setup
@@ -79,9 +82,19 @@ class GUI:
         self.canvas.create_rectangle(0,0, 100, 50, fill="grey")
 
         # Remap for status color
-        self.green_status = ["Idle", "Waiting for mission", "Mission completed"]
-        self.yellow_status = ["Getting object", "Going to object", "Going to person", "Giving object", "Going to charging station", "Charge"]
-        self.red_status = ["SPOT not available", "Mission failed"]
+        self.green_status = ["Idle"]
+
+        self.yellow_status = ["Initialization", 
+                              "Mapping", 
+                              "Conversation", 
+                              "Approach item", 
+                              "Approach person", 
+                              "Pick item",                               
+                              "Place item", 
+                              "Confirm mission"]
+        
+        self.red_status = ["Estop triggered", 
+                           "failed"]
 
     
     def button1_click(self):
@@ -112,10 +125,10 @@ class GUI:
         Callback function for the button3 click event,
         triggers the soft stop
         """
-        # request = TriggerSoftStopRequest()
-        # response = service_client(request)
-        # rospy.loginfo(f"Triggered soft stop with response {response}"
-        print("Soft stop triggered")
+        request = Trigger()
+        response =  self.service_client(request)
+        rospy.loginfo(f"Triggered soft stop with response {response}")
+
 
 
     def on_enter_pressed(self,event):
@@ -127,7 +140,10 @@ class GUI:
         self.entry1.destroy()
         self.button2 = customtkinter.CTkButton(self.left_frame, text="New mission (Text)", command=self.button2_click, corner_radius=2, width=200, height=100, font=("Roboto", 25))
         self.button2.pack(pady=10)
-        print("pressed")
+
+        # Publish the text request
+        self.text_pub.publish("Apple")
+        
 
 
     def status_callback(self,msg):
