@@ -190,6 +190,10 @@ class Mapping(smach.State):
         
 
 class Idle(smach.State):
+    """ 
+    This state checks if there is a request for a mission and if there is, it
+    calls the conversation service to get the mission.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["request_speech", "request_text", "no_request"])
@@ -240,6 +244,9 @@ class Idle(smach.State):
 
 # define state Conversation
 class Conversation(smach.State):
+    """
+    This state calls the conversation service to get the mission.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["object_specified", "object_not_specified", "failed_3_times"],
@@ -248,6 +255,7 @@ class Conversation(smach.State):
         # Create a publisher to publish mission_status
         self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
+        # Initialize the client for the conversation action server
         self.client = actionlib.SimpleActionClient('conversation', ConversationAction)
         self.goal = ConversationGoal()
 
@@ -258,7 +266,8 @@ class Conversation(smach.State):
         # Publish the mission status
         self.mission_pub.publish("Conversation")
 
-        self.goal.conv_type = "give_mission"  # Change this based on your requirements
+        # Send conversation goal
+        self.goal.conv_type = "give_mission"  
         rospy.logwarn(f"Started conversation \"{self.goal.conv_type}\"")
         self.client.send_goal(self.goal)
         self.client.wait_for_result(rospy.Duration(60))
@@ -275,6 +284,9 @@ class Conversation(smach.State):
 
 
 class Approach_ITEM(smach.State):
+    """
+    This state calls the rrt_path action server to get the path to the object.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["goal_reached", "failed_goal_reached"],
@@ -316,7 +328,7 @@ class Approach_ITEM(smach.State):
             self.goal.target_pose.pose.position.y = 80
             self.goal.target_pose.pose.orientation.z = 2
 
-
+        # send rrtpath goal
         self.rrt_path_client.send_goal(self.goal)
         result = self.rrt_path_client.wait_for_result(rospy.Duration(60))
 
@@ -330,6 +342,9 @@ class Approach_ITEM(smach.State):
         
 
 class Approach_PERSON(smach.State):
+    """
+    This state calls the motion_control action server to get the path to the person.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["goal_reached", "failed_goal_reached"],
@@ -338,6 +353,7 @@ class Approach_PERSON(smach.State):
         # Create a publisher to publish mission_status
         self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
+        # Initialize the client for the motion_control action server
         self.client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
         self.goal = MoveBaseGoal()
         
@@ -357,7 +373,7 @@ class Approach_PERSON(smach.State):
         if not DEBUG:
         # For the real implementation the goal is set to the position of the object
             for detection in database.detections:
-                if detection.type is "person":
+                if detection.type == "person":
                     rospy.logwarn(f"Found person in database")
                     self.goal = detection.position
 
@@ -367,7 +383,8 @@ class Approach_PERSON(smach.State):
             self.goal.target_pose.pose.position.y = 50
             # use rrt path to object/person by coding z to 2
             self.goal.target_pose.pose.orientation.z = 2
-
+        
+        # send motioncontrol goal
         self.client.send_goal(self.goal)
         self.client.wait_for_result(rospy.Duration(60))
         result = self.client.get_result()
@@ -382,6 +399,9 @@ class Approach_PERSON(smach.State):
         
 
 class PickItem(smach.State):
+    """
+    This state waits for the user to pick up the item.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["successfully_picked", "failed_more_than_3_times", "failed"])
@@ -398,8 +418,8 @@ class PickItem(smach.State):
 
         rospy.logwarn("Please pick up the item using the controller")
         rospy.logwarn("After picking up, please press enter to continue")
+
         # wait until enter key is pressed to continue, if nothing is pressed after 60 seconds then return failed
-        
         success = wait_for_input(60)
 
         if success:
@@ -413,6 +433,9 @@ class PickItem(smach.State):
         
     
 class PlaceItem(smach.State):
+    """
+    This state waits for the user to place the item.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                                 outcomes=["successfully_placed", "failed_more_than_3_times", "failed"])
@@ -444,6 +467,9 @@ class PlaceItem(smach.State):
 
 
 class ConfirmMission(smach.State):
+    """
+    This state calls the conversation service to confirm the mission.
+    """
     def __init__(self):
         smach.State.__init__(self, 
                                 outcomes=["mission_confirmed", "mission_not_confirmed"])
@@ -460,6 +486,7 @@ class ConfirmMission(smach.State):
         # Publish the mission status
         self.mission_pub.publish("Confirm mission")
 
+        # Send conversation goal
         self.goal.conv_type = "confirm_mission"  # Change this based on your requirements
         rospy.logwarn(f"Started conversation \"{self.goal.conv_type}\"")
         self.client.send_goal(self.goal)
@@ -475,6 +502,9 @@ class ConfirmMission(smach.State):
 
 
 class Estop(smach.State):
+    """
+    This state triggers the estop.
+    """
     def __init__(self):
         smach.State.__init__(self, outcomes=["triggered"])
 
@@ -498,6 +528,7 @@ class Estop(smach.State):
 
 
 if __name__ == '__main__':
+
 
     DEBUG = True
     rospy.init_node('state_machine')
