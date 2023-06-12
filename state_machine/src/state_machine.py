@@ -7,8 +7,9 @@ import actionlib
 import time
 import numpy as np
 import os
+import rosnode
 
-from human_interaction.msg import ConversationAction, ConversationGoal
+from human_interaction.msg import ConversationAction, ConversationGoal, ConversationFeedback, ConversationActionGoal
 from explore.msg import ExploreFrontiersAction, ExploreFrontiersGoal
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_srvs.srv import Trigger, TriggerRequest
@@ -17,16 +18,33 @@ from std_msgs.msg import String
 from nav_msgs.msg import OccupancyGrid
 
 
-
 def check_node_running(node_name):
-    node_uri = rospy.get_node_uri()
-    if node_uri == '':
+    """
+    Helper function that checks if a node is running
+    """
+    node_list = rosnode.get_node_names()
+    if node_name not in node_list:
         rospy.loginfo(f"Node '{node_name}' is not running.")
         return False
     else:
         rospy.loginfo(f"Node '{node_name}' is running")
         return True
 
+
+def wait_for_input(timeout):
+    """
+    Helper function that waits for a user input for a specified timeout duration
+    """
+    start_time = time.time()
+    while input("Press enter to continue...") != '':
+        if time.time() - start_time >= timeout:
+            rospy.loginfo("Timeout reached. Continuing...")
+            return False
+    
+    else:
+        rospy.loginfo("Input received. Continuing...")
+        return True
+    
 
 class Initialization(smach.State):
     """
@@ -35,22 +53,29 @@ class Initialization(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=["success", "failed"])
 
-    def execute(self, userdata):
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
+    def execute(self, userdata):
+        
         rospy.logwarn("System is initializing...")
+
+        # Publish the mission status
+        self.mission_pub.publish("Initialization")
+
         rospy.sleep(3)
 
         # Check if node plane segmentation was launchd
-        plane_seg_running = check_node_running("plane_segmentation")
+        plane_seg_running = check_node_running("/plane_segmentation")
 
         # Check if node yolo is running
-        yolo_running = check_node_running("yolo_detection")
+        yolo_running = check_node_running("/yolo_detection")
 
         # Check if node occ_map is running
-        occ_map_running = check_node_running("occupancy_map")
+        occ_map_running = check_node_running("/occupancy_map")
 
         # Check if node grid_transform is running
-        grid_transform_running = check_node_running("grid_position_transform")
+        grid_transform_running = check_node_running("/grid_position_transform")
 
         # Set timeout duration
         timeout_duration = rospy.Duration(10)
@@ -102,6 +127,8 @@ class Mapping(smach.State):
         smach.State.__init__(self, 
                              outcomes=["done", "threshold_not_reached"])
 
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
         # Initialize the client for the frontier exploration action server
         self.client = actionlib.SimpleActionClient('explore', ExploreFrontiersAction)
@@ -114,56 +141,101 @@ class Mapping(smach.State):
 
 
     def execute(self, userdata):
+        
+        # Publish the mission status
+        self.mission_pub.publish("Mapping")
 
-        while self.map_change > self.map_threshold:
-            # Save the previous map
-            prev_map  = rospy.wait_for_message("/spot/mapping/occupancy_grid", OccupancyGrid) 
-            rospy.logwarn(f"Received previous map")
+        if not DEBUG:
+            while self.map_change > self.map_threshold:
+                # Save the previous map
+                prev_map  = rospy.wait_for_message("/spot/mapping/occupancy_grid", OccupancyGrid) 
+                rospy.logwarn(f"Received previous map")
 
-           # Call the frontier exploration service
-            rospy.logwarn(f"Calling frontier exploration service for the {self.counter}. time")
+               # Call the frontier exploration service
+                rospy.logwarn(f"Calling frontier exploration service for the {self.counter}. time")
+                self.client.send_goal(self.goal)
+                self.client.wait_for_result(rospy.Duration(120))
+                result = self.client.get_result()
+                rospy.logwarn("Frontier exploration service called successfully")
+
+                # Save the current map
+                current_map = rospy.wait_for_message("/spot/mapping/occupancy_grid", OccupancyGrid)
+                rospy.logwarn(f"Received current map")
+                
+                # Calculate the number of changed pixels
+                change_pixels = 0
+                for i in range(len(current_map.data)):
+                    if current_map.data[i] != prev_map.data[i]:
+                        change_pixels += 1
+
+                self.map_change = change_pixels
+                self.counter += 1
+
+                # Check if the threshold is reached
+                if self.map_change > 50:
+                    rospy.logwarn(f"Number of changed pixels: {self.map_change}, MAPPING called again")
+                    return "threshold_not_reached"
+                
+                else:
+                    rospy.logwarn(f"Number of changed pixels: {self.map_change}, MAPPING finished")
+                    return "done"
+            
+        else:
+            # For debugging you can only execute mapping once
             self.client.send_goal(self.goal)
             self.client.wait_for_result(rospy.Duration(120))
             result = self.client.get_result()
             rospy.logwarn("Frontier exploration service called successfully")
-
-            # Save the current map
-            current_map = rospy.wait_for_message("/spot/mapping/occupancy_grid", OccupancyGrid)
-            rospy.logwarn(f"Received current map")
-            
-            # Calculate the number of changed pixels
-            change_pixels = 0
-            for i in range(len(current_map.data)):
-                if current_map.data[i] != prev_map.data[i]:
-                    change_pixels += 1
-
-            self.map_change = change_pixels
-            self.counter += 1
-
-            # Check if the threshold is reached
-            if self.map_change > 50:
-                rospy.logwarn(f"Number of changed pixels: {self.map_change}, MAPPING called again")
-                return "threshold_not_reached"
-            
-            else:
-                rospy.logwarn(f"Number of changed pixels: {self.map_change}, MAPPING finished")
-                return "done"
-            
+            return "done"
+        
 
 class Idle(smach.State):
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["request_speech", "request_text", "no_request"])
+        
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
+        
+        # set up subscriber for conv_goal
+        self.conv_subscriber = rospy.Subscriber("/conversation/goal", ConversationActionGoal, self.conv_callback, queue_size=3)
+        self.conv_value = None  # Variable to store the value received in conv_callback
+
+        # set up subscriber for text_goal
+        self.text_subscriber = rospy.Subscriber("/spot/text_request", String, self.text_callback, queue_size=3)
+        self.text_value = None  # Variable to store the value received in text_callback
+
+
+    def conv_callback(self, msg):
+        """
+        Callback function for the conversation goal
+        """
+        self.conv_value = "set"
+    
+
+    def text_callback(self, msg):
+        """
+        Callback function for the text goal
+        """
+        self.text_value = "set"
+
 
     def execute(self, userdata):
 
         rospy.logwarn("Executing state Idle")
 
+        # Publish the mission status
+        self.mission_pub.publish("Idle")
+
         rospy.sleep(5)
-
-        return "request_speech"
-
-
+    
+        # Check if there is a request
+        if self.conv_value:
+            return "request_speech"
+        elif self.text_value:
+            return "request_text"
+        else:
+            return "no_request"
 
 
 # define state Conversation
@@ -173,14 +245,18 @@ class Conversation(smach.State):
                              outcomes=["object_specified", "object_not_specified", "failed_3_times"],
                              output_keys=["object_id"])
         
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
+
         self.client = actionlib.SimpleActionClient('conversation', ConversationAction)
         self.goal = ConversationGoal()
 
 
     def execute(self, userdata):
         rospy.logwarn("Executing state Conversation")
- 
-        self.pub = rospy.Subscriber("/spot/mission_status", String, queue_size=3)
+
+        # Publish the mission status
+        self.mission_pub.publish("Conversation")
 
         self.goal.conv_type = "give_mission"  # Change this based on your requirements
         rospy.logwarn(f"Started conversation \"{self.goal.conv_type}\"")
@@ -203,43 +279,47 @@ class Approach_ITEM(smach.State):
         smach.State.__init__(self, 
                              outcomes=["goal_reached", "failed_goal_reached"],
                              input_keys=["object_id"])
+        
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
+        # Initialize the client for the rrt_path action server
         self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
 
 
     def execute(self, userdata):
 
-                
+        rospy.logwarn("Executing state Approach_ITEM")
+
+        # Publish the mission status
+        self.mission_pub.publish("Approach item")
+
         # Getting snapshot of the detection database
         database = rospy.wait_for_message("/spot/database", DetectionArray)
-
         rospy.logwarn(f"Database was recorded as {database}")
 
-
-    def execute(self, userdata):
-
-                
         # Getting snapshot of the detection database
         database = rospy.wait_for_message("/spot/database", DetectionArray)
-
-        rospy.logwarn(f"Database was recorded as {database}")
-
-
-        for detection in database.detections:
-            if detection.type in userdata.object_id:
-                rospy.logwarn(f"Found object {detection.type} in database")
-            
-
         self.goal = MoveBaseGoal()
 
-        self.goal.target_pose.pose.position.x = 80
-        self.goal.target_pose.pose.position.y = 80
-        self.goal.target_pose.pose.orientation.z = 2
+        if not DEBUG:
+            # For the real implementation the goal is set to the position of the object
+            for detection in database.detections:
+                if detection.type in userdata.object_id:
+                    rospy.logwarn(f"Found object {detection.type} in database")
+                    self.goal = detection.position
+
+        else:      
+            # For debugging a hardcoded goal can be used
+            rospy.logwarn(f"Database was recorded as {database}")
+            self.goal.target_pose.pose.position.x = 80
+            self.goal.target_pose.pose.position.y = 80
+            self.goal.target_pose.pose.orientation.z = 2
+
 
         self.rrt_path_client.send_goal(self.goal)
         result = self.rrt_path_client.wait_for_result(rospy.Duration(60))
 
-        
         if result:  
             # Action completed successfully
             rospy.logwarn("Goal reached")
@@ -255,6 +335,8 @@ class Approach_PERSON(smach.State):
                              outcomes=["goal_reached", "failed_goal_reached"],
                              input_keys=["object_id"])
 
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
         self.client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
         self.goal = MoveBaseGoal()
@@ -262,10 +344,29 @@ class Approach_PERSON(smach.State):
 
     def execute(self, userdata):
 
-        self.goal.target_pose.pose.position.x = 80
-        self.goal.target_pose.pose.position.y = 80
-        # use rrt path to object/person by coding z to 2
-        self.goal.target_pose.pose.orientation.z = 2
+        rospy.logwarn("Executing state Approach_PERSON")
+
+        # Publish the mission status
+        self.mission_pub.publish("Approach person")
+
+        # Snapshot of the detection database
+        database = rospy.wait_for_message("/spot/database", DetectionArray)
+        rospy.logwarn(f"Database was recorded as {database}")
+
+
+        if not DEBUG:
+        # For the real implementation the goal is set to the position of the object
+            for detection in database.detections:
+                if detection.type is "person":
+                    rospy.logwarn(f"Found person in database")
+                    self.goal = detection.position
+
+        else:
+        # For debugging a hardcoded goal can be used
+            self.goal.target_pose.pose.position.x = 50
+            self.goal.target_pose.pose.position.y = 50
+            # use rrt path to object/person by coding z to 2
+            self.goal.target_pose.pose.orientation.z = 2
 
         self.client.send_goal(self.goal)
         self.client.wait_for_result(rospy.Duration(60))
@@ -284,10 +385,16 @@ class PickItem(smach.State):
     def __init__(self):
         smach.State.__init__(self, 
                              outcomes=["successfully_picked", "failed_more_than_3_times", "failed"])
-        
+
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
+
         self.failed_counter = 0
 
     def execute(self, userdata):
+
+        # Publish the mission status
+        self.mission_pub.publish("Pick item")
 
         rospy.logwarn("Please pick up the item using the controller")
         rospy.logwarn("After picking up, please press enter to continue")
@@ -304,21 +411,26 @@ class PickItem(smach.State):
         else:
             return "failed_more_than_3_times"
         
-        
-    
     
 class PlaceItem(smach.State):
     def __init__(self):
         smach.State.__init__(self, 
                                 outcomes=["successfully_placed", "failed_more_than_3_times", "failed"])
+      
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
+      
         self.failed_counter = 0
   
     def execute(self, userdata):
 
         rospy.logwarn("Please pick up the item using the controller")
         rospy.logwarn("After picking up, please press enter to continue")
-        # wait until enter key is pressed to continue, if nothing is pressed after 60 seconds then return failed
 
+        # Publish the mission status
+        self.mission_pub.publish("Place item")
+
+        # wait until enter key is pressed to continue, if nothing is pressed after 60 seconds then return failed
         success = wait_for_input(60)
 
         if success:
@@ -329,7 +441,6 @@ class PlaceItem(smach.State):
         
         else:
             return "failed_more_than_3_times"
-
 
 
 class ConfirmMission(smach.State):
@@ -337,13 +448,17 @@ class ConfirmMission(smach.State):
         smach.State.__init__(self, 
                                 outcomes=["mission_confirmed", "mission_not_confirmed"])
                                 
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
 
         self.client = actionlib.SimpleActionClient('conversation', ConversationAction)
         self.goal = ConversationGoal()
 
     def execute(self, userdata):
         rospy.logwarn("Executing state ConfirmMission")
-        self.pub = rospy.Subscriber("/spot/mission_status", String, queue_size=3)
+
+        # Publish the mission status
+        self.mission_pub.publish("Confirm mission")
 
         self.goal.conv_type = "confirm_mission"  # Change this based on your requirements
         rospy.logwarn(f"Started conversation \"{self.goal.conv_type}\"")
@@ -363,6 +478,9 @@ class Estop(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=["triggered"])
 
+        # Create a publisher to publish mission_status
+        self.mission_pub = rospy.Publisher("/spot/mission_status", String, queue_size=10)
+
         # set up client to "/spot/estop/gentle" service
         self.client = rospy.ServiceProxy("/spot/estop/gentle", Trigger)
 
@@ -370,25 +488,18 @@ class Estop(smach.State):
 
         # trigger estop
         rospy.logwarn("Estop triggered")
+
+        # Publish the mission status
+        self.mission_pub.publish("Estop triggered")
+
         self.client.wait_for_service()
         self.client.call(TriggerRequest())
         return "triggered"
 
 
-def wait_for_input(timeout):
-    start_time = time.time()
-    while input("Press enter to continue...") != '':
-        if time.time() - start_time >= timeout:
-            print("Timeout reached. Continuing...")
-            return False
-    
-    else:
-        print("Input received. Continuing...")
-        return True
-
-
-
 if __name__ == '__main__':
+
+    DEBUG = True
     rospy.init_node('state_machine')
 
     # Create a SMACH state machine
@@ -461,7 +572,6 @@ if __name__ == '__main__':
                 remapping={"item_id": "item_id"})
         
 
-    
     sis = smach_ros.IntrospectionServer('server_name', sm, '/SYSTEM_LAUNCH')
     sis.start()
 
