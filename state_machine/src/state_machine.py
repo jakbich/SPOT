@@ -8,6 +8,7 @@ import time
 import numpy as np
 import os
 import rosnode
+import argparse
 
 from human_interaction.msg import ConversationAction, ConversationGoal, ConversationFeedback, ConversationActionGoal
 from explore.msg import ExploreFrontiersAction, ExploreFrontiersGoal
@@ -142,7 +143,7 @@ class Mapping(smach.State):
 
     def execute(self, userdata):
         
-        # Publish the mission status
+        # # Publish the mission status
         self.mission_pub.publish("Mapping")
 
         if not DEBUG:
@@ -181,11 +182,16 @@ class Mapping(smach.State):
                     return "done"
             
         else:
-            # For debugging you can only execute mapping once
-            self.client.send_goal(self.goal)
-            self.client.wait_for_result(rospy.Duration(120))
-            result = self.client.get_result()
-            rospy.logwarn("Frontier exploration service called successfully")
+            # For debugging you can only execute mapping three times instead of until the threshold is reached
+            for i in range(3):
+                # Call the frontier exploration service
+                rospy.logwarn(f"Calling frontier exploration service for the {self.counter}. time")
+                self.client.send_goal(self.goal)
+                self.client.wait_for_result(rospy.Duration(120))
+                result = self.client.get_result()
+                rospy.logwarn("Frontier exploration service called successfully")
+                self.counter += 1
+
             return "done"
         
 
@@ -273,14 +279,19 @@ class Conversation(smach.State):
         self.client.wait_for_result(rospy.Duration(60))
         result = self.client.get_result()
         
-        if result.answer:  
-            # Action completed successfully
-            userdata.object_id = result.answer
-            return 'object_specified'
-        else:
-            # Action did not complete within the timeout
-            return 'object_not_specified'
+        if not DEBUG:
+            if result.answer:  
+                # Action completed successfully
+                userdata.object_id = result.answer
+                return 'object_specified'
+            else:
+                # Action did not complete within the timeout
+                return 'object_not_specified'
 
+        else: 
+            # For debugging a hardcoded object can be used
+            userdata.object_id = "apple"
+            return 'object_specified'
 
 
 class Approach_ITEM(smach.State):
@@ -308,7 +319,7 @@ class Approach_ITEM(smach.State):
 
         # Getting snapshot of the detection database
         database = rospy.wait_for_message("/spot/database", DetectionArray)
-        rospy.logwarn(f"Database was recorded as {database}")
+        # rospy.logwarn(f"Database was recorded as {database}")
 
         # Getting snapshot of the detection database
         database = rospy.wait_for_message("/spot/database", DetectionArray)
@@ -323,10 +334,10 @@ class Approach_ITEM(smach.State):
 
         else:      
             # For debugging a hardcoded goal can be used
-            rospy.logwarn(f"Database was recorded as {database}")
-            self.goal.target_pose.pose.position.x = 80
-            self.goal.target_pose.pose.position.y = 80
-            self.goal.target_pose.pose.orientation.z = 2
+            # rospy.logwarn(f"Database was recorded as {database}")
+            self.goal.target_pose.pose.position.x = 45
+            self.goal.target_pose.pose.position.y = 105
+            self.goal.target_pose.pose.position.z = 2
 
         # send rrtpath goal
         self.rrt_path_client.send_goal(self.goal)
@@ -340,6 +351,7 @@ class Approach_ITEM(smach.State):
             # Action did not complete within the timeout
             return 'failed_goal_reached'
         
+
 
 class Approach_PERSON(smach.State):
     """
@@ -359,7 +371,6 @@ class Approach_PERSON(smach.State):
         
 
     def execute(self, userdata):
-
         rospy.logwarn("Executing state Approach_PERSON")
 
         # Publish the mission status
@@ -367,7 +378,7 @@ class Approach_PERSON(smach.State):
 
         # Snapshot of the detection database
         database = rospy.wait_for_message("/spot/database", DetectionArray)
-        rospy.logwarn(f"Database was recorded as {database}")
+        # rospy.logwarn(f"Database was recorded as {database}")
 
 
         if not DEBUG:
@@ -379,8 +390,8 @@ class Approach_PERSON(smach.State):
 
         else:
         # For debugging a hardcoded goal can be used
-            self.goal.target_pose.pose.position.x = 50
-            self.goal.target_pose.pose.position.y = 50
+            self.goal.target_pose.pose.position.x = 40
+            self.goal.target_pose.pose.position.y = 55
             # use rrt path to object/person by coding z to 2
             self.goal.target_pose.pose.orientation.z = 2
         
@@ -397,6 +408,8 @@ class Approach_PERSON(smach.State):
             # Action did not complete within the timeout
             return 'failed_goal_reached'
         
+   
+        return "goal_reached"
 
 class PickItem(smach.State):
     """
@@ -447,8 +460,8 @@ class PlaceItem(smach.State):
   
     def execute(self, userdata):
 
-        rospy.logwarn("Please pick up the item using the controller")
-        rospy.logwarn("After picking up, please press enter to continue")
+        rospy.logwarn("Please place down up the item using the controller")
+        rospy.logwarn("After placing down the item, please press enter to continue")
 
         # Publish the mission status
         self.mission_pub.publish("Place item")
@@ -457,7 +470,7 @@ class PlaceItem(smach.State):
         success = wait_for_input(60)
 
         if success:
-            return "successfully_picked"
+            return "successfully_placed"
         
         elif self.failed_counter < 3:
             return "failed"
@@ -493,12 +506,17 @@ class ConfirmMission(smach.State):
         self.client.wait_for_result(rospy.Duration(60))
         result = self.client.get_result()
         
-        if result.answer:  
-            # Action completed successfully
-            return 'mission_confirmed'
+
+        if not DEBUG:
+            if result.answer:  
+                # Action completed successfully
+                return 'mission_confirmed'
+            else:
+                # Action did not complete within the timeout
+                return 'mission_not_confirmed'
+            
         else:
-            # Action did not complete within the timeout
-            return 'mission_not_confirmed'
+            return 'mission_confirmed'
 
 
 class Estop(smach.State):
@@ -529,8 +547,17 @@ class Estop(smach.State):
 
 if __name__ == '__main__':
 
+    # Parse the arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--debug', action='store_true', help='Enable debug mode')
+    args = parser.parse_args()
+    
+    # Retrieve the debug parameter value
+    DEBUG = args.debug
 
-    DEBUG = True
+    rospy.loginfo("Starting state machine with debug mode: " + str(DEBUG))
+
+    # Initialize the node
     rospy.init_node('state_machine')
 
     # Create a SMACH state machine

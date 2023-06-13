@@ -10,7 +10,7 @@
 This repository is part the submission for the project of the course **Multidisciplinary Project (RO47007)**, in collaboration with  [TNO](https://www.tno.nl/en?gclid=.CjwKCAjw1MajBhAcEiwAagW9MSsTkBs0QeVZAyaxq9Fz1mtmGNJCkYzUVTuIwKk3bHhMCr6WwW6XnhoCvmsQAvD_BwE).
 
 
-This package provides the necessary code to build and run the ``state machine`` part of the project.
+This package provides the necessary code to build and run the ``state_machine`` part of the project.
 
   
 It contains all necessary files to build one ROS nodes, namely: 
@@ -71,6 +71,11 @@ It manages the following states:
 - ESTOP: triggers the ROS-service /spot/estop/gentle in order to abort all current actions and make Spot sit down and shut down all motors. After executing that state, the state machine will terminate with the status "failed".
 
 
+<div style="text-align:center">
+ <img src="images/smach_viewer.svg", height=800>
+</div>
+
+
 
 # 2. Usage <a name="u"></a>
 
@@ -110,14 +115,25 @@ roslaunch slam mapping.launch
 
 **Enabling all the necessary other nodes (Detection, Path Planning, Human Interaction, Motion Control and Exploration)**
 ```
-roslaunch state_machine state_machine.launch
+roslaunch state_machine sm_requirements.launch
 ```
 
 
 **Running the state machine**
+
+To run the full version of the `state_machine`, run:
+
 ```
-rosrun state_machine state_machine.py
+rosrun state_machine state_machine.py 
 ```
+
+There is also a simplified version of the `state_machine`, that still implpements all states but omits some of the checks that are implemented to work in real-life to make the behaviour more robust and autonomous.
+To run a simplified version of the `state_machine` that can be used for debugging and is less error-prone you can run:
+
+```
+rosrun state_machine state_machine.py --debug
+```
+
 
 ### Confirming correct launch <a name="conf"></a>
 
@@ -150,12 +166,7 @@ To confirm the correct launch of the system and for introspection during runnnin
 rosrun smach_viewer smach_viewer.py
 ```
 
-Its output should look like this:
-
-
-<div style="text-align:center">
- <img src="images/smach_viewer.svg", height=800>
-</div>
+Its output should look like the image in the section [ROS-Node state_machine](#r1) above.
 
 
 
@@ -166,7 +177,7 @@ Its output should look like this:
 ├── images                          # images for the README
 │   └── smach_viewer.svg
 ├── launch                          # launch files
-│   └── state_machine.launch
+│   └── sm_requirements.launch
 ├── package.xml                     # package info
 ├── README.md                       # README
 ├── rviz                            # rviz files     

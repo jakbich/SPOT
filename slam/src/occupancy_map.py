@@ -45,9 +45,9 @@ class OccupancyMap:
 
             # Fill occupancy map with the new point cloud data
             if i == 0: # Ground points
-                self.grid[indices] -= 15
+                self.grid[indices] -= 10
             else:
-                self.grid[indices] += 15
+                self.grid[indices] += 10
 
             self.grid[self.grid < -1] = 0
             self.grid[self.grid > 100] = 100

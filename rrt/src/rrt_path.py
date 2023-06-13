@@ -25,10 +25,16 @@ class Node:
     """"
     Node for RRT path planning algorithm
     """
-    def __init__(self, x, y, parent=None) -> None:
+    def __init__(self, x, y, parent=None, parent_cost=0.0) -> None:
         self.x = int(x)
         self.y = int(y)
         self.parent = parent
+        self.parent_cost = parent_cost
+        
+
+
+
+
 
 class RRT:
     """
@@ -79,7 +85,7 @@ class RRT:
         x2, y2 = node2.x, node2.y
 
         # check if both nodes are valid
-        if self.grid[int(x1), int(y1)] >= 50 or self.grid[int(x2), int(y2)] >= 50:
+        if self.grid[int(x1), int(y1)] > 60 or self.grid[int(x2), int(y2)] > 60:
             return False
         elif self.grid[int(x1), int(y2)] < 0 or self.grid[int(x2), int(y1)] < 0:
             return False
@@ -142,8 +148,19 @@ class RRT:
 
         if self.is_collision_free(nearest_node, new_node):
             new_node.parent = nearest_node
+            new_node.parent_cost = nearest_node.parent_cost + self.get_distance(nearest_node, new_node)
+
+            # Rewire the tree
+            for node in self.nodes:
+                if node != nearest_node and self.get_distance(node, new_node) < self.step_size and self.is_collision_free(node, new_node):
+                    node_cost = node.parent_cost + self.get_distance(node, new_node)
+                    if node_cost < new_node.parent_cost:
+                        new_node.parent = node
+                        new_node.parent_cost = node_cost
+
             self.nodes.append(new_node)
             return new_node
+
         
         return None
     
@@ -263,10 +280,12 @@ class RRTPath:
             start_pos[0] += 10 * math.cos(self.yaw)
             start_pos[1] += 10 * math.sin(self.yaw)
 
-        if goal.target_pose.pose.position.z == 2:
+        if goal.target_pose.pose.position.z > 1.5:
             flag = "object"
         else:
             flag = "exploration"
+
+        
 
         # Run RRT
         rospy.logwarn("Start RRT Algorithm")
@@ -335,7 +354,14 @@ class RRTPath:
 
             marker = Marker()
             # x_marker, y_marker = self.pos
-            x_marker, y_marker = self.rrt_path[-2]
+            x_marker, y_marker = None, None
+            if flag == "exploration":
+                x_marker, y_marker = self.rrt_path[-2]
+            else:
+                x_marker, y_marker = self.rrt_path[-1]
+
+
+
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD
