@@ -43,30 +43,32 @@ The project group would like to express our gratitude to the TNO company for pro
 The repository came with a package already designed for the simulation setup and to tele-op the robot in the simulation. This package is called  ([spot_config](spot_config)). All the other packages in the repository are made by our team. These are: 
 
 - explore ([explore](explore))
-    - ``explore`` 
+    - ``explore``: This node uses a 'Frontier Based Exploration' algorithm to produce a goal point for Spot to walk to, this results in autonomous exploration of unseen areas.
 
 - human interaction ([human interaction](human_interaction))
-    - ``bracelet_gui_node`` 
-    - ``conversation_server``
+    - ``bracelet_gui_node``: This node provides a graphical interface for a healhcare professional to interact with Spot
+    - ``conversation_server``: This node enables Spot to listen to spoken user input and reply to the user allowing for a conversation. This node can trigger the state machine to start a new mission.
     
 
 - motion control ([motion control](motion_control))
-    - ``motion_control``
+    - ``motion_control``: This node converts MoveBaseGoal messages to linear and angular velocities to move Spot.
 
 - rrt ([rrt](rrt))
-    - ``rrt_path_node``
+    - ``rrt_path_node``: This node computes a path from a start location to a goal location using a RRT* algorithm.
 
         
 - slam ([slam](slam))
-    - ``image2pointcloud`` 
-    - ``plane_segmentation``
-    - ``occupancy_map`` 
+    - ``image2pointcloud``: This node transforms depth images measured/created by Spot into 3D point clouds. 
+    - ``plane_segmentation``: This node performs ground plane segmentation on the found point clouds
+    - ``occupancy_map``: This node builds an occupancy map that is able to show explored space, occupied space and unexplored space.
 
 - state machine ([state machine](state_machine))
-    - ``state_machine``
+    - ``state_machine``: This node is the main 'control' node of the system. It coordinates all the different nodes to work together for Spot to complete its mission.
 
 - yolo ([yolo](yolo))
-    - ``detection``
+    - ``detection``: This node uses a pretrained Yolov7 classification algorithm trained on the COCO dataset to detect persons and objects. These detections are combined with 3D locations associated with these detctions into a database.
+
+   
 
 
 
