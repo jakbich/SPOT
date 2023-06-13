@@ -15,7 +15,8 @@ This repository is part the submission for the project of the course **Multidisc
 <img src="readme_images/tno.png" alt="Image 4" width="260" />
 
 #### Project Description
-In this project the SPOT robot will navigate through a care environment. For the sake of simplicity the demo will take place on a flat floor with no stairs or height differences. The SPOT robot that is currently available at CoR is operated using ROS driver. With the ROS driver it is able to send Twist ROS messages to move the robot. The SPOT is also equipped with an arm. This will be pick up hand-sized objects and place them somewhere else.
+For the course: Multidisciplinary Project (RO47007) in collaboration with TNO an assignment has been given to develop code to detect items and persons and then use the robot 'Spot' from Boston Dynamics to bring these found items to a person. Our own use case takes place in a healthcare environment where the nurse can give the command to retrieve an item and have it delivered.
+For the sake of simplicity, the demo will take place on a flat floor with no stairs or height differences. The SPOT robot that is currently available at CoR is operated using ROS driver. With the ROS driver it is able to send Twist ROS messages to move the robot. The SPOT is also equipped with an arm. This will be picking up hand-sized objects and placing them somewhere else.
 
 #### Challenge
 The primary challenge of this project is to develop an object delivery system where the SPOT robot picks up a specific object. Once the object is grasped, the robot should navigate within a predefined space, searching for the correct person to deliver the object. The robot's camera will be used to detect and identify the correct person. In case SPOT has found the person the Spot will walk to the person and place the object on the ground. The operation of the arm is done manually.
@@ -39,33 +40,32 @@ The project group would like to express our gratitude to the TNO company for pro
 
 
 # 2. Node overview <a name="nov"></a>
+The repository came with a package already designed for the simulation setup and to tele-op the robot in the simulation. This package is called  ([spot_config](spot_config)). All the other packages in the repository are made by our team. These are: 
 
-This repository contains all necessary files to build all 11 ROS nodes of the 8 packages, namely: 
-
-- explore ([Link to README](explore/README.md))
+- explore ([explore](explore))
     - ``explore`` 
 
-- human interaction ([Link to README](human_interaction/README.md))
+- human interaction ([human interaction](human_interaction))
     - ``bracelet_gui_node`` 
     - ``conversation_server``
     
 
-- motion control ([Link to README](motion_control/README.md))
+- motion control ([motion control](motion_control))
     - ``motion_control``
 
-- rrt ([Link to README](rrt/README.md))
+- rrt ([rrt](rrt))
     - ``rrt_path_node``
 
         
-- slam ([Link to README](slam/README.md))
+- slam ([slam](slam))
     - ``image2pointcloud`` 
     - ``plane_segmentation``
     - ``occupancy_map`` 
 
-- state machine ([Link to README](state_machine/README.md))
+- state machine ([state machine](state_machine))
     - ``state_machine``
 
-- yolo ([Link to README](yolo/README.md))
+- yolo ([yolo](yolo))
     - ``detection``
 
 
