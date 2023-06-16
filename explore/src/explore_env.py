@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 # source: https://github.com/ctsaitsao/turtlebot3-slam/blob/main/nodes/exploration
 
@@ -13,20 +13,29 @@ from nav_msgs.msg import OccupancyGrid, Odometry
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker
 import matplotlib.pyplot as plt
-
 from std_srvs.srv import Trigger, TriggerResponse
+
+from explore.msg import ExploreFrontiersAction, ExploreFrontiersGoal
 
 np.set_printoptions(threshold=sys.maxsize)  # for debugging
 
 
 class Exploration:
     def __init__(self):
+        # Initialize server
+        self.server = actionlib.SimpleActionServer('explore', ExploreFrontiersAction, self.explore, False)
+        rospy.loginfo("Waiting for 'explore' action server...")
+        self.server.start()
+        rospy.loginfo("Exploration server is up.")
         self.pub_goal = rospy.Publisher("/spot/mapping/active_slam/goal", Marker, queue_size=3)
-        self.pub_cost_map = rospy.Publisher("/spot/mapping/active_slam/cost_map", OccupancyGrid, queue_size=1)
+
+
+        rospy.loginfo("Waiting for RRT path server.")
         self.rrt_path_client = actionlib.SimpleActionClient('rrt_path', MoveBaseAction)
         self.rrt_path_client.wait_for_server()
         rospy.logwarn("RRT path server is up.")
 
+        # Initialize client
     def image_gradient(self, I, operator='Sobel'):
         """ Outputs an image's gradient based on one of three operators.
 
@@ -64,7 +73,7 @@ class Exploration:
 
         return mag, theta
 
-    def explore(self):
+    def explore(self, goal):
         """ Autonomous exploration. Sends pose goals to move_base. """
         rospy.logwarn("Starting exploration.")
         while True:
@@ -136,6 +145,8 @@ class Exploration:
             # Transform odom coordinates to map coordinates:
             goal.target_pose.pose.position.x = map_x
             goal.target_pose.pose.position.y = map_y
+            # Set z to one cto omit last path point
+            goal.target_pose.pose.position.z = 1
 
 
             self.rrt_path_client.send_goal(goal)
@@ -149,16 +160,16 @@ class Exploration:
                 self.rrt_path_client.cancel_goal()
 
 
-            map_msg = OccupancyGrid()
-            map_msg.header.frame_id = "odom"
-            map_msg.info.resolution = map_resolution
-            map_msg.info.width = int(map_width / map_resolution)
-            map_msg.info.height = int(map_height / map_resolution)
-            map_msg.info.origin.position.x = map_origin[0]
-            map_msg.info.origin.position.y = map_origin[1]
-            map_msg.data = laplacian_normlized.flatten()
-            map_msg.header.stamp = rospy.Time.now()
-            self.pub_cost_map.publish(map_msg)
+            # map_msg = OccupancyGrid()
+            # map_msg.header.frame_id = "odom"
+            # map_msg.info.resolution = map_resolution
+            # map_msg.info.width = int(map_width / map_resolution)
+            # map_msg.info.height = int(map_height / map_resolution)
+            # map_msg.info.origin.position.x = map_origin[0]
+            # map_msg.info.origin.position.y = map_origin[1]
+            # map_msg.data = laplacian_normlized.flatten()
+            # map_msg.header.stamp = rospy.Time.now()
+            # self.pub_cost_map.publish(map_msg)
 
             # fig, ax = plt.subplots()
             # im = ax.imshow(laplacian_normlized, cmap='hot', interpolation='nearest')
@@ -168,14 +179,14 @@ class Exploration:
             # plt.show()
 
             break
-        return TriggerResponse(success=True)
+        return True
 
 
 def main():
     """ The main() function. """
-    rospy.init_node('exploration')
+    rospy.init_node('explore_node')
     exploration = Exploration()
-    explore_service = rospy.Service('/spot/explore_frontiers', Trigger, exploration.explore())
+    rospy.spin()
     
 if __name__ == '__main__':
     try:

@@ -8,7 +8,15 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   message_filters
   geometry_msgs
+  move_base_msgs
 )
+
+find_package(message_generation)
+find_package(map_msgs)
+
+
+add_message_files(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msg FILES DetectionInfo.msg DetectionArray.msg)
+generate_messages(DEPENDENCIES geometry_msgs map_msgs move_base_msgs)
 
 catkin_package(
   CATKIN_DEPENDS

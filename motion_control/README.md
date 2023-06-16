@@ -25,12 +25,15 @@ TThis package can be used in combination with the other ROS packages contained i
 1.  [About the package](#atp) \
     1.1 [ROS-Node motion_control](#r1)
 
-2. [Usage](#u)\
+
+2. [Installation](#inst)
+
+3. [Usage](#u)\
     2.1 [Starting the simulation](#rsim)\
     2.2 [Running Motion_Control](#rslam)
     
     
-3. [File Structure](#fs)
+4. [File Structure](#fs)
 
 
 
@@ -89,7 +92,17 @@ Twist:
 
 ````
 
-# 2. Usage <a name="u"></a>
+
+# 2. Installation <a name="inst"></a>
+
+**Install all dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+
+# 3. Usage <a name="u"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
 
@@ -156,7 +169,7 @@ rostopic pub /motion_control/goal move_base_msgs/MoveBaseActionGoal "{
 ```` 
 If launched correctly, SPOT should be moving the the position (63, 11) in the OccupancyGrid. 
 
-## 3. File Structure <a name="fs"></a>
+## 4. File Structure <a name="fs"></a>
 ````
 ├── CMakeLists.txt                  # CMakeLists.txt for the package
 ├── launch

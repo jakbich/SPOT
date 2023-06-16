@@ -10,6 +10,7 @@
 	type="recognize_speech.py" 
 	name="conversation_server" 
 	output="screen"
+	launch-prefix="gnome-terminal --command"
 />
 
 	<node 

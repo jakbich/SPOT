@@ -1,0 +1,1963 @@
+[33mcommit dfe3255e4d127dc6cebaff0194576cce1e1be265[m[33m ([m[1;36mHEAD -> [m[1;32mstate_machine[m[33m, [m[1;31morigin/state_machine[m[33m)[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Thu Jun 8 11:06:43 2023 +0200
+
+    Action server for explore
+
+[33mcommit 7f5060a37ee15bee10a2f34cd3e456c737639ef6[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue Jun 6 16:20:43 2023 +0200
+
+    Mapping service not working yet
+
+[33mcommit a5b6fbf2e4c0fdd1479659c8b8000e2f94bc93d5[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 15:54:13 2023 +0200
+
+    Added launch file
+
+[33mcommit 37b142ce5e0b084cba62a121538e6b838844a59e[m
+Merge: d0bfe12 9c3c515
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 15:26:25 2023 +0200
+
+    Merge branch 'explore' into state_machine
+
+[33mcommit 9c3c515b6900f079cd74e88f233350b229fbf0dd[m[33m ([m[1;32mexplore[m[33m)[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 15:22:33 2023 +0200
+
+    Changed explore to trigger service
+
+[33mcommit d0bfe125ff640bdcd0e703a72954e042cc1388f8[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 14:59:53 2023 +0200
+
+    added state_machine launch and first parts
+
+[33mcommit e83a621e6d3665ee86e5bfdf66a24225e32ac301[m
+Merge: 0f07f48 088a412
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 14:24:00 2023 +0200
+
+    Merged explore
+
+[33mcommit 088a41268884b4bc3aae6cb9017ff35a50e2d3ee[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 14:18:34 2023 +0200
+
+    tweaking
+
+[33mcommit 0f07f48f48196dcc58bc5248f3eb3cba4b252e83[m
+Merge: fb3ab90 b89b76d
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 14:16:52 2023 +0200
+
+    Merged with slam
+
+[33mcommit 3cd88dac59374d33b3f172b3b6841c1095c42732[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:43:53 2023 +0200
+
+    added slam
+
+[33mcommit b89b76d279f49c3d8315cc2a47f46883426ec6c1[m[33m ([m[1;31morigin/slam[m[33m, [m[1;32mslam[m[33m)[m
+Merge: 64f5870 0dd2477
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Fri Jun 2 13:37:58 2023 +0200
+
+    Merge branch 'slam' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into slam
+
+[33mcommit da36b7e15923d267483e5b98eb4d1b84d668df23[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:37:41 2023 +0200
+
+    fixing git
+
+[33mcommit 64f5870f4c1b467c3cdc8ebebfc42a827c4c44a1[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Fri Jun 2 13:35:26 2023 +0200
+
+    Solved dubble launched nodes
+
+[33mcommit 7b17ac1af3b100d4c9dd07bb22f1a15954cdf153[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:30:21 2023 +0200
+
+    added human interaction
+
+[33mcommit dfa0425850e0360f279897a25fae7bcb23106cf7[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:26:39 2023 +0200
+
+    adding motion_control
+
+[33mcommit 35de4150610fd4b3c30b3227df84824eacaf871e[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:25:36 2023 +0200
+
+    fixing git
+
+[33mcommit 128a87b759cdda528d46e590bcc227456974c5b2[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:16:26 2023 +0200
+
+    merged manually rrt
+
+[33mcommit a4a3643cb300d193e492f4b017130b1a2f8199ef[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:14:47 2023 +0200
+
+    changed gitignore
+
+[33mcommit e5d6600507e09723de97b73f9e79eb1f84e43588[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:13:22 2023 +0200
+
+    changed gitignore
+
+[33mcommit 87061b5ebb06337049b21da13234ff400610598d[m
+Merge: abccb2d 9a17e7d
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:11:00 2023 +0200
+
+    Merge branch 'rrt' into explore
+
+[33mcommit abccb2da45ed10786e0d4342ea6b192be4b2a73b[m
+Merge: 9648efb 0dd2477
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 13:06:11 2023 +0200
+
+    merged slam
+
+[33mcommit 9648efb8fc608a829f77954214a53caa57b10b15[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 12:57:37 2023 +0200
+
+    cleaned up branch
+
+[33mcommit 2c3efa376988165b838d9f72f085d935b17ad8cf[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 12:56:01 2023 +0200
+
+    added explore.py
+
+[33mcommit 9550529523022e23e660b3689ee4b0ed36abf96a[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 12:54:19 2023 +0200
+
+    removed old slam
+
+[33mcommit df7ecd4a53221e8378dadd6685ac7459d6cabbae[m
+Merge: 7f71645 44eba49
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 11:42:33 2023 +0200
+
+    Merged wip
+
+[33mcommit 7f71645b2ee3a1eebd5f7891630632e293083246[m
+Merge: 2527d44 0e84d7c
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 11:23:08 2023 +0200
+
+    merging for testing
+
+[33mcommit 0dd2477ebd1b19fab14745fa6d88e1cfcaad4fe7[m
+Author: Marco de Böck <m.b.debock@student.tudelft.nl>
+Date:   Fri Jun 2 11:22:12 2023 +0200
+
+    Update README.md
+
+[33mcommit 9a17e7dc6765a1ac9afe8fe33f4d6a732dd0f8e5[m[33m ([m[1;31morigin/rrt[m[33m)[m
+Author: Marco de Böck <m.b.debock@student.tudelft.nl>
+Date:   Fri Jun 2 11:07:17 2023 +0200
+
+    Update .gitignore
+
+[33mcommit 317c36db4b9b98c160b7814397efc8c1295d6a2c[m
+Author: Marco de Böck <m.b.debock@student.tudelft.nl>
+Date:   Fri Jun 2 11:05:21 2023 +0200
+
+    Update .gitignore
+
+[33mcommit 5ce9965de9a4f58017d8ec397c968016be85ee01[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri Jun 2 10:06:40 2023 +0200
+
+    Cleaned slam branch
+
+[33mcommit 2550336e5a2b09e932aa79bef4102d954e2fde3c[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Fri Jun 2 09:52:42 2023 +0200
+
+    Create launch file for image2pointcloud instead of node
+
+[33mcommit fb3ab907c40d26f826210da81de37b4930933131[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 09:49:50 2023 +0200
+
+    Cleaned up branch by deleting slam folder
+
+[33mcommit cad7a2205f71b3d9ececfca5612955474a6061fe[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 09:37:53 2023 +0200
+
+    Added image
+
+[33mcommit ebb53608b9cb53616f8781630b3ac01e5a53a17c[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 09:33:56 2023 +0200
+
+    Cleaned up branch
+
+[33mcommit ee885224b3ea563331f80ff5f310981d31f0f0d0[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 09:32:36 2023 +0200
+
+    changed branch name
+
+[33mcommit 0e84d7cc351cf83470270e55ee450ff74349571e[m[33m ([m[1;31morigin/trajectory[m[33m)[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Fri Jun 2 09:21:01 2023 +0200
+
+    Tweaked motion_control and added comments to rrt
+
+[33mcommit fa9b4a895084f879b4fe7c2d273c9ac23dc31626[m
+Merge: 817245a bfccef3
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Thu Jun 1 16:05:16 2023 +0200
+
+    Merge branch 'trajectory' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into trajectory
+
+[33mcommit 817245a2ad270c7adc4748f6ab1183e79d9ccc7e[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Thu Jun 1 16:04:55 2023 +0200
+
+    tweaked RRT with motion_control
+
+[33mcommit 44eba495a2e29ab1ecb0cd976434b582e89cb952[m[33m ([m[1;32mwip[m[33m)[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 13:32:44 2023 +0200
+
+    Deleted non-existing files from CMakeList
+
+[33mcommit b7735a43e20f9d60f78995b3f5563f22766cf871[m
+Author: Marco de Böck <m.b.debock@student.tudelft.nl>
+Date:   Thu Jun 1 12:32:40 2023 +0200
+
+    Deleted wrong image and uploaded the right image for the rrt/README.md
+
+[33mcommit f320c9c70e3d1009cf070b81c13b065ab3bf3b07[m
+Author: Marco de Böck <m.b.debock@student.tudelft.nl>
+Date:   Thu Jun 1 12:28:31 2023 +0200
+
+    Update rrt/README.md and upload image
+
+[33mcommit 6bed8df5e0de398db9bd2ca4e4d7a05d3d0bd5d7[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Thu Jun 1 12:26:26 2023 +0200
+
+    added yolo install dependencies to readme
+
+[33mcommit efa65ef5b5779d13bb4d65b59d52c998df7808ba[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 12:10:46 2023 +0200
+
+    HRI README added publisher/subscriber table
+
+[33mcommit aef3c46a48c2c9b048f954598c2f9f828ba42861[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 12:01:12 2023 +0200
+
+    Added new images to README
+
+[33mcommit 6e690ca7205d696f4de6e69063acd42759ac5250[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 11:55:22 2023 +0200
+
+    Removed images from README
+
+[33mcommit eb151a1bb16bad6f3b6c9a909001fbca06f83d9f[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 11:47:47 2023 +0200
+
+    Added master README and image_folder
+
+[33mcommit 2527d443d1007e31f520af236f2426a1ffb74dc0[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Thu Jun 1 11:18:03 2023 +0200
+
+    Created seperate launch files
+
+[33mcommit af9ad8001d243afa63466549359dfe9aa8ddaed0[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 10:27:33 2023 +0200
+
+    Added requirements.txt
+
+[33mcommit 3b40c1541bb08516b7e99257ea716c5f2f28bcf8[m
+Merge: 2425dba 7d95dcf
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 10:19:57 2023 +0200
+
+    Merge branch 'slam' into hardware-tests
+
+[33mcommit 2425dba557f29c079b78355a5a43c8219b57ded6[m
+Merge: f0a45ce d659158
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 10:17:41 2023 +0200
+
+    Merge branch 'detection' into hardware-tests
+
+[33mcommit f0a45ce525f0d3e868e84cf26385b95647b61725[m
+Merge: 21d043a 6a25575
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 10:14:44 2023 +0200
+
+    Merge branch 'state_machine' into hardware-tests
+
+[33mcommit 21d043a90262da325940ad8236a9cc5bb7d53568[m
+Merge: f4954e7 369b598
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 10:10:58 2023 +0200
+
+    Merge branch 'planning' into hardware-tests
+
+[33mcommit f4954e7caeccd04c87b19cd05470a65951aa4a84[m
+Merge: 50f2404 bfccef3
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 10:07:01 2023 +0200
+
+    Merge branch 'trajectory' into hardware-tests
+
+[33mcommit 50f2404dc4ad347d6d9607abdc8ff444bc4e3a89[m
+Merge: 5cc9b9c 79d0735
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu Jun 1 09:59:01 2023 +0200
+
+    Merge branch 'hardware-tests' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into hardware-tests
+
+[33mcommit bfccef306fbc570b465a64621aacdd7c798e2cb4[m[33m ([m[1;32mtrajectory[m[33m)[m
+Author: Jurjen Scharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Thu Jun 1 01:06:17 2023 +0200
+
+    Update motion_control/README.md
+
+[33mcommit 2554abfaef6f4c8c74666be694550bcf846c6215[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Thu Jun 1 01:04:46 2023 +0200
+
+    Tweaked READMEs
+
+[33mcommit 985603cb4a5a1d2fe63463248e7ba54f4a85394f[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Thu Jun 1 01:01:20 2023 +0200
+
+    Added READMEs
+
+[33mcommit 7b7a616eb66dbeef316a27d76caac1c0d2f5c1c8[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Wed May 31 22:17:57 2023 +0200
+
+    RRT somewhat working
+
+[33mcommit d6591586395cbb0bc7958dc56fa6b3b68a29204a[m[33m ([m[1;32mdetection[m[33m)[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 31 12:12:17 2023 +0200
+
+    added database for detections
+
+[33mcommit 369b5981b62a96ba5e84b6e7cffbd8883053e785[m[33m ([m[1;31morigin/planning[m[33m, [m[1;32mplanning[m[33m)[m
+Author: Marco de Böck <m.b.debock@student.tudelft.nl>
+Date:   Tue May 30 22:59:36 2023 +0200
+
+    Update rrt/README.md for rrt
+
+[33mcommit 7d95dcf26a7d9b90abbe164e588565ddd3f15911[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 30 17:29:01 2023 +0200
+
+    Update image scaling and tables in README
+
+[33mcommit 5b8c78e33c33d6cb1665af68be075cc8d8ed1ff2[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Tue May 30 17:28:48 2023 +0200
+
+    Updated README.md
+
+[33mcommit b0174eabf210ce5af4181f4041c248b7cf8a7941[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Tue May 30 17:26:22 2023 +0200
+
+    Update yolo/README.md, yolo/images/EXAMPLE.png
+
+[33mcommit bddb1e03c4c779dc5caab4faceb7619790f79eac[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Tue May 30 17:04:45 2023 +0200
+
+    Update yolo/README.md
+
+[33mcommit efcbf10558abe0d0cc3ea3354312371f8d344b43[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Tue May 30 17:01:05 2023 +0200
+
+    Updated the readme.md
+
+[33mcommit 6a25575f0bfc005a45ce0ebdba6c4c6d499d7ec9[m
+Merge: 2debe4d 6be0986
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue May 30 16:50:26 2023 +0200
+
+    Merged
+
+[33mcommit 2debe4db6b0191efd3a972d8054a5439adb1f6ca[m
+Merge: 6c338e1 9ba620e
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue May 30 16:48:13 2023 +0200
+
+    Merge branch 'slam' into state_machine
+
+[33mcommit 24886526eae1b6d340328f0ed9e0350760c409f2[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Tue May 30 15:43:06 2023 +0200
+
+    cleanup
+
+[33mcommit 957f40dfa17c70a0927abb3d7afc36dd91853c0f[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Tue May 30 15:42:35 2023 +0200
+
+    update gitignore
+
+[33mcommit 3b51b46d74536a6117531570700015bb1ec95513[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Tue May 30 15:40:39 2023 +0200
+
+    Working on fixing RRT
+
+[33mcommit 4db0b1d9afcc461df78800fccdbcd271cc7fa7ba[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Tue May 30 15:38:53 2023 +0200
+
+    yolo works with gray images
+
+[33mcommit 6c338e1605d1e52fbe082bcc03c0f5efdd83e67c[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue May 30 15:19:14 2023 +0200
+
+    Added state to trigger conversation_server
+
+[33mcommit 9d114fc0d8e42ce094ea2fcf716985f319023df0[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Tue May 30 14:14:57 2023 +0200
+
+    Fixed CMake files
+
+[33mcommit fe4e56156b315bbb7724a598428809c79c518084[m
+Merge: 98d468a 5e00e5e
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Tue May 30 14:12:03 2023 +0200
+
+    Merge branch 'trajectory' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into planning
+
+[33mcommit eb226d1db6520550cbd13ecd2d2871400f9bfdf9[m
+Merge: c15594f 07bb4c0
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue May 30 13:50:35 2023 +0200
+
+    Merge branch 'human_interaction' into state_machine
+
+[33mcommit f04c206a58c473e278674745536142540ab4c6ba[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 30 13:20:28 2023 +0200
+
+    Updated readme to visualize images
+
+[33mcommit 9158345318ba276cba5568684027cf376c3b45ac[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 30 13:17:25 2023 +0200
+
+    Added readme
+
+[33mcommit c7524c19ae1db0119d7e47dd541f45a8404ab8f9[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 30 09:35:32 2023 +0200
+
+    Read-out bag-file for debugging depth image
+
+[33mcommit 98d468a6356807d11236e5fef9b4d072a37f81e0[m
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Tue May 30 09:32:33 2023 +0200
+
+    included correct cmakelist and package
+
+[33mcommit a75813bb25c6df6ec735cee8fce0172bc558de3e[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Mon May 29 19:20:34 2023 +0200
+
+    Update yolo/README.md
+
+[33mcommit d969edd88cb5370dc2af8f9668e733a40488e2c7[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Mon May 29 19:13:36 2023 +0200
+
+    Updated README.md
+
+[33mcommit 5e00e5e8f64284234155e73d67f1bdf78bbd810d[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Mon May 29 16:25:24 2023 +0200
+
+    Seperated motion package, added READMEs to motion and trajectory, and hopefully the exploring works now
+
+[33mcommit 7d8a173d2d8810ff80450c6f6680c12c3950f3a6[m
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Mon May 29 14:33:36 2023 +0200
+
+    Working on testing
+
+[33mcommit 6642a47e9216bb9e72a23ead18bb561bb79d8a28[m
+Merge: fa4de55 9ba620e
+Author: Jurjen <jurjenscharringa@gmail.com>
+Date:   Mon May 29 14:00:37 2023 +0200
+
+    Resolved merge conflift
+
+[33mcommit fa4de5574fa67aa54775d4d819093ae926a04461[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Mon May 29 11:28:27 2023 +0200
+
+    Added trajectory package to convert list of points to moveactiongoals
+
+[33mcommit 9621d13004fa28c7e9fdc0c917739c673b50328f[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Mon May 29 11:23:35 2023 +0200
+
+    Worked on planning
+
+[33mcommit e3e45686a80507086b33b341ace19df05638d987[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Sun May 28 21:51:32 2023 +0200
+
+    split up RRT package
+
+[33mcommit 07bb4c0d208563fee215aea7209b56dad0781b3f[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Sat May 27 13:08:47 2023 +0200
+
+    Added links to README
+
+[33mcommit 471e7e32c8858d6c0e7612d8cf039035dbf8e61e[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Sat May 27 12:57:33 2023 +0200
+
+    Added launch file for bracelet_gui
+
+[33mcommit aedbc968c80a061182e94cf6f6267e0ec7e8b5e2[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Sat May 27 12:56:42 2023 +0200
+
+    Full README, requirements.txt and images for README
+
+[33mcommit 9033dc20248ccee89815f0eb04c5661efa7c673f[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri May 26 12:35:28 2023 +0200
+
+    Added GUI for bracelet (triggering missions (speech/text), showing status
+
+[33mcommit 9d5a5ac68269ab5565a3a8a3a6d48dee10769d88[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri May 26 09:39:20 2023 +0200
+
+    Adjusted README, added bracelet GUI
+
+[33mcommit 5cc9b9c12cc3e62e7a157d76f1d28b62643bd62a[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri May 26 09:39:20 2023 +0200
+
+    Added bracelet GUI
+
+[33mcommit adf698a70035f40bf7935fa8e0fc691733658eea[m
+Merge: 402b7d3 9770c8c
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Thu May 25 16:53:10 2023 +0200
+
+    Merge remote-tracking branch 'origin/motion_control' into planning
+
+[33mcommit 79d0735a4d7332f5c1b9ed9c499aa07f87b9b19a[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Thu May 25 15:47:47 2023 +0200
+
+    hotfix
+
+[33mcommit cbf6bb7d7b796ad506f16fbb78b52325749c61c5[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Thu May 25 15:44:53 2023 +0200
+
+    fixed the issue where yolo package did not build
+
+[33mcommit 402b7d38f22b7474849a047176ff5632500113ea[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Thu May 25 13:31:08 2023 +0200
+
+    Added copy
+
+[33mcommit 383333e8a4a3f9824c9a86f55766ffb6839c9ab7[m
+Merge: 58afeb2 9ba620e
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Thu May 25 12:58:54 2023 +0200
+
+    Fixed conflicting CMakeLists.txt
+
+[33mcommit 9ba620eed8550278ba43eba505f838911e391b6a[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Thu May 25 11:21:36 2023 +0200
+
+    Depth image to pointcloud
+
+[33mcommit 6f9a13383154841d30d981a9aa6421779ee22656[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Thu May 25 11:11:03 2023 +0200
+
+    Added TODO comments
+
+[33mcommit 3f87b7b25c1b7109357c868315b30638039318b0[m
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Thu May 25 10:53:34 2023 +0200
+
+    Implemented the server to the planning node
+
+[33mcommit f656877d7a9914b5b6b28d88d37d04dcb2e621f9[m
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Thu May 25 10:03:44 2023 +0200
+
+    First implementation of RRT and test Occupancymap created
+
+[33mcommit 58afeb2b65af336c27f4e7c8851350a0552010cb[m
+Author: Jesse Dolfin <j.r.dolfin@student.tudelft.nl>
+Date:   Wed May 24 13:57:24 2023 +0200
+
+    Update .gitignore
+
+[33mcommit 4dedc7a550a37925da3dc65241351a40696ce418[m
+Merge: 52382c3 5fbe9db
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 13:18:49 2023 +0200
+
+    Merge branch 'hardware-tests' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into hardware-tests
+
+[33mcommit 52382c34b7c78b5f274ebc24ff8e6eaf950ba91d[m
+Merge: fd5d11d 9770c8c
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 13:16:41 2023 +0200
+
+    Merge branch 'motion_control' into hardware-tests
+
+[33mcommit 9770c8cac948b71ab41ba3211cbc5ceafa617193[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 13:15:48 2023 +0200
+
+    Connected motion server and explore frontiers
+
+[33mcommit 5fbe9db5518131425077c8f53d793ede6fd21f27[m
+Merge: fd5d11d 8ab8f9a
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 24 12:58:52 2023 +0200
+
+    Merge branch 'detection' into hardware-tests
+
+[33mcommit 8ab8f9a6c64b9322b79aad00e3e5694ed05402b6[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 24 12:25:34 2023 +0200
+
+    node now assigns 2d coord to detection in right camera
+
+[33mcommit 267c4480ba6d7c75617ba9f47ea0342acaf9a1df[m
+Merge: c91d339 bc39433
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 12:14:33 2023 +0200
+
+    Merge branch 'active_slam' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into motion_control
+
+[33mcommit 0d886073c8cbe91756def024ea673b202042a3d9[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:51:55 2023 +0200
+
+    Added header to README
+
+[33mcommit fd5d11d0178104dfefb6ba869cf17e7b5c504a30[m
+Merge: 7495eb4 76db77c
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:46:51 2023 +0200
+
+    Merge branch 'detection' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into hardware-tests
+
+[33mcommit 7495eb43f571aa4495c28c7d44623eb162805846[m
+Merge: 4259658 bc39433
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:45:06 2023 +0200
+
+    Merge branch 'active_slam' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into hardware-tests
+
+[33mcommit 4259658fe24124787b8dbb60faa34e0c6c2c110d[m
+Merge: 4b9c8fb d52a4b9
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:44:45 2023 +0200
+
+    Merge branch 'human_interaction' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into hardware-tests
+
+[33mcommit 4b9c8fb3e8342baa6817000d34d2d6a8de831d30[m
+Merge: 4bae09f c91d339
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:43:00 2023 +0200
+
+    Merge branch 'motion_control' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into hardware-tests
+
+[33mcommit d52a4b9ad689822b8bc1b2fa08303b7e9e62262b[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:39:06 2023 +0200
+
+    merge check
+
+[33mcommit bc3943377673461681025cd26dc5c599e076b254[m[33m ([m[1;31morigin/active_slam[m[33m)[m
+Merge: 92aee25 ec0de9c
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Wed May 24 10:22:11 2023 +0200
+
+    Merge with active slam
+
+[33mcommit 92aee253329c5d6a395e035bc9aec3621fa2af90[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Wed May 24 10:20:30 2023 +0200
+
+    Basic exploring code working
+
+[33mcommit 4bae09f6c4ec570f9947f267454a9857dc7ee726[m
+Merge: 1975420 6be0986
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:18:43 2023 +0200
+
+    Merge remote-tracking branch 'origin/active_slam' into hardware-tests
+
+[33mcommit 19754202f3153fc53e50fe0fa441dc49658c2465[m
+Merge: ffacd34 b3da9ce
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:16:47 2023 +0200
+
+    Merge remote-tracking branch 'origin/detection' into hardware-tests
+
+[33mcommit ffacd34f2ae3ccc816f26541d58a3155ea1f4df8[m
+Merge: a598c5d c15594f
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:13:02 2023 +0200
+
+    Merge remote-tracking branch 'origin/state_machine' into hardware-tests
+
+[33mcommit a598c5d451f2262dc3975b903ed96d65b165905d[m
+Merge: 5bed432 27e70ec
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:12:43 2023 +0200
+
+    Merge remote-tracking branch 'origin/planning' into hardware-tests
+
+[33mcommit 5bed43256842c52503c8a5ced43d8eeb73be9bcb[m
+Merge: b50f6e2 db6e4d2
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 10:12:21 2023 +0200
+
+    Merge remote-tracking branch 'origin/motion_control' into hardware-tests
+
+[33mcommit c91d339f4546f0fc30713a96ad6d5959977c32e1[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Wed May 24 10:02:37 2023 +0200
+
+    Tweaked motion_control
+
+[33mcommit b50f6e2451c80b04a7c6705d721aecbae01a1ed3[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 24 09:40:37 2023 +0200
+
+    Addded the action file
+
+[33mcommit 76db77c30128cbde94290ca4bfc0ad5fb5521805[m
+Merge: fd75fbb 4e54b6b
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 24 09:15:15 2023 +0200
+
+    pre-merge commit
+
+[33mcommit ec0de9c349a0e1d4f9efc96a460568e15d1e0c67[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Tue May 23 20:54:00 2023 +0200
+
+    Changed motion control to a server
+
+[33mcommit 4591e268de0582ed116560b02fa91add2e5a248b[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue May 23 17:46:06 2023 +0200
+
+    Added comments to the conversation_server
+
+[33mcommit fd75fbba8e4ca3c1dfcc391533c52ca509e4eab3[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Tue May 23 16:26:10 2023 +0200
+
+    added camera transform function, works but a different reference frame needs to be created
+
+[33mcommit b25b33152b851bb0bc021c39e07b0d6661d7a9d8[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Tue May 23 13:53:01 2023 +0200
+
+    fixed the issue with the path to yolo files
+
+[33mcommit 6be098675d3e56f6b668c959599f4503366362af[m[33m ([m[1;32mactive_slam[m[33m)[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Tue May 23 12:26:20 2023 +0200
+
+    Continued working on activeslam and motion control
+
+[33mcommit c15594f203063275bf5f80e8d8749a50f7b35840[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 23 11:46:47 2023 +0200
+
+    High level state machine without actions
+
+[33mcommit 58309bbebcf8cc409a78c49c3afd7845c06ba1b1[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Tue May 23 09:24:00 2023 +0200
+
+    All progress so far on exploring
+
+[33mcommit e7e056162bf1c809438720a64a5ffb910d3fa11d[m
+Merge: 82a4e6b db6e4d2
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Tue May 23 00:17:55 2023 +0200
+
+    Merge branch 'motion_control' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into planning
+
+[33mcommit aa4472c85c49e33d7655b1d651f814341943f41c[m
+Merge: e41137e db6e4d2
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Sat May 20 21:17:03 2023 +0200
+
+    Merge branch 'motion_control' into active_slam
+
+[33mcommit e41137ed362d33a3a3fc2b961ab3dd51d4d2af61[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Sat May 20 12:50:43 2023 +0200
+
+    Working on frontier exploration
+
+[33mcommit db6e4d2b5e475b7e27a74fcd8e9a899fec137765[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Sat May 20 12:26:08 2023 +0200
+
+    Added motion_control.py and grid_position_transform.py
+
+[33mcommit 5531e2b3a08723a0371bb58274b1d636b7136d1f[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Fri May 19 15:24:27 2023 +0200
+
+    Added action feedback, initial README
+
+[33mcommit 8a7513e624a34d1e9aa32563e74077fdb0ef6199[m
+Merge: 469c2d7 4e54b6b
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Thu May 18 10:00:46 2023 +0200
+
+    Merge branch 'slam' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into active_slam
+
+[33mcommit 469c2d7a963ee3e13af5e9796004f8eba7067db7[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Thu May 18 09:56:48 2023 +0200
+
+    Continued working on active_slam
+
+[33mcommit b3da9cec141828a3de9e6c01c8d8e7bd26907cd7[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 17 21:32:10 2023 +0200
+
+    Fixed the yolo detection algorithm.
+
+[33mcommit c1cb9dda32f8d79af314fa5a9048a6e796156617[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 17 16:04:44 2023 +0200
+
+    Initial server/client setup
+
+[33mcommit 3315ce4676d59c71d999fd4f38a101dec933d3e7[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 17 14:30:29 2023 +0200
+
+    Refactored for readability
+
+[33mcommit 82a4e6bba2dcd3238ea95251ca4450889463bf15[m
+Merge: eec53e0 251359e
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Wed May 17 12:13:02 2023 +0200
+
+    Merge branch 'human_interaction' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into planning
+
+[33mcommit eec53e0dd78b59ff67a206b1554d8335ae0928fa[m
+Merge: 27e70ec 4e54b6b
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Wed May 17 12:11:42 2023 +0200
+
+    Merge branch 'slam' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into planning
+
+[33mcommit 4e54b6b80a25da225f2f5fd5b633b15bc21e0e89[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 16 20:01:25 2023 +0200
+
+    Solved position drift by using ground truth
+
+[33mcommit 27e70ec21da40bb0cbd6819f2a9d23cd49a5b29c[m
+Author: Marco de Bock <m.b.debock@student.tudelft.nl>
+Date:   Thu May 11 23:58:37 2023 +0200
+
+    create node for rrt planning
+
+[33mcommit 3c99117c4af1e75d4d0bab469f671f0a4dbd1403[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 21:00:48 2023 +0200
+
+    fixed a bug, node is now publishing 2d bounding boxes
+
+[33mcommit 3f1c14bac982af9df29940effca02c9f22756400[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 20:29:59 2023 +0200
+
+    updated package.xml
+
+[33mcommit fd852188654e25400ac59fbcdf15634619884371[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 20:24:08 2023 +0200
+
+    updated readme
+
+[33mcommit 9c9a64a45d808529ed190678b0afb9d81bcf2f31[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 20:22:23 2023 +0200
+
+    updated readme
+
+[33mcommit 15e106047428cab401fac5e770cab26ee0abe67c[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 20:15:38 2023 +0200
+
+    added the yolo_config folder
+
+[33mcommit 69cae523c99daaf31441b459131d79ddbd3ec0e8[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 20:13:13 2023 +0200
+
+    added gitignore
+
+[33mcommit 9d9c28ff0d1a45b13a04b6abb0acc7df55cfbe02[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 20:11:05 2023 +0200
+
+    base yolo in ros
+
+[33mcommit 574f1d529dd0f4ace6352230fce63293bfa92fc5[m
+Merge: 63e116b ad1a165
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Wed May 10 18:26:08 2023 +0200
+
+    Merge branch 'slam' of https://gitlab.tudelft.nl/cor/ro47007/2023/team-19/champ_spot into active_slam
+
+[33mcommit 63e116b3278afd90c93009be6784fb0b9b6eba6a[m
+Author: jscharringa <j.a.scharringa@student.tudelft.nl>
+Date:   Wed May 10 18:18:40 2023 +0200
+
+    Started working on the active slam
+
+[33mcommit 251359e643c743c6ca33bee2ddefcd98aba48b60[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 10 18:10:28 2023 +0200
+
+    Removed unnecessary audio file. Closes #3
+
+[33mcommit b6262f1c35602e5ae6629a295362dcfa050a6093[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Wed May 10 18:06:20 2023 +0200
+
+    Initial conversational capabilities and remapping of similiar words. closes #2
+
+[33mcommit ad1a165cc3d4f26147364af0bfe48c224917c2e3[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Wed May 10 17:05:41 2023 +0200
+
+    solved #2, Filtered pc point on distance and angle
+
+[33mcommit 01a64bb2da9d1ec2724d5afd26234e33cc51098d[m
+Author: JesseDolfin <jesse.dolfin@gmail.com>
+Date:   Wed May 10 16:10:54 2023 +0200
+
+    testfile
+
+[33mcommit 2558abf05ac0df24b7251df91b03b941444e4e0c[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Wed May 10 14:01:14 2023 +0200
+
+    Grid updates with fixed step sizes
+
+[33mcommit 97b18eb63d7a78214f727a3f3a5a62148de0951b[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Wed May 10 12:08:26 2023 +0200
+
+    Initial mapping wthout update
+
+[33mcommit a3c01c12b119473162ca0f75b327e8bd35ea0c30[m
+Author: jakob <j.d.bichler@student.tudelft.nl>
+Date:   Tue May 9 19:47:18 2023 +0200
+
+    Initial node, publishes transcribed speech to topic after rosrun
+
+[33mcommit 57be030c6e8d7ed77a2935b0404914204dceaec8[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 9 17:40:29 2023 +0200
+
+    close #1
+
+[33mcommit 8362fa08f04045c1d88720222b3d3a41bd798d2f[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 9 17:35:32 2023 +0200
+
+    closes #1; synch timings in segmentation
+
+[33mcommit 5cd956aa2c8538d6b4506ab3c32a516280d4543a[m
+Author: Guido Dumont <guidodumont.gd@gmail.com>
+Date:   Tue May 9 12:08:44 2023 +0200
+
+    Create plane segmentation node
+
+[33mcommit 9cbe1c8d69422c5d17a8f54299bea0b529ebaaa2[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Tue May 2 11:22:23 2023 +0200
+
+    Update README.md
+
+[33mcommit 47eaf7f9d332ee9b71533cf2a07832287f6b1d45[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Tue May 2 11:06:52 2023 +0200
+
+    Update README.md
+
+[33mcommit 077ab5f2daea6ae937e43f1306bd2f930df36292[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Tue May 2 11:00:41 2023 +0200
+
+    Update README.md
+
+[33mcommit 8c4928e9d9c6e2691bca96f62cdea0333ec398ab[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 11:35:15 2023 +0200
+
+    Update README.md
+
+[33mcommit b9162b0ef433cdb51354f52e8817ec8972b0bf31[m
+Merge: 0d441ec 2578526
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 09:54:30 2023 +0200
+
+    Merge branch 'kkhomenko-master-patch-51240' into 'master'
+    
+    Update README.md
+    
+    See merge request cor/ro47007/2023/team-0/tno/champ_spot!3
+
+[33mcommit 257852642a161c741fe44d402a881fee0e7af3bc[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 09:54:13 2023 +0200
+
+    Update README.md
+
+[33mcommit 0d441ec2b2feb3955eab9b519ab7c5a21677dda2[m
+Merge: c189d72 ec6ed75
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 09:44:47 2023 +0200
+
+    Merge branch 'kkhomenko-master-patch-56711' into 'master'
+    
+    Update README.md
+    
+    See merge request cor/ro47007/2023/team-0/tno/champ_spot!2
+
+[33mcommit ec6ed75bafd857a9170c0dbe5818f3ca46b04566[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 09:44:23 2023 +0200
+
+    Update README.md
+
+[33mcommit c189d722cde0cc04f50191669120fed660b625ab[m
+Merge: e428ba8 19ce69d
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 09:34:19 2023 +0200
+
+    Merge branch 'kkhomenko-master-patch-06166' into 'master'
+    
+    Update README.md
+    
+    See merge request cor/ro47007/2023/team-0/tno/champ_spot!1
+
+[33mcommit 19ce69d54b67c2e1b0b14ac02e8f6f39353348d1[m
+Author: Kseniia Khomenko <k.khomenko@tudelft.nl>
+Date:   Mon May 1 09:33:30 2023 +0200
+
+    Update README.md
+
+[33mcommit e428ba8f00625edc8d2e7e35b2395cc1c1e6bbb2[m
+Merge: 7f41f0c 2226cc9
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 13:40:26 2023 +0200
+
+    Merge branch 'master' of https://github.com/Thomahawkuru/champ_spot
+
+[33mcommit 7f41f0cabbf06feaaf2ba9fa9a75ec7b3a13393b[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 13:40:24 2023 +0200
+
+    update
+
+[33mcommit 2226cc90668d2b3f5d785b599112adf62a31bf7a[m
+Author: kseniia99kh <110399218+kseniia99kh@users.noreply.github.com>
+Date:   Fri Apr 28 13:26:53 2023 +0200
+
+    Update README.md
+
+[33mcommit b6bda5706ad0343d6daae8b9ebde9fe7f2912142[m
+Merge: f1f294f 114bacc
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 13:24:00 2023 +0200
+
+    Merge branch 'master' of https://github.com/Thomahawkuru/champ_spot
+
+[33mcommit f1f294f91d5c53264212b8a0ddfbe554edb90a5a[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 13:23:53 2023 +0200
+
+    update
+
+[33mcommit 114bacc7073e46e7d5c530c477fdac7ee3a01b75[m
+Author: kseniia99kh <khomenko.ks99@gmail.com>
+Date:   Fri Apr 28 13:04:16 2023 +0200
+
+    Added launch file to spawn the world + modified office.world
+
+[33mcommit 12e4fbd6f489249eb1ab356019e345a8a4531b0d[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 12:04:38 2023 +0200
+
+    Update README.md
+
+[33mcommit 0b48e5ae5f0cc6a6665cb30827f4df066dfce43e[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 12:04:13 2023 +0200
+
+    Update README.md
+
+[33mcommit 9957440dfa9ed7a4cc6ca62b22234db168ce7c78[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 12:03:52 2023 +0200
+
+    Update README.md
+
+[33mcommit e411718ffaebb9fab8101be1764ea0d2a64a3126[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 11:53:52 2023 +0200
+
+    update
+
+[33mcommit 62778588cdcd2f1e973bfe6cc018bd930ef6b4e1[m
+Author: kkhomenko <k.khomenko@tudelft.nl>
+Date:   Fri Apr 28 10:33:41 2023 +0200
+
+    Added models directory
+
+[33mcommit a82e39d6d629acefff75e08bd1f68a470c7af98d[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 09:39:53 2023 +0200
+
+    update
+
+[33mcommit cda10ed69be4036677301248dccf7dfe175065f2[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 09:30:07 2023 +0200
+
+    update
+
+[33mcommit d2546140fc9af79b2a1fee0c8fa789fe10981264[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 09:26:21 2023 +0200
+
+    update
+
+[33mcommit 063b7029d28227bf5bc4ba61dfbbed88b32b3110[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 09:25:20 2023 +0200
+
+    updated
+
+[33mcommit 1c98310d6ac607c6c51a66e09f3a4dbef32b5a58[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Fri Apr 28 09:08:01 2023 +0200
+
+    chagnes to spot ros
+
+[33mcommit 63f12c2f9b658f7076affe249d3dc3defb7cb51e[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 17:59:33 2023 +0200
+
+    reduced spaw height
+
+[33mcommit d259aef575fdd9520f034e1ca8844e5dded7b95e[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 17:22:28 2023 +0200
+
+    added new world to launchfiles
+
+[33mcommit 05d238a4b7de2e2aba1f152245d350fdad8e22ae[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:32:11 2023 +0200
+
+    added humans in office
+
+[33mcommit 94d0c6ef4433fdfc4d0016ae237ccd90c135d970[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:18:22 2023 +0200
+
+    update previous commit
+
+[33mcommit d21af8af7ff9a5738ef32ad3f062dda46bf836f2[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:09:30 2023 +0200
+
+    added z height to model spawning
+
+[33mcommit 3cc091b629dbbf678246cc7be3772c0ea3393b23[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:05:52 2023 +0200
+
+    Update README.md
+
+[33mcommit cbb0ee9624c604f6e9c1bef978f4580947f14b04[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:05:16 2023 +0200
+
+    Update README.md
+
+[33mcommit 34129fe1bd23025b0d47e8e4bf1d2c10991adae0[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:03:53 2023 +0200
+
+    Update README.md
+
+[33mcommit 3095ce5c0990f4c524c6df52a6699e30e7824125[m
+Author: Thomahawkuru <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 13:03:26 2023 +0200
+
+    Update README.md
+
+[33mcommit 060af24bcdb0e4ec9e082633b81030a44b5b9923[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 12:56:01 2023 +0200
+
+    moved config to parent folder
+
+[33mcommit e635132683df7f11dc0eba63921fdae942f1bd87[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 12:53:33 2023 +0200
+
+    update readme
+
+[33mcommit d4a0f8b32116d5609da305831da8d9e36a70c7d4[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 12:52:43 2023 +0200
+
+    removed other robots
+
+[33mcommit 64b6e03fe5892775d57393cc41ece2da64e07bf2[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 12:52:33 2023 +0200
+
+    removed other robots
+
+[33mcommit 27619a4b9cfd77707ea21143fd84cf785d755248[m
+Author: Thomas de Boer <thomas.boer.rc@gmail.com>
+Date:   Wed Apr 26 12:49:39 2023 +0200
+
+    removed other robots
+
+[33mcommit 83d59811d262d52c16fe8b6da8f269ae312e1c5f[m
+Merge: 5fbea30 d504b86
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue May 3 11:02:11 2022 +0800
+
+    Merge pull request #13 from wangcongrobot/master
+    
+    add a1_config
+
+[33mcommit d504b86d6a65c11e92ae7db00e04be8bb04286df[m
+Author: Cong Wang <wangcongrobot@gmail.com>
+Date:   Fri Apr 22 19:27:28 2022 +0800
+
+    update A1 in README
+
+[33mcommit 036f11a4a7816db6106eb9cb276a97aa71833eaf[m
+Author: Cong Wang <wangcongrobot@gmail.com>
+Date:   Fri Apr 15 15:29:16 2022 +0800
+
+    add a1_config
+
+[33mcommit 5fbea3089cca990cd96d76bf4dc7cb639e34b49e[m
+Author: Juan Jimeno <jimenojmm@gmail.com>
+Date:   Tue Mar 8 19:30:58 2022 +0800
+
+    added go1 support
+
+[33mcommit 5c4c47ecce2f5b44aba9211df8c5690fccb3cb4b[m
+Merge: 86f64c4 eed50c8
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Feb 7 01:30:17 2022 +0700
+
+    Merge pull request #10 from chandyalex/stanford_pupper_config
+    
+    stanford description
+
+[33mcommit eed50c80a1a87e21ef9550d19802c83b08ae77bb[m
+Author: chandy <chandyalex92@gmail.com>
+Date:   Fri Feb 4 19:32:29 2022 +0100
+
+    read me update
+
+[33mcommit ed97ec1fbc9a402b988c4f8e3dd1363f8a44da56[m
+Author: chandy <chandyalex92@gmail.com>
+Date:   Fri Feb 4 19:29:20 2022 +0100
+
+    added stanford pupper config
+
+[33mcommit dc83a663c25e6571521c26c69521260472cd0eaf[m
+Author: chandy <chandyalex92@gmail.com>
+Date:   Fri Feb 4 19:15:38 2022 +0100
+
+    stanford description
+
+[33mcommit 86f64c4ddd12feb69ad52fca62515bea08254d4d[m
+Merge: 1eb4198 8d8129c
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu Dec 16 19:57:13 2021 +0800
+
+    Merge pull request #9 from nisshan-x/add_new_mini_pupper
+    
+    add new robot Mini Pupper
+
+[33mcommit 8d8129c6d896a49f4209a434b092abdcfcdb4444[m
+Author: nisshan-x <nisshan.x@gmail.com>
+Date:   Thu Dec 16 20:46:22 2021 +0900
+
+    add new robot Mini Pupper
+
+[33mcommit 1eb4198a155664db37720e45a8b2960afd3d83e0[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Oct 5 23:30:26 2021 +0800
+
+    fixed rviz ref frame
+
+[33mcommit ee5c881a4c544817a5b29f93b53081051aa16aea[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Oct 5 23:22:01 2021 +0800
+
+    fixed rviz ref frame
+
+[33mcommit e1ceeb7e435e49b810c8edc50afbfcbd2033dc28[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Jul 18 12:41:16 2021 +0800
+
+    added enable/disable of gz gui
+
+[33mcommit aed07de1d3f527627bb58f4b675758e282786bcc[m
+Merge: f7d17d5 9d883ea
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Apr 16 09:10:51 2021 +0800
+
+    Merge pull request #7 from aditya-shirwatkar/master
+    
+    Add Stochlite Robot
+
+[33mcommit 9d883ea75a748e21469f2e881334c318b3163f12[m
+Author: Aditya Shirwatkar <50446525+aditya-shirwatkar@users.noreply.github.com>
+Date:   Wed Apr 14 15:33:44 2021 +0530
+
+    Update README.md
+    
+    added stochlite
+
+[33mcommit 888cbc18a460d7809d455424bb52b2a03c789cca[m
+Author: aditya-shirwatkar <aditya.s@students.vnit.ac.in>
+Date:   Wed Apr 14 15:31:43 2021 +0530
+
+    added stochlite config files
+
+[33mcommit f7d17d5e5c4e3c78187c587e95ca25c152c31fbd[m
+Merge: 75c7761 9a8c751
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Jan 30 14:40:28 2021 +0800
+
+    Merge pull request #6 from tarasborov/master
+    
+    Update CmakeLists for colcon build
+
+[33mcommit 9a8c751bb429e5f2649a4a918924aedad9012d12[m
+Author: tarasborov <71763179+tarasborov@users.noreply.github.com>
+Date:   Tue Jan 26 18:53:21 2021 +0200
+
+    Update CmakeLists for colcon build
+
+[33mcommit 75c776139b67ea9ec3748c5c2f7af9276963c573[m
+Merge: 76b4082 e6472ff
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Nov 21 00:59:51 2020 +0800
+
+    Merge pull request #5 from eborghi10/spotmicro_position_interface
+    
+    Use PositionJointInterface for Spot Micro robot
+
+[33mcommit e6472ffa3c9ba454bd844dceb8503726bf90e962[m
+Author: Emiliano Borghi <emiliano.borghi@gmail.com>
+Date:   Fri Nov 20 11:32:04 2020 -0300
+
+    Use PositionJointInterface for Spot Micro robot
+
+[33mcommit 76b40826d33ca7ac858518c240c96ad99be7e4da[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Sep 22 02:16:07 2020 +0800
+
+    tweaked PID constants
+
+[33mcommit 7962c28c04cf9372349c154326729679c5337902[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 21 23:50:00 2020 +0800
+
+    added ANYmal C
+
+[33mcommit 0b9e1ccd23946349b275f28fad2c636521e79337[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 21 23:31:58 2020 +0800
+
+    added anymal_c
+
+[33mcommit 00f1ac90ccf2da80cffd25bae803b9a383a6a50b[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 21 23:31:01 2020 +0800
+
+    renamed anymal to anymal_b
+
+[33mcommit 27b8b41de47463050f38dc5eaf14dede176df8ba[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 21 22:00:22 2020 +0800
+
+    rename anymal to anymal_b
+
+[33mcommit df6995958625d4bc2a25f21da2e83ef8c9dc3612[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 19 12:47:32 2020 +0800
+
+    fixed typo
+
+[33mcommit 1169da28d4eb671419e8dc83e961cfbc05e4e664[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 19 12:43:46 2020 +0800
+
+    fixed formatting
+
+[33mcommit cf6b93dd1abf40bc5b3a20eb3d7a25e0089d9539[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 19 12:40:44 2020 +0800
+
+    added link to champ main repo
+
+[33mcommit a53030271554eb1e88d48d89c3e5c171e46c55ba[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 22:57:49 2020 +0800
+
+    multirobot integration
+
+[33mcommit 64472d5dfd83826d718130ac722bf15a8c6d7425[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 19:29:35 2020 +0800
+
+    revert default launch
+
+[33mcommit 261bad64f711f66f3f63eb758815b8533b426630[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 19:29:24 2020 +0800
+
+    fixed urdf path
+
+[33mcommit 60100b94a13433180a94d06115a7f50bfff5adae[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 19:27:26 2020 +0800
+
+    fine tuned walking params
+
+[33mcommit 3ff9fef2466450c4b10653780bf7b8965415de71[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 00:38:58 2020 +0800
+
+    added working Anymal gazebo sim
+
+[33mcommit 042e0f82722874910c16ea60e6df43d6a5cb71f4[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 00:38:35 2020 +0800
+
+    working gazebo parameters
+
+[33mcommit 637b0a8b2919dea15e869bdc8904633073262949[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Sep 18 00:25:44 2020 +0800
+
+    added aliengo
+
+[33mcommit 71dc597ce407babaabec91da51a4f77eeb43bf21[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 13 23:44:04 2020 +0800
+
+    set joint_states rate to 50Hz
+
+[33mcommit c2da679d7968ccb3acf0ccc0b87043e696ee0cd6[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 13 23:29:58 2020 +0800
+
+    added argument to load gazebo world from config package
+
+[33mcommit 77a48860402433cd75ee4bf111e02b4098f23f76[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 13 22:19:08 2020 +0800
+
+    sync with updated urdf
+
+[33mcommit e2ed59d5e7fa675c0138c3668c03ed16a56626e7[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 13 16:35:40 2020 +0800
+
+    fine-tuned gait params
+
+[33mcommit 27fef5be9a61f007ef81839f8e88e25af3e6f6cc[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 13 16:35:26 2020 +0800
+
+    sync w/ updated urdf
+
+[33mcommit 73b237fc9ba66f75662070748517da5453d68cea[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 22:17:04 2020 +0800
+
+    fixed setup-assistant link
+
+[33mcommit faea595f364e028f095f7b3b4184db4bfca00845[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 21:50:29 2020 +0800
+
+    added spot
+
+[33mcommit 2fa96a9ac01cf12458932e6cc5fc33b6758d01f4[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 18:54:57 2020 +0800
+
+    rearrange instructions for brevity
+
+[33mcommit 1430d29130d8bcd06d1e37d7dc6f98694cf6525a[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 18:32:19 2020 +0800
+
+    updated README
+
+[33mcommit ac4cd9851c796260cc286791a007143cf2d9c05d[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 18:20:12 2020 +0800
+
+    increased linear velocity
+
+[33mcommit 3c6b4475d7afe64ccde393d9d2f71eb394663032[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 16:42:45 2020 +0800
+
+    retained changes for consistency
+
+[33mcommit df15b599aa99bc3c64fb4fc92dcefd4530b12824[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 16:42:27 2020 +0800
+
+    fine-tuned odom scaler based on new covariances
+
+[33mcommit b177bf3808b403a4d2ce97028eb13d50802d8e22[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Sep 12 12:18:13 2020 +0800
+
+    added spot
+
+[33mcommit a183d4dcf1ed963135516ff45fef26b8be15d1c5[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed Sep 9 20:20:21 2020 +0800
+
+    updated README on auto-generated instructions
+
+[33mcommit 54526cc59439031fc1d60ccb036ec95785d32dba[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed Sep 9 20:15:48 2020 +0800
+
+    added generated README
+
+[33mcommit 6ebdff1ed5fd874f2ede29d1bb0ec52d978d61e6[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed Sep 9 20:12:27 2020 +0800
+
+    fixed costmap layers
+
+[33mcommit bc9f0985b73c3032e5f449ad3df0ace8081eea31[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed Sep 9 19:38:56 2020 +0800
+
+    added configs that work in Gazebo
+
+[33mcommit f9d14fe80584b8c9235fd92599a02be5c196480e[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed Sep 9 19:33:31 2020 +0800
+
+    improved nav parameters
+
+[33mcommit a171afb60958002d475eba7b824ff3e630bdeedc[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed Sep 9 00:19:51 2020 +0800
+
+    new navstack params
+
+[33mcommit 32529706fcdc0a9b556effdee62f1dd80bc333d0[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 22:15:46 2020 +0800
+
+    fine-tuned nav params
+
+[33mcommit ae3e4564f07bb4f8fd6d59b5001886c58cf44c1d[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 01:00:40 2020 +0800
+
+    added base_frame arg
+
+[33mcommit ca00a21d0c3e1fac812680ba7fdae45fdfc7c3b3[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 00:59:01 2020 +0800
+
+    removed odom_scaler
+
+[33mcommit 8ab60d35f0b5636a22cc7ca4d3c2dcbf9a1792d6[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 00:57:31 2020 +0800
+
+    added com translation
+
+[33mcommit 223a0f2217e62d1b2ecb846c31be816d024b1ae6[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 00:51:59 2020 +0800
+
+    removed odom_scaler
+
+[33mcommit 6cd635c68b5724b1b099e47a8bd9923148167543[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 00:51:39 2020 +0800
+
+    added COM translation
+
+[33mcommit 1c8f9f024ff1761126d8541d066888a636570fe7[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Sep 7 00:50:03 2020 +0800
+
+    added com translation
+
+[33mcommit b1dc6039b0aa3fb2a161d40f622551183a881d57[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 23:59:12 2020 +0800
+
+    less aggressive velocities and accelerations
+
+[33mcommit d1ddd766826aa7d45145b0402139ba647289bfee[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 23:58:45 2020 +0800
+
+    removed odom scaler
+
+[33mcommit eafad345f5a4975b7de9bc32e171b2a768b6af82[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 15:21:48 2020 +0800
+
+    sync w/ setup assistant update
+
+[33mcommit d316ef928b16a53ffa3092e600ee02f9f0f6a2ff[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 15:21:22 2020 +0800
+
+    correct cheetah footprint
+
+[33mcommit 9836816536ed2d12adabaf466751e2b138bed347[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 15:21:10 2020 +0800
+
+    fined tuned gait parameters
+
+[33mcommit efa344f7d474502a89b4e7569d8570922291b181[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 15:20:15 2020 +0800
+
+    increased joint_states publish rate
+
+[33mcommit 09f7ae0921ff07e90abf9c1f006963068abadc5e[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 13:45:57 2020 +0800
+
+    increased default joint_states publish rate
+
+[33mcommit dce939e88d9fd5d7c5b9d47765a0393417e13934[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 13:44:49 2020 +0800
+
+    working params sync with state estimation
+
+[33mcommit 62b88c5d3651aa5400c871156e9ca9068ff91220[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 13:44:34 2020 +0800
+
+    correct mini cheetah footprint
+
+[33mcommit c8e824b31889b8c5b0c7f0cf74ac25932597b510[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Sep 6 13:44:10 2020 +0800
+
+    increased publish rate of joint_states
+
+[33mcommit 52fa36a922bf2f32d6f6801ed8d53e0de0d6ba9b[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu Aug 27 01:34:16 2020 +0800
+
+    update mini cheetah source
+
+[33mcommit d646cdab95748754ad48b9b3c25f3376dbea60e2[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu Aug 27 01:32:21 2020 +0800
+
+    change mini cheetah description source
+
+[33mcommit 6344db797b5d48d2fa887015543dd54d4043cf61[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu Aug 27 01:29:34 2020 +0800
+
+    working config with new gazebo model
+
+[33mcommit 3e88b8aa6ef06d8cb7c8c4f53711b916f9f6a487[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Aug 11 01:11:25 2020 +0800
+
+    added publish_joint_control arg
+
+[33mcommit a0743987097e4b096df9de36084adaff288c164d[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Aug 11 01:03:45 2020 +0800
+
+    added odom_scaler on json configs
+
+[33mcommit 969a8bb7e7275d1b697addff48ea4ebbb386beeb[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Aug 11 00:44:53 2020 +0800
+
+    fixed joints controller topic error
+
+[33mcommit 7bba5e218ecae259e0a77a0474952c9d476dbb8d[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Aug 10 22:04:21 2020 +0800
+
+    updated new param
+
+[33mcommit 283b8588ac11fb5afcac03925bff2ef6f6d42a0a[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Aug 10 21:52:13 2020 +0800
+
+    calibrated odometry
+
+[33mcommit 9d55dbe5dd6a9f2506a350b8a231a0d1d3e48f68[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Aug 10 21:45:45 2020 +0800
+
+    fixed urdf path
+
+[33mcommit 546326d80ab277b35b318ca38dc5b032e73b8a9c[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Aug 10 21:42:00 2020 +0800
+
+    sync robots with controller updates
+
+[33mcommit df105f0d3e987d0000b6d3e429dac94fb78855e7[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Aug 7 22:09:51 2020 +0800
+
+    fixed typo
+
+[33mcommit 82b501d6559c48025a71dc057c400980a8bc7e94[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Aug 7 22:06:49 2020 +0800
+
+    added README
+
+[33mcommit f1fafaf107ab2b3634436ad8a8de67fafd9f3dc7[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Aug 7 21:46:24 2020 +0800
+
+    added open quadruped project
+
+[33mcommit 49975fea2a773ba0583b66ed140744c220da92a0[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu Aug 6 23:41:48 2020 +0800
+
+    added opendog
+
+[33mcommit d5625f359d4d208a1c63a6ea2050bca3ef5198b5[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Aug 1 13:29:42 2020 +0800
+
+    added dkitty
+
+[33mcommit 8193946d450af02462285f28cb7bf198d9b79503[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Mon Jun 1 00:29:09 2020 +0800
+
+    revert prev configs
+
+[33mcommit 5eb17a082fd403d851eb75cb571586ea3dbd592e[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun May 31 23:48:21 2020 +0800
+
+    added COM x translation
+
+[33mcommit 57e2f3dc628f9e9b06864e4247d4203228f50ebb[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun May 31 22:20:15 2020 +0800
+
+    fine tuned gait parameters
+
+[33mcommit 0bbbe4971a37a78951069ae493a0580f637508dc[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun May 31 22:19:59 2020 +0800
+
+    changed leg
+
+[33mcommit ee75cd58b0860580ac3e063b17f3bddba1e981d9[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Wed May 27 00:49:39 2020 +0800
+
+    reconfigured pins
+
+[33mcommit c83391d01734deac5f54fdceb78b3fb9b42791f6[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri May 8 20:14:13 2020 +0800
+
+    setup assistant sync for namespace support
+
+[33mcommit e8da9d44f04f11124f959b0b99111de015e14f64[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri May 8 19:24:32 2020 +0800
+
+    cleaned up
+
+[33mcommit cdff01893d926c2e377a3caa76a44d215ec22e4a[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri May 8 19:22:07 2020 +0800
+
+    resturctured folders
+
+[33mcommit 860f95b00290b429a00491d6938d7521f8710aaa[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri May 8 19:21:59 2020 +0800
+
+    resturctured folders
+
+[33mcommit 0c9ca6f574d14e422d58a4df8c7c26f48ac14fd2[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri May 8 19:21:48 2020 +0800
+
+    added auto updater when setup assistant has changes
+
+[33mcommit 79fa9f0dafddf6db3461090d2ba55410fbc5a053[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri May 8 18:28:23 2020 +0800
+
+    sync json config files
+
+[33mcommit 43f0e9eecc105eb65765d57c15d7e7cf3de9c1ad[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu May 7 21:17:33 2020 +0800
+
+    fixed walking gait param
+
+[33mcommit 00f71c660cc13b4bf2781e3d63b4867c45b9c0ea[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu May 7 21:07:10 2020 +0800
+
+    sync with controller updates
+
+[33mcommit 3e3c8d6ef2966a08b220f123b4d1706df9a74c08[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Thu May 7 21:07:00 2020 +0800
+
+    fixed walking param
+
+[33mcommit 4dbf138b61616e10730653a5a6f0cae4b935d8a9[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Apr 26 11:44:19 2020 +0800
+
+    fixed hard-coded URDF path
+
+[33mcommit 79042c6715f196cd92d11b45cf2f68cce8e0d6d5[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Apr 26 01:22:18 2020 +0800
+
+    deleted unused scripts
+
+[33mcommit 18cf27deeae47d9b4e6a9bb68229e9ad03c1849d[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Apr 26 01:22:06 2020 +0800
+
+    added .gitignore
+
+[33mcommit 3c81eaddd3eafa409ab9b4c69705340987124600[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sun Apr 26 00:16:52 2020 +0800
+
+    added description installers
+
+[33mcommit fc048792768c235f80032186090e6ca145fa8fc6[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Apr 25 18:00:11 2020 +0800
+
+    changed base frame to odom
+
+[33mcommit dab483109d2836cfe3e35e1c08f61893df8e884c[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Fri Apr 24 22:52:51 2020 +0800
+
+    added dream_walker
+
+[33mcommit bdcf91e487849081f6917fa3f79e36206e3fd7a3[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Tue Apr 21 21:48:29 2020 +0800
+
+    chaged has_odom to has_imu
+
+[33mcommit 04beaf474b7103297577fc303c116e6a02794127[m
+Author: Juan Miguel Jimeno <jimenojmm@gmail.com>
+Date:   Sat Apr 18 00:38:02 2020 +0800
+
+    added mini cheetah
+
+[33mcommit f54af9023f16fc8bac145f8d247fa8001cc03449[m
+Author: Juan Jimeno <jimenojmm@gmail.com>
+Date:   Tue Apr 14 20:02:39 2020 +0800
+
+    first commit

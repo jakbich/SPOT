@@ -1,0 +1,10 @@
+<launch>
+    <!-- <include file="$(find slam)/launch/mapping.launch"/> -->
+
+    <include file="$(find motion_control)/launch/motion_control.launch"/>
+    <include file="$(find human_interaction)/launch/bracelet_gui.launch"/>
+    <node pkg="rrt" type="rrt_path.py" name="rrt" output="screen" />
+    <node pkg="explore" type="explore_env.py" name="explore_node" output="screen" />
+    <node pkg="yolo" type="yolo_detection.py" name="yolo_detection" output="screen" />
+    
+</launch>
