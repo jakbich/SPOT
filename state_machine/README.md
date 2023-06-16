@@ -27,13 +27,15 @@ These packages can be used in combination with the other ROS packages contained 
     1.1 [ROS-Node state_machine](#r1)
 
 
+2. [Installation](#inst)
 
-2. [Usage](#u)\
+
+3. [Usage](#u)\
     2.1 [Starting the simulation](#rsim)\
     2.2 [Running necessary launch files](#rslam)\
     2.3 [Confirming correct launch](#conf)
     
-3. [File Structure](#fs)
+4. [File Structure](#fs)
 
 
 
@@ -76,8 +78,16 @@ It manages the following states:
 </div>
 
 
+# 2. Installation <a name="inst"></a>
 
-# 2. Usage <a name="u"></a>
+**Install all dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+
+# 3. Usage <a name="u"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Installation** of the [main README](../README.md)) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. 
 
@@ -170,7 +180,7 @@ Its output should look like the image in the section [ROS-Node state_machine](#r
 
 
 
-## 3. File Structure <a name="fs"></a>
+## 4. File Structure <a name="fs"></a>
 
 ````
 ├── CMakeLists.txt                  # compiler instructions

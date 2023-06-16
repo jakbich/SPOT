@@ -22,20 +22,19 @@ This package can be used in combination with the other ROS packages contained in
 1.  [About the package](#atp) \
     1.1 [ROS-Node rrt_path](#r1)
 
-2. [Usage](#u)\
-    2.1 [Starting the simulation](#rsim)\
-    2.2 [Running RRT](#rslam)\
-    2.3 [Running all the nodes individually](#rind)
+2. [Installation](#inst)
+
+3. [Usage](#u)\
+    3.1 [Starting the simulation](#rsim)\
+    3.2 [Running RRT](#rslam)\
+    3.3 [Running all the nodes individually](#rind)
     
     
-3. [File Structure](#fs)
+4. [File Structure](#fs)
 
 
 
 ---
-
-<p>&nbsp;</p>
-
 
 
 
@@ -58,9 +57,26 @@ The vizualized result of the ``rrt_path`` node should look like this:
 
 > Note: he robots position in Rviz does not match the robot position used by the occupancy map. This difference is due to a simulation error and/or position drift. Therefore, it is recommended to hide the robot model in Rviz. The blue marker represents the robot position. 
 
-# 2. Usage <a name="u"></a>
 
-After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
+
+
+
+# 2. Installation <a name="inst"></a>
+
+**Install all dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+
+
+
+
+# 3. Usage <a name="u"></a>
+
+After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` 
+and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
 
 ### Starting the simulation <a name="rsim"></a>
 The simulation should be running (the world in Gazebo and SPOT in Rviz), before the nodes within this package can be launched. This can be done using the two commands below.
@@ -145,7 +161,7 @@ roslaunch motion_control motion_control.launch
 
 > Note: Each command needs to be run in a new terminal that is sourced each time. 
 
-## 3. File Structure <a name="fs"></a>
+## 4. File Structure <a name="fs"></a>
 ````
 ├── CMakeLists.txt              # CMakeLists.txt for the package
 ├── images                      # Images used in the README 

@@ -25,14 +25,15 @@ These packages can be used in combination with the other ROS packages contained 
 # Table of Contents
 
 1.  [About the package](#atp) \
-    1.1 [ROS-Node image2pointcloud](#r1)\
-    1.2 [ROS-Node plane_segmentation](#r2)\
-    1.3 [ROS-Node occupancy_map](#r3)
+    1.1 [ROS-Node plane_segmentation](#r2)\
+    1.2 [ROS-Node occupancy_map](#r3)
 
-2. [Usage](#u)\
-    2.1 [Starting the simulation](#rsim)\
-    2.2 [Running SLAM](#rslam)\
-    2.3 [Running all the nodes individually](#rind)
+2. [Installation](#inst)  
+
+3. [Usage](#u)\
+    3.1 [Starting the simulation](#rsim)\
+    3.2 [Running SLAM](#rslam)\
+    3.3 [Running all the nodes individually](#rind)
     
     
 3. [File Structure](#fs)
@@ -46,21 +47,6 @@ These packages can be used in combination with the other ROS packages contained 
 
 
 
-
-## ROS-Node image2pointcloud <a name="r1"></a>
-The ``image2pointcloud`` node contains all the necessary files to transform depth images measured/created by SPOT into 3D point clouds. These point clouds are then used by other machine perception and planning nodes.
-
-This node is subscribed and publishes to the topics below.
-| **Subscribes:**               | **Publishes:**                    |
-|-------------------------------|-----------------------------------|
-| depth/frontright/camera/image | /spot/depth/frontright/pointcloud |
-| depth/frontleft/camera/image  | /spot/depth/frontleft/pointcloud  |
-
-The incoming depth images and the resulting point clouds should look like this.
-
-<div style="text-align:center">
- <img src="images/depth_image.png">
-</div>
 
 ## ROS-Node plane_segmentation <a name="r2"></a>
 The ``plane_segmentation`` node contains all the necessary files to perform ground plane segmentation. The segmentation is defined by a hardcoded Z-height threshold to reduce computational time and under the assumption that the ground is flat. The segmented point cloud is used in another node to create an occupancy map.
@@ -91,7 +77,20 @@ The created occupancy map updates dynamically when SPOT is moving.
 
 ![](images/update_slam.gif)
 
-# 2. Usage <a name="u"></a>
+
+
+# 2. Installation <a name="inst"></a>
+
+**Install all dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+
+
+
+# 3. Usage <a name="u"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
 
@@ -148,7 +147,7 @@ Run the node ``plane_segmentation``:
 roslaunch slam plane_segmentation.launch
 ```
 
-## 3. File Structure <a name="fs"></a>
+## 4. File Structure <a name="fs"></a>
 
 ````
 ├── action

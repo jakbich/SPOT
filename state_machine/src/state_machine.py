@@ -101,7 +101,7 @@ class Initialization(smach.State):
         rospy.loginfo("Waiting for 'motion_control' action server...")
         motion_running = self.motion_client.wait_for_server(timeout_duration)
 
-        rospy.sleep(3)
+        rospy.sleep(10000)
 
         #  Check if all action servers are running
         if not (explore_running and conv_running and rrt_running and motion_running):
