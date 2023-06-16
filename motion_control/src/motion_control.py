@@ -22,8 +22,8 @@ class MotionControl:
         self.server.start()
 
         # Robot variables
-        self.linear_vel = 0.15 # m/s
-        self.angular_vel = 0.15 # rad/s
+        self.linear_vel = 0.4 # m/s
+        self.angular_vel = 0.4 # rad/s
         self.robot_pos = None
         self.robot_yaw = None
         self.goal_pos = None

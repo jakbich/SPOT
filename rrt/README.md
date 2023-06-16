@@ -22,10 +22,12 @@ This package can be used in combination with the other ROS packages contained in
 1.  [About the package](#atp) \
     1.1 [ROS-Node rrt_path](#r1)
 
-2. [Usage](#u)\
-    2.1 [Starting the simulation](#rsim)\
-    2.2 [Running RRT*](#rslam)\
-    2.3 [Running all the nodes individually](#rind)
+2. [Installation](#inst)
+
+3. [Usage](#u)\
+    3.1 [Starting the simulation](#rsim)\
+    3.2 [Running RRT*](#rslam)\
+    3.3 [Running all the nodes individually](#rind)
     
     
 3. [File Structure](#fs)
@@ -56,7 +58,20 @@ In combination with the dependency with ``motion_control`` SPOT is able to follo
 
 > Note: The path is executed except for the last point. This point will be at the frontier of the unkown OccupancyGrid and therefore we do not know yet wheter it is occupied or free. So after the second to last point is reached, the node reports a succes. 
 
-# 2. Usage <a name="u"></a>
+
+
+# 2. Installation <a name="inst"></a>
+
+**Install all dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+
+
+
+# 3. Usage <a name="u"></a>
 
 After building the packages and sourcing your workspace (follow all the steps in **Getting started**) each of the contained nodes in the workspace can be started using ``roslaunch`` and the provided launch files. However, because all the nodes described in this README depend on each other, it is recommended to launch them all at once after the World in Gazebo and SPOT in Rviz have spawned.
 
@@ -143,7 +158,7 @@ roslaunch motion_control motion_control.launch
 
 > Note: Each command needs to be run in a new terminal that is sourced each time. 
 
-## 3. File Structure <a name="fs"></a>
+## 4. File Structure <a name="fs"></a>
 ````
 ├── CMakeLists.txt              # CMakeLists.txt for the package
 ├── images                      # Images used in the README 

@@ -25,11 +25,16 @@ class Node:
     """"
     Node for RRT star path planning algorithm
     """
-    def __init__(self, x, y, parent=None, parent_cost=0) -> None:
+    def __init__(self, x, y, parent=None, parent_cost=0.0) -> None:
         self.x = int(x)
         self.y = int(y)
         self.parent = parent
         self.parent_cost = parent_cost
+        
+
+
+
+
 
 class RRT_star:
     """
@@ -80,7 +85,7 @@ class RRT_star:
         x2, y2 = node2.x, node2.y
 
         # check if both nodes are valid
-        if self.grid[int(x1), int(y1)] >= 50 or self.grid[int(x2), int(y2)] >= 50:
+        if self.grid[int(x1), int(y1)] > 60 or self.grid[int(x2), int(y2)] > 60:
             return False
         elif self.grid[int(x1), int(y2)] < 0 or self.grid[int(x2), int(y1)] < 0:
             return False
@@ -155,6 +160,7 @@ class RRT_star:
 
             self.nodes.append(new_node)
             return new_node
+
         
         return None
     
@@ -200,8 +206,10 @@ class RRTPath:
         rospy.init_node('rrt_path')
         
         # Initialize server
+        rospy.logwarn("Starting rrt path server")
         self.server = actionlib.SimpleActionServer('rrt_path', MoveBaseAction, self.run_rrt, False)
         self.server.start()
+        
 
         # Initialize client
         self.motion_client = actionlib.SimpleActionClient('motion_control', MoveBaseAction)
@@ -216,6 +224,8 @@ class RRTPath:
         self.goal_yaw = None
 
         self.DEBUG = True
+
+
 
         # Create MoveBaseAction template
         self.move_base_goal_msg = MoveBaseGoal()
@@ -271,6 +281,13 @@ class RRTPath:
             start_pos[0] += 10 * math.cos(self.yaw)
             start_pos[1] += 10 * math.sin(self.yaw)
 
+        if goal.target_pose.pose.position.z > 1.5:
+            flag = "object"
+        else:
+            flag = "exploration"
+
+        
+
         # Run RRT
         rospy.logwarn("Start RRT Algorithm")
         rrt = RRT_star(start_pos, self.goal_pos, self.grid)
@@ -278,7 +295,8 @@ class RRTPath:
         self.rrt_path = rrt.plan_path()
         if self.rrt_path is None:
             rospy.logwarn("No path found")
-            rospy.sleep(rospy.Duration(5))
+            rospy.sleep(rospy.Duration(3))
+            self.server.set_aborted()
             return
         
         rospy.logwarn("Path: {}".format(self.rrt_path))
@@ -337,7 +355,14 @@ class RRTPath:
 
             marker = Marker()
             # x_marker, y_marker = self.pos
-            x_marker, y_marker = self.rrt_path[-1]
+            x_marker, y_marker = None, None
+            if flag == "exploration":
+                x_marker, y_marker = self.rrt_path[-2]
+            else:
+                x_marker, y_marker = self.rrt_path[-1]
+
+
+
             marker.header.frame_id = "odom"  # Modify the frame_id according to your needs
             marker.type = Marker.SPHERE
             marker.action = Marker.ADD
@@ -367,8 +392,11 @@ class RRTPath:
 
         for i, point in enumerate(self.rrt_path):
             # Skip the last point
-            if i == len(self.rrt_path) - 1:
-                break
+            if flag == "exploration":
+                if i == len(self.rrt_path) - 1:
+                    break
+
+                    
 
             action_goal = MoveBaseGoal()
             # action_goal.header.stamp = rospy.Time.now()
@@ -405,7 +433,6 @@ class RRTPath:
 if __name__ == '__main__':
     try:
         rrt = RRTPath()
-        rospy.logwarn("Starting rrt path server")
         rospy.spin()
     except rospy.ROSInterruptException:
         rospy.logwarn("The node rrt_path could not be launched")

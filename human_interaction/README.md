@@ -91,17 +91,6 @@ If you have not done so yet, follow the instructions to setup the CHAMP workspac
 **2. Install the following dependencies:**
 
 ```
-actionlib==1.14.0
-customtkinter==5.1.3
-pyaudio==0.2.13
-pyttsx3==2.90
-rospy==1.16.0
-SpeechRecognition==3.10.0
-ttkthemes==3.2.2
-```
-This can be done either manually or with these commands :
-
-```
 cd path/to/champ_spot/human_interaction
 pip install -r requirements.txt
 ```

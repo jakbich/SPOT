@@ -1,4 +1,3 @@
-
 # 1. About the package <a name="atp"></a>
  **Course:**  Multidisciplinary Project (RO47007) \
  **Program:** Msc Robotics @ TU Delft            
@@ -24,6 +23,7 @@ This package can be used in combination with the other ROS packages contained in
 1.  [About the package](#atp) \
     1.1 [ROS-Node detection_node](#r1)
 
+
 2. [Getting Started](#gs)\
     2.1 [Prerequisites](#pr)\
     2.2 [Installation](#i)\
@@ -39,19 +39,24 @@ This package can be used in combination with the other ROS packages contained in
 
 ## ROS-Node detection <a name="r1"></a>
 The package contains all the necessary files to build and run ``detection`` that:
-- Detects persons and then uses point-cloud data to assign a 3d location to the person, this data is then published.
+- Detects persons and object and uses depth-cloud information to assign a 3d point in world-fixed frame to the detection
 - Detects persons and objects and draws bounding boxes around them. The images with bounding boxes are published.
+- Builds a database with all the detections that contains the confidence of the detection, type of the deteciton and a moveBaseGoal message that describes the location of the detection. This database is published
 
 This node is subscribed and publishes to the topics below.
 | **Subscribes:**                                   | **Publishes:**                    |
 |---------------------------------------------------|-----------------------------------|
 | /spot/camera/frontleft/image                      | /spot/camera/boundingBoxCamera    |
-| /spot/camera/frontright/image                     |                                   |
-| /spot/depth/plane_segmentation/non_ground         |                                   |
+| /spot/camera/frontright/image                     | /spot/database                    |
+| /spot/depth/left/pointcloud                       | /spot/detections/markers          |
+| /spot/depth/right/pointcloud                      |                                   |
+| /odom/ground_truth                                |                                   |
 
 Furthermore the node request information regarding the both cameras from:
 - /spot/camera/frontright/camera_info
 - /spot/camera/frontleft/camera_info
+
+but only does this ones
 
 
 # 2. Getting Started <a name="gs"></a>
@@ -78,6 +83,10 @@ rospkg_modules==1.5.0
 rospy==1.16.0
 sensor_msgs==1.13.1
 tf==1.13.2
+```
+These can be easily installed using the following command:
+```bash
+pip install -r requirements.txt
 ```
 
 **3. Configure yolo**
@@ -151,9 +160,14 @@ You can then add the image with bounding boxes to rviz to view the result, it sh
 │   └── EXAMPLE.png
 ├── launch
 │   └── world_spot.launch
+├── msg
+│   ├── DetectionArray.msg
+│   └── DetectionInfo.msg
 ├── package.xml
 ├── README.md
+├── requirements.txt
 ├── src
+│   ├── arm_detection.py
 │   └── yolo_detection.py
 └── yolo_config
     ├── coco.names
@@ -162,4 +176,3 @@ You can then add the image with bounding boxes to rviz to view the result, it sh
     ├── yolov7x.cfg
     └── yolov7x.weights
 ```
-
