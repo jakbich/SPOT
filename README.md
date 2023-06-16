@@ -15,7 +15,8 @@ This repository is part the submission for the project of the course **Multidisc
 <img src="readme_images/tno.png" alt="Image 4" width="260" />
 
 #### Project Description
-In this project the SPOT robot will navigate through a care environment. For the sake of simplicity the demo will take place on a flat floor with no stairs or height differences. The SPOT robot that is currently available at CoR is operated using ROS driver. With the ROS driver it is able to send Twist ROS messages to move the robot. The SPOT is also equipped with an arm. This will be pick up hand-sized objects and place them somewhere else.
+For the course: Multidisciplinary Project (RO47007) in collaboration with TNO an assignment has been given to develop code to detect items and persons and then use the robot 'Spot' from Boston Dynamics to bring these found items to a person. Our own use case takes place in a healthcare environment where the nurse can give the command to retrieve an item and have it delivered.
+For the sake of simplicity, the demo will take place on a flat floor with no stairs or height differences. The SPOT robot that is currently available at CoR is operated using ROS driver. With the ROS driver it is able to send Twist ROS messages to move the robot. The SPOT is also equipped with an arm. This will be picking up hand-sized objects and placing them somewhere else.
 
 #### Challenge
 The primary challenge of this project is to develop an object delivery system where the SPOT robot picks up a specific object. Once the object is grasped, the robot should navigate within a predefined space, searching for the correct person to deliver the object. The robot's camera will be used to detect and identify the correct person. In case SPOT has found the person the Spot will walk to the person and place the object on the ground. The operation of the arm is done manually.
@@ -39,34 +40,35 @@ The project group would like to express our gratitude to the TNO company for pro
 
 
 # 2. Node overview <a name="nov"></a>
+The repository came with a package already designed for the simulation setup and to tele-op the robot in the simulation. This package is called  ([spot_config](spot_config)). All the other packages in the repository are made by our team. These are: 
 
-This repository contains all necessary files to build all 10 ROS nodes of the 7 packages, namely: 
+- explore ([explore](explore))
+    - ``explore``: This node uses a 'Frontier Based Exploration' algorithm to produce a goal point for Spot to walk to, this results in autonomous exploration of unseen areas.
 
-- human interaction ([Link to README](human_interaction/README.md))
-    - ``bracelet_gui_node`` 
-    - ``conversation_server``
+- human interaction ([human interaction](human_interaction))
+    - ``bracelet_gui_node``: This node provides a graphical interface for a healhcare professional to interact with Spot
+    - ``conversation_server``: This node enables Spot to listen to spoken user input and reply to the user allowing for a conversation. This node can trigger the state machine to start a new mission.
     
 
-- motion control ([Link to README](motion_control/README.md))
-    - ``motion_control``
+- motion control ([motion control](motion_control))
+    - ``motion_control``: This node converts MoveBaseGoal messages to linear and angular velocities to move Spot.
 
-- rrt ([Link to README](rrt/README.md))
-    - ``rrt_path_node``
+- rrt ([rrt](rrt))
+    - ``rrt_path_node``: This node computes a path from a start location to a goal location using a RRT* algorithm.
 
         
-- slam ([Link to README](slam/README.md))
-    - ``image2pointcloud`` 
-    - ``plane_segmentation``
-    - ``occupancy_map`` 
+- slam ([slam](slam))
+    - ``image2pointcloud``: This node transforms depth images measured/created by Spot into 3D point clouds. 
+    - ``plane_segmentation``: This node performs ground plane segmentation on the found point clouds
+    - ``occupancy_map``: This node builds an occupancy map that is able to show explored space, occupied space and unexplored space.
 
-- state machine ([Link to README](state_machine/README.md))
-    - ``state_machine``
+- state machine ([state machine](state_machine))
+    - ``state_machine``: This node is the main 'control' node of the system. It coordinates all the different nodes to work together for Spot to complete its mission.
 
-- trajectory ([Link to README](trajectory/README.md))
-    - ``trajectory_node``
+- yolo ([yolo](yolo))
+    - ``detection``: This node uses a pretrained Yolov7 classification algorithm trained on the COCO dataset to detect persons and objects. These detections are combined with 3D locations associated with these detctions into a database.
 
-- yolo ([Link to README](yolo/README.md))
-    - ``detection``
+   
 
 
 
@@ -206,6 +208,8 @@ Build your workspace
 ## 3.4 Confirming installation <a name="ins_confirm"></a>
 To confirm that all the packages are installed correctly, refer to the linked READMEs of each package:
 
+- [README explore](explore/README.md)
+
 - [README human_interaction](human_interaction/README.md)
 
 - [README motion_control](motion_control/README.md)
@@ -215,8 +219,6 @@ To confirm that all the packages are installed correctly, refer to the linked RE
 - [README slam](slam/README.md)
 
 - [README state_machine](state_machine/README.md)
-
-- [README trajectory](trajectory/README.md)
 
 - [README yolo](yolo/README.md)
 
