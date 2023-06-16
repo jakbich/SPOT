@@ -6,7 +6,7 @@
     <arg name="gazebo_world"       default="$(find spot_config)/worlds/outdoor.world" /> <!-- Path to Gazebo world you want to load. -->
     <arg name="description_file"   default="$(find spot_description)/urdf/spot.urdf"/> <!-- Path to URDF file Do not touch this. -->
     <arg name="world_init_x"       default="-1" /> <!-- X Initial position of the robot in Gazebo World -->
-    <arg name="world_init_y"       default="0" /> <!-- Y Initial position of the robot in Gazebo World -->
+    <arg name="world_init_y"       default="2" /> <!-- Y Initial position of the robot in Gazebo World -->
     <arg name="world_init_z"       default="1" /> <!-- Z Initial position of the robot in Gazebo World -->
     <arg name="world_init_heading" default="0" /> <!-- Initial heading of the robot in Gazebo World -->
 
