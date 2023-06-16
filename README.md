@@ -77,6 +77,8 @@ These nodes can be used in combination with the other ROS nodes contained in the
 
 This README file contains the overarching information about the packages and the necessary installation steps, while the README files in the subdirectories (linked behind each package heading) contain more specific information about the usage of the individual nodes as well as how to confirm successful installation.
 
+To launch a full run from scratch, follow the instructions in the [README state_machine](state_machine/README.md) file.
+
 
 
 # 3. Installation <a name="ins"></a>
